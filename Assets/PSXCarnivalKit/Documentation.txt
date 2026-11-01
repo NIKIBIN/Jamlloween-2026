@@ -1,0 +1,177 @@
+PSX Carnival Kit
+
+Documentation
+
+Every prop is a prefab in Assets/PSXCarnivalKit/Prefabs/ (PF_<prop>): drag it into a scene. 1 unit = 1 m; a prop's pivot
+is on the floor (or, for a wall prop, on the wall) it rests against. Each part has a box collider.
+
+Look
+Every prefab uses Materials/, which use the shader PSXCarnivalKit/PSX Unlit: the texture times the baked
+vertex shading, unlit, with the PS1's vertex snap (Vertex Snap: rows on screen, 0 = off) and Unity's fog.
+Affine Texture Warp (0 as shipped, up to 1) gives the PS1's swimming textures, most on big faces seen close.
+Render pipelines: Built-in and URP: the materials use the pack's one-pass unlit shader (vertex snap, fog, and an affine texture warp to turn on), which both render. Not HDRP.
+
+Animations
+A prop with moving parts has an Animation component with its clips; nothing plays on its own:
+    GetComponent<Animation>().Play("open");
+Demo/L_Demo.unity circles the props and plays every animation in turn (Scripts/PropsDemo.cs).
+Left/right selects a prop, A shows the catalog, drag orbits, right-drag pans, the wheel zooms,
+Space toggles auto orbit, R resets the view. Animations keep playing in either view.
+Demo/L_Level.unity is a level of 900 of them to walk (Scripts/LevelWalker.cs): WASD or the
+arrows and the mouse, Shift runs, E uses what is in front of you, Esc frees the mouse.
+
+Pickups
+An item to take, a save point or storage has Scripts/Pickup.cs on its prefab, set up in the inspector: its
+kind (Item, Save, Storage), the item it gives and how many, its title and text, its reveal (the clip the
+inspect view plays) and, for a save, what it takes (an ink ribbon); UnityEvents for what it does (onPicked,
+onSaved, onOpened, onRefused, onUsed). An item glints until it is taken.
+    key.Use(carried);                       // carried: the player's items, a List<string>; the key goes in
+    typewriter.Use(carried);                // takes an ink_ribbon, saves
+Scripts/Inspect.cs holds a prop up over the game to turn and read, E playing its reveal, Esc putting it away:
+    inspect.Open(diary.gameObject);
+
+Machines
+A prop that works (its kind is in the list below) has Scripts/Machine.cs on its prefab, set up in the
+inspector: its kind (what a use does: Switch, Button, Turn, Slot, Keypad, Panel, Item, Powered, Gauge),
+the machines it needs to be powered, and UnityEvents for what it does (onSwitched, onLive, onRefused,
+onUsed, onKeyed, onPicked). Machine.cs's comments say what each kind does.
+    lever.Use(carried);                     // the player's use; carried: the items they hold
+    keypad.Use(carried, "keypad_key_4");    // a key: the part they point at
+    door.needs = new[] { lever };           // the door is powered while the lever is on
+
+Textures: T_atlas.png 2048x2048, T_canvas_stripe.png 128x128, T_canvas_stripe_low.png 128x128, T_deck_ride.png 128x128, T_fun_checker.png 128x128, T_fun_swirl.png 128x128, T_midway.png 128x128, T_plywood_black.png 128x128, T_plywood_red.png 128x128, T_plywood_shed.png 128x128, T_sawdust.png 128x128, point filtered, no mipmaps.
+Icons/: an inventory icon per prop, T_<prop>, imported as a UI sprite.
+
+Props (triangles, size in metres: width x height x depth, animations)
+- carnival_arch: Carnival Entrance Arch, 1480 tris, 7.945 x 7.35 x 0.785; a machine, powered
+- ticket_booth: Ticket Booth, 476 tris, 2.7 x 4.19 x 2.285, open; a machine, switch
+- key_booth: Booth Key, 124 tris, 0.169 x 0.012 x 0.053; a machine, item
+- turnstile: Turnstile, 296 tris, 1.159 x 1.4 x 1.054, turn; a machine, button
+- fence_carnival: Picket Fence, 272 tris, 2.04 x 1.27 x 0.112
+- barricade_closed: Closed Barricade, 88 tris, 1.8 x 1.07 x 0.757
+- lamp_carnival: Carnival Light Pole, 346 tris, 0.83 x 5.38 x 0.76; a machine, powered
+- pennant_line: Pennant Line, 144 tris, 6.002 x 0.865 x 0.009
+- sign_height: Height Board, 24 tris, 0.6 x 1.9 x 0.4
+- poster_clown: Clown Poster, 2 tris, 0.6 x 0.8 x 0
+- poster_circus: Circus Poster, 2 tris, 0.6 x 0.8 x 0
+- crowd_barrier: Crowd Barrier, 296 tris, 2.342 x 1.119 x 0.7
+- booth_ring_toss: Ring Toss Booth, 3780 tris, 4.2 x 3.675 x 3.005; a machine, powered
+- booth_shooting: Shooting Gallery, 2700 tris, 4.2 x 3.675 x 3.005, ducks; a machine, powered
+- booth_bottles: Knock 'Em Down Booth, 3008 tris, 4.2 x 3.675 x 3.005; a machine, powered
+- booth_balloons: Pop a Balloon Booth, 3872 tris, 4.2 x 3.675 x 3.005; a machine, powered
+- high_striker: High Striker, 216 tris, 1.713 x 5.725 x 1.2, strike; a machine, button
+- fortune_machine: Fortune Teller Machine, 1076 tris, 0.94 x 2.77 x 0.8, sway; a machine, powered
+- prize_bear_giant: Giant Prize Bear, 380 tris, 0.768 x 1.114 x 0.69
+- prize_bear: Prize Bear, 344 tris, 0.295 x 0.429 x 0.265
+- balloon_bunch: Balloon Bunch, 504 tris, 0.775 x 2.257 x 0.747
+- fortune_card: Fortune Card, 12 tris, 0.06 x 0.002 x 0.09
+- ticket_strip: Ride Tickets, 24 tris, 0.288 x 0.004 x 0.095
+- bench_park: Park Bench, 240 tris, 1.8 x 0.908 x 0.61
+- litter_bin_full: Litter Bin, Overflowing, 652 tris, 1.35 x 1.376 x 1.13
+- trash_can: Trash Can, 312 tris, 0.55 x 0.825 x 0.514, open; a machine, switch
+- trash_can_knocked: Trash Can, Knocked Over, 314 tris, 1.356 x 0.55 x 1.207
+- crystal_ball: Crystal Ball, 268 tris, 0.16 x 0.205 x 0.16, swirl
+- tarot_card: Tarot Card, 12 tris, 0.092 x 0.001 x 0.131; a pickup, item (1 x tarot_card)
+- food_stand: Food Stand, 224 tris, 3.2 x 3.25 x 2.953
+- cotton_candy_cart: Cotton Candy Cart, 636 tris, 1.985 x 2.25 x 1.755
+- popcorn_cart: Popcorn Wagon, 760 tris, 1.655 x 2.135 x 0.92
+- popcorn_spilled: Spilled Popcorn, 396 tris, 0.22 x 0.069 x 0.463
+- picnic_table: Picnic Table, 196 tris, 1.8 x 0.792 x 1.68
+- lollipops: Swirl Lollipops, 144 tris, 0.205 x 0.012 x 0.22; a pickup, item (1 x lollipops)
+- caramel_apple: Caramel Apple, 192 tris, 0.14 x 0.17 x 0.14; a pickup, item (1 x caramel_apple)
+- candy_scatter: Dropped Candy, 1084 tris, 0.302 x 0.022 x 0.314; a pickup, item (1 x candy_scatter)
+- carousel: Carousel, 7522 tris, 9.9 x 6.3 x 9.9, turn; a machine, powered
+- carousel_horse: Fallen Carousel Horse, 404 tris, 1.717 x 0.38 x 1.367
+- ferris_wheel_base: Ferris Wheel Frame, 416 tris, 7.3 x 7.87 x 3
+- ferris_wheel_ring: Ferris Wheel, 3480 tris, 12.297 x 13.66 x 1.92, turn; a machine, powered
+- ride_panel: Ride Panel, 76 tris, 0.6 x 1.495 x 0.589; a machine, slot
+- ride_key: Ride Key, 124 tris, 0.169 x 0.012 x 0.053; a machine, item
+- ghost_train_front: Ghost Train Front, 448 tris, 8.5 x 6.5 x 0.865, open; a machine, powered
+- dark_wall: Dark Ride Wall, 12 tris, 2 x 3.6 x 0.12
+- dark_wall_painted: Dark Ride Wall, Painted, 12 tris, 2 x 3.6 x 0.12
+- dark_roof: Dark Ride Roof, 12 tris, 2 x 0.12 x 2
+- track_straight: Track, Straight, 96 tris, 1 x 0.14 x 2
+- track_curve: Track, Corner, 444 tris, 1.493 x 0.115 x 1.493
+- ghost_car: Ghost Train Car, 304 tris, 0.9 x 1.1 x 1.853
+- ghoul_popup: Pop-Up Ghoul, 276 tris, 0.8 x 1.824 x 1.284, lunge; a machine, powered
+- cobweb_corner: Corner Cobweb, 504 tris, 0.592 x 0.632 x 0.592
+- spider_hanging: Hanging Spider, 200 tris, 0.222 x 1.562 x 0.177, drop
+- bats: Paper Bats, 320 tris, 1.359 x 0.48 x 0.003
+- ghost_hanging: Hanging Ghost, 152 tris, 0.571 x 1.6 x 0.56, sway
+- fun_house_front: Fun House Front, 662 tris, 8 x 7.5 x 2.895
+- fun_wall: Fun House Wall, 12 tris, 2 x 3.6 x 0.12
+- fun_floor: Fun House Floor, 12 tris, 2 x 0.05 x 2
+- fun_mirror: Fun House Mirror, 28 tris, 1 x 2.3 x 0.346
+- barrel_tunnel: Barrel Tunnel, 456 tris, 2.6 x 2.5 x 2.2, spin; a machine, powered
+- big_top_wall: Big Top Wall, 70 tris, 4.07 x 3.33 x 0.121
+- big_top_entrance: Big Top Entrance, 288 tris, 4.07 x 3.625 x 0.43
+- big_top_roof: Big Top Roof, 258 tris, 15.88 x 9.21 x 15.88
+- big_top_pole: King Pole, 324 tris, 2.64 x 9.9 x 0.8; a machine, powered
+- ring_curb: Ring Curb, 48 tris, 2.795 x 0.28 x 0.564
+- bleachers: Bleachers, 300 tris, 4 x 1.5 x 3
+- circus_podium: Circus Podium, 188 tris, 1.18 x 0.606 x 1.18
+- human_cannon: Human Cannon, 1512 tris, 3.33 x 3.443 x 1.44
+- trapeze: Trapeze, 44 tris, 0.921 x 3.019 x 0.036
+- caravan: Showman's Trailer, 408 tris, 6 x 3.009 x 2.825, open; a machine, switch
+- vanity_mirror: Dressing Mirror, 400 tris, 1.1 x 1.018 x 0.4
+- costume_rack: Costume Rail, 532 tris, 1.669 x 1.769 x 0.66
+- clown_trunk: Clown Trunk, 200 tris, 1.02 x 0.67 x 0.64, open; a machine, switch
+- generator_trailer: Generator Trailer, 268 tris, 4.859 x 2.37 x 1.89, start, run; a machine, switch
+- key_generator: Generator Key, 124 tris, 0.169 x 0.012 x 0.053; a machine, item
+- power_panel: Main Power Board, 144 tris, 1.03 x 2.163 x 0.76, throw; a machine, switch
+- cable_run: Cable Run, 204 tris, 4.011 x 0.044 x 0.498
+- cage_wagon: Beast Wagon, 1724 tris, 4.2 x 3.66 x 2.42
+- table_pine: Kitchen Table, Pine, 68 tris, 1.2 x 0.75 x 0.8
+- chair_folding_wood: Folding Chair, Wood, 72 tris, 0.44 x 0.848 x 0.482
+- flashlight: Flashlight, 116 tris, 0.19 x 0.054 x 0.051
+- battery: Battery, 56 tris, 0.034 x 0.061 x 0.032
+- trash_bags: Trash Bags, 480 tris, 0.959 x 0.79 x 0.794
+- chainlink_fence: Chain-Link Fence, 524 tris, 2.59 x 2.15 x 0.078
+- chainlink_gate: Chain-Link Gate, 556 tris, 2.59 x 2.15 x 0.099, open; a machine, switch
+- pallet_stack: Pallets, Stacked, 1260 tris, 1.304 x 0.72 x 1.121
+- cardboard_boxes: Cardboard Boxes, 96 tris, 1.077 x 0.705 x 0.917
+- oil_drum_rusted: Oil Drum, Rusted, 96 tris, 0.6 x 0.89 x 0.571
+- burn_barrel: Burn Barrel, 176 tris, 0.6 x 1.24 x 0.584, burn; a machine, powered
+- hay_bale: Hay Bale, 28 tris, 0.9 x 0.39 x 0.47
+- crowbar: Crowbar, 80 tris, 0.605 x 0.092 x 0.234
+- marionette: Marionette, 480 tris, 0.221 x 0.843 x 0.129, sway
+- doll_head: Doll's Head, 180 tris, 0.126 x 0.129 x 0.139
+- monkey_cymbals: Cymbal Monkey, 494 tris, 0.161 x 0.242 x 0.197, play
+- note_folded: Folded Note, 12 tris, 0.148 x 0.002 x 0.07, unfold; a pickup, item (1 x note)
+- ice_cream_van: Ice Cream Van, 1558 tris, 2.16 x 3.11 x 5.1, open_hood, open_back, open_hatch, open_left, open_right, open_all, drive, steer
+- box_truck_rusted: Box Truck, Rusted, 1392 tris, 2.22 x 2.658 x 6.8, open_hood, open_back, open_left, open_right, open_all
+- jerry_can: Jerry Can, 188 tris, 0.174 x 0.523 x 0.35
+- tire_stack: Tire Stack, 576 tris, 0.67 x 0.8 x 0.64
+- clown_figure: Clown Figure, 1196 tris, 0.94 x 2.366 x 1.177, turn; a machine, powered
+- clown_slumped: Dead Clown, 1052 tris, 1 x 0.947 x 1.256
+- clown_cutout: Clown Photo Board, 44 tris, 1.2 x 2.111 x 0.737
+- clown_mask: Clown Mask, 116 tris, 0.22 x 0.109 x 0.275
+- mallet_bloody: Bloody Mallet, 60 tris, 0.44 x 0.24 x 1.377
+- corpse_sheet: Body Under a Sheet, 608 tris, 1.906 x 0.269 x 0.8
+- body_wrapped: Body in a Tarp, 308 tris, 1.78 x 0.28 x 0.4
+- severed_hand: Severed Hand, 190 tris, 0.164 x 0.043 x 0.268
+- bucket_blood: Bucket of Blood, 509 tris, 0.484 x 0.398 x 0.424
+- sign_turn_back: Turn Back Sign, 48 tris, 0.714 x 1.4 x 0.079
+- sign_help: Help Us Boards, 144 tris, 0.912 x 0.915 x 0.035
+- instant_photo: Instant Photo, 12 tris, 0.104 x 0.001 x 0.119; a pickup, item (1 x photo)
+- pine: Pine, 270 tris, 5.892 x 8.71 x 5.354, sway
+- pine_tall: Pine, Tall, 378 tris, 6.576 x 12.681 x 7.201, sway
+- pine_dead: Pine, Dead, 400 tris, 1.579 x 7.605 x 1.86, sway
+- oak: Oak, 478 tris, 7.449 x 7.185 x 6.823, sway
+- birch: Birch, 408 tris, 3.641 x 7.203 x 3.923, sway
+- tree_dead: Dead Tree, 432 tris, 4.163 x 5.629 x 4.233, sway
+- bush: Bush, 160 tris, 1.561 x 1.479 x 1.692
+- grass_tall: Grass, Tall, 180 tris, 0.767 x 0.777 x 0.645
+- boulder: Boulder, 72 tris, 1.234 x 0.938 x 1.081
+- stump: Stump, 158 tris, 1.192 x 0.486 x 1.146
+- crow: Crow, 386 tris, 0.108 x 0.214 x 0.412, look
+- ground_midway: Ground, Midway, 24 tris, 4 x 0.11 x 4
+- midway_edge: Grass to Midway, 24 tris, 4 x 0.11 x 4
+- midway_corner_out: Grass to Midway, Outer Corner, 24 tris, 4 x 0.11 x 4
+- midway_corner_in: Grass to Midway, Inner Corner, 24 tris, 4 x 0.11 x 4
+- ground_sawdust: Ground, Sawdust, 24 tris, 4 x 0.11 x 4
+- ground_grass: Ground, Grass, 24 tris, 4 x 0.11 x 4
+- ground_forest_floor: Ground, Forest Floor, 24 tris, 4 x 0.11 x 4
+- edge_straight: Forest Edge, Straight, 24 tris, 4 x 0.11 x 4
+- edge_corner_out: Forest Edge, Outer Corner, 24 tris, 4 x 0.11 x 4
+- edge_corner_in: Forest Edge, Inner Corner, 24 tris, 4 x 0.11 x 4
