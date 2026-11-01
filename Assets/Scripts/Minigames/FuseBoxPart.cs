@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>Peca clicavel do painel de fusiveis. Guarda o tipo, o indice e o realce ao passar o mouse.</summary>
 public class FuseBoxPart : MonoBehaviour
 {
-    public enum Kind { Screw, Cover, Fuse, Slot, SpareFuse }
+    public enum Kind { Screw, Cover, Fuse, Slot, SpareFuse, Lever }
 
     public Kind kind;
     public int index;
