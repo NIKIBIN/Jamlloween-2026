@@ -22,17 +22,29 @@ public class PlayerInteractor : MonoBehaviour
         interactAction.AddBinding("<Gamepad>/buttonSouth");
     }
 
+    public Transform ViewCamera => viewCamera;
+
     void OnEnable() => interactAction.Enable();
-    void OnDisable() => interactAction.Disable();
+
+    void OnDisable()
+    {
+        interactAction.Disable();
+        current = null;
+        if (promptLabel != null) promptLabel.text = string.Empty;
+    }
 
     void Update()
     {
         current = null;
-        if (Physics.Raycast(viewCamera.position, viewCamera.forward, out var hit, interactDistance,
-                interactMask, QueryTriggerInteraction.Collide))
+        var hits = Physics.RaycastAll(viewCamera.position, viewCamera.forward, interactDistance,
+            interactMask, QueryTriggerInteraction.Collide);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+        foreach (var hit in hits)
         {
+            if (hit.collider.transform.IsChildOf(transform)) continue;   // ignora o proprio jogador
             current = hit.collider.GetComponentInParent<IInteractable>();
             if (current != null && string.IsNullOrEmpty(current.Prompt)) current = null;
+            break;                                                        // o primeiro objeto na frente decide
         }
 
         if (promptLabel != null)
