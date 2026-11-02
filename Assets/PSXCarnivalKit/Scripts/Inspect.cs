@@ -26,6 +26,8 @@ namespace HeyHeyThere.PSXCarnivalKit
         public GameObject Item { get; private set; }  // the copy shown
         public float yaw, pitch, zoom = 1f;
 
+        static readonly int RadialFogId = Shader.PropertyToID("_RadialFogEnabled");
+
         Camera cam;
         RenderTexture picture;
         Transform pivot;
@@ -173,7 +175,16 @@ namespace HeyHeyThere.PSXCarnivalKit
                 picture = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.ARGB32) { filterMode = FilterMode.Point };
             }
             cam.targetTexture = picture;
+
+            // The copy sits far from the world, so the radial fog (measured from the player's flashlight) and the night fog would
+            // swallow it whole. Both are off only while this camera draws: the game behind it keeps its own.
+            var radialFog = Shader.GetGlobalFloat(RadialFogId);
+            var worldFog = RenderSettings.fog;
+            Shader.SetGlobalFloat(RadialFogId, 0f);
+            RenderSettings.fog = false;
             cam.Render();
+            RenderSettings.fog = worldFog;
+            Shader.SetGlobalFloat(RadialFogId, radialFog);
         }
 
         void OnGUI()

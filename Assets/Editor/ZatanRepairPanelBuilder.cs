@@ -50,7 +50,7 @@ public static class ZatanRepairPanelBuilder
         var lampGreen = Mat("ZatanLampGreen", new Color(0.2f, 0.8f, 0.3f), 0.8f, 0f, new Color(0.3f, 2.2f, 0.5f));
         var lampRed = Mat("ZatanLampRed", new Color(0.9f, 0.15f, 0.1f), 0.8f, 0f, new Color(2.5f, 0.2f, 0.1f));
         var hoseMat = Unlit("ZatanHose", new Color(0.03f, 0.03f, 0.035f));
-        var tarDecal = Transparent(Mat("ZatanTarDecal", new Color(0.008f, 0.008f, 0.01f, 1f), 0f, 0f), tex);
+        var tarDecal = Transparent(MatLit("ZatanTarDecal", new Color(0.008f, 0.008f, 0.01f, 1f), 0f, 0f), tex);
         var shineMat = Transparent(Unlit("ZatanShine", Color.white), puff);
         var smokeMat = Transparent(ParticleMat("ZatanSmoke", new Color(0.12f, 0.12f, 0.12f, 0.7f)), puff);
         var steamMat = Transparent(ParticleMat("ZatanSteam", new Color(1f, 1f, 1f, 0.55f)), puff);
@@ -65,13 +65,6 @@ public static class ZatanRepairPanelBuilder
 
         var view = Empty("ViewPoint", R, new Vector3(0f, 0.07f, -0.53f));
         view.localRotation = Quaternion.Euler(9f, 0f, 0f);
-        var light = new GameObject("WorkLight").AddComponent<Light>();
-        light.transform.SetParent(R, false);
-        light.transform.localPosition = new Vector3(0f, 0.15f, -0.4f);
-        light.type = LightType.Point;
-        light.color = new Color(1f, 0.9f, 0.75f);
-        light.intensity = 1.1f;
-        light.range = 1.6f;
 
         // ---------- caixa ----------
         var boxVis = Vis(Piece("Box", R, Vector3.zero));
@@ -280,7 +273,6 @@ public static class ZatanRepairPanelBuilder
         var so = new SerializedObject(game);
         Ref(so, "prompt", null, "Consertar Zatan");
         Ref(so, "viewPoint", view);
-        Refs(so, "activeWhilePlaying", light.gameObject);
         Ref(so, "cover", coverGo.GetComponent<ZatanRepairPart>());
         Ref(so, "coverAnchor", coverAnchor);
         Ref(so, "coverRest", coverRest);
@@ -551,7 +543,18 @@ public static class ZatanRepairPanelBuilder
         return m;
     }
 
+    /// <summary>Material opaco no Flashlight Fog Surface: o shader do projeto, que reage a lanterna, olhos do Zatan e luminaria de trabalho.</summary>
     static Material Mat(string name, Color color, float smoothness = 0.3f, float metallic = 0f, Color? emission = null)
+    {
+        var m = Asset(name, "Jamlloween/Flashlight Fog Surface");
+        m.SetColor("_BaseColor", color);
+        m.SetColor("_EmissionColor", emission ?? Color.black);
+        EditorUtility.SetDirty(m);
+        return m;
+    }
+
+    /// <summary>Material no Lit do URP. So para as camadas transparentes (piche), que o shader do projeto nao faz.</summary>
+    static Material MatLit(string name, Color color, float smoothness = 0.3f, float metallic = 0f, Color? emission = null)
     {
         var m = Asset(name, "Universal Render Pipeline/Lit");
         m.SetColor("_BaseColor", color);

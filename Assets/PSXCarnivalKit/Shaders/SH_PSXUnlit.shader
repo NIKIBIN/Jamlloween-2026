@@ -74,13 +74,14 @@ Shader "PSXCarnivalKit/PSX Unlit"
                 clip(c.a - _Cutoff);
                 if (_RadialFogEnabled > 0.5)
                 {
-                    float3 eyeLight = ZatanEyeLight(c.rgb, i.positionWS);
+                    float3 eyeLight = ZatanEyeLight(c.rgb, i.positionWS) + MinigameWorkLamp(c.rgb, i.positionWS);
                     c.rgb *= FlashlightBrightness(i.positionWS);
                     c.rgb = FlashlightApplyFog(c.rgb, i.positionWS, unity_FogColor.rgb) + eyeLight;
                     c.rgb *= 1.0 - _ZatanBlackout;
                     return c;
                 }
                 UNITY_APPLY_FOG(i.fogCoord, c);
+                c.rgb += MinigameWorkLamp(c.rgb, i.positionWS);
                 c.rgb *= 1.0 - _ZatanBlackout;
                 return c;
             }
