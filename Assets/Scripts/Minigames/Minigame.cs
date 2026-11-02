@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Jamlloween.Progression;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -14,7 +15,7 @@ using UnityEngine.InputSystem;
 /// Reuso: arraste o prefab para qualquer cena e ligue os eventos onStarted / onExited / onCompleted.
 /// Quem controla uma perseguicao pode chamar Exit() para tirar o jogador do minigame.
 /// </summary>
-public abstract class Minigame : MonoBehaviour, IInteractable
+public abstract class Minigame : MonoBehaviour, IInteractable, IStepForceCompletable
 {
     public enum State { Idle, Entering, Playing, Exiting }
 
@@ -59,7 +60,7 @@ public abstract class Minigame : MonoBehaviour, IInteractable
     static string BlockedBy => EntryBlocker?.Invoke();
 
     public State CurrentState { get; private set; }
-    public bool IsCompleted { get; private set; }
+    public bool IsCompleted { get; protected set; }
     public bool IsPlaying => CurrentState == State.Playing;
     public string Prompt
     {
@@ -82,7 +83,27 @@ public abstract class Minigame : MonoBehaviour, IInteractable
 
     protected virtual void Awake() => SetPlayingObjects(false);
 
-    public void Interact(PlayerInteractor interactor) => Begin(interactor);
+    StepInteraction stepGate;
+    bool stepGateLooked;
+
+    /// <summary>Liga este minigame ao diretor de progressao (opcional: sem StepInteraction ele funciona livre, como nas outras cenas).</summary>
+    protected StepInteraction StepGate
+    {
+        get
+        {
+            if (!stepGateLooked) { stepGate = GetComponent<StepInteraction>(); stepGateLooked = true; }
+            return stepGate;
+        }
+    }
+
+    public void Interact(PlayerInteractor interactor)
+    {
+        if (StepGate != null && !StepGate.TryUse()) return;   // fora da etapa: mostra o texto e nao abre
+        Begin(interactor);
+    }
+
+    /// <summary>Usado pelo pulo de etapas do debug: marca como concluido sem jogar e sem disparar eventos.</summary>
+    public virtual void ForceComplete() => IsCompleted = true;
 
     /// <summary>Entra no minigame. O interactor identifica o jogador (e a camera dele).</summary>
     public void Begin(PlayerInteractor interactor)
@@ -132,6 +153,7 @@ public abstract class Minigame : MonoBehaviour, IInteractable
         IsCompleted = true;
         Debug.Log($"[Minigame] {name} concluido", this);
         onCompleted?.Invoke();
+        if (StepGate != null) StepGate.NotifyCompleted();
         StartCoroutine(ExitAfter(exitDelay >= 0f ? exitDelay : exitDelayAfterComplete));
     }
 

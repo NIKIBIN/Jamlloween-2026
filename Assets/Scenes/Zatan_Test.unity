@@ -941,6 +941,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5660753982958524052, guid: 8949c000732394929b7782f6d892d262, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 734211115}
     - targetCorrespondingSourceObject: {fileID: 4554387148643927076, guid: 8949c000732394929b7782f6d892d262, type: 3}
       insertIndex: -1
       addedObject: {fileID: 37420494}
@@ -6894,6 +6897,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3932798464155656991, guid: 40e3a09e65e9f98c251ac1710a6a78c2, type: 3}
+      propertyPath: kind
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 5448768862527023462, guid: 40e3a09e65e9f98c251ac1710a6a78c2, type: 3}
       propertyPath: m_LocalPosition.x
       value: -34.98
@@ -9549,6 +9556,151 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 2273674337229328569, guid: 5ad6cf1cb3834301d6f3eefc3096a854, type: 3}
+--- !u!1 &274890978
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 274890979}
+  - component: {fileID: 274890982}
+  - component: {fileID: 274890981}
+  - component: {fileID: 274890980}
+  m_Layer: 0
+  m_Name: ProgressionDirector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &274890979
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 274890978}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 400480096}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &274890980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 274890978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18a0377e474884d258bcaca14f914596, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.ProgressionDirector
+  steps:
+  - {fileID: 11400000, guid: 3030cf1a58c2150ca8438626a2e1392e, type: 2}
+  - {fileID: 11400000, guid: 6c0d67545b1c84bdd9afebd0c43e232f, type: 2}
+  - {fileID: 11400000, guid: 72ef4902131bbec43b5ca8b7f561b79d, type: 2}
+  - {fileID: 11400000, guid: 6e2054104f7d50098838c6af50e5193d, type: 2}
+  - {fileID: 11400000, guid: 093dedcdf2f3128a18c168646a504714, type: 2}
+  - {fileID: 11400000, guid: 4f0b60b6deac041db86c772f08e82a05, type: 2}
+  - {fileID: 11400000, guid: 462af50f130d27437b5665691bc5b131, type: 2}
+  - {fileID: 11400000, guid: c429741eb0769a56cbdf66d107c5a40a, type: 2}
+  - {fileID: 11400000, guid: ae6e40ee7c23762c2a77a7420e9d5aa2, type: 2}
+  - {fileID: 11400000, guid: 5694dfed189695bd08f483cd9ca6e343, type: 2}
+  - {fileID: 11400000, guid: b223b36ce232d846bbc290acdc18d056, type: 2}
+  tasks:
+  - id: flashlight
+    text: Pegar a lanterna
+    indent: 0
+    initialState: 2
+    doneEvent: FlashlightTaken
+  - id: radio
+    text: "Consertar o r\xE1dio"
+    indent: 0
+    initialState: 2
+    doneEvent: RadioFixed
+  - id: zatan
+    text: Consertar o Zatan
+    indent: 0
+    initialState: 1
+    doneEvent: ZatanFixed
+  - id: generator
+    text: Ligar o gerador
+    indent: 0
+    initialState: 0
+    doneEvent: GeneratorStarted
+  - id: carousel
+    text: Consertar o carrossel
+    indent: 0
+    initialState: 1
+    doneEvent: MechanismFixed
+  - id: head_find
+    text: "Achar a cabe\xE7a do cavalo"
+    indent: 1
+    initialState: 0
+    doneEvent: HeadPicked
+  - id: head_mount
+    text: "Encaixar a cabe\xE7a no cavalo"
+    indent: 1
+    initialState: 0
+    doneEvent: HeadMounted
+  - id: mechanism
+    text: Consertar o mecanismo
+    indent: 1
+    initialState: 0
+    doneEvent: MechanismFixed
+  radio: {fileID: 0}
+  sfx: {fileID: 0}
+  defaultBlockedTexts:
+  - "N\xE3o preciso mexer nisso agora."
+  - Tenho que voltar aqui depois.
+  blockedTextSeconds: 2.2
+  debugKey: 97
+--- !u!114 &274890981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 274890978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 181fe2b6c6851f1e7adb4ede8ef7034d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.Clipboard
+  key: 3
+  raiseSeconds: 0.25
+  hiddenOffset: {x: -0.17, y: -0.75, z: 0.35}
+  raisedOffset: {x: -0.17, y: -0.27, z: 0.42}
+  boardMaterial: {fileID: 0}
+  paperMaterial: {fileID: 0}
+  clipMaterial: {fileID: 0}
+  title: TAREFAS
+  inkColor: {r: 0.13, g: 0.11, b: 0.09, a: 1}
+  currentColor: {r: 0.6, g: 0.07, b: 0.05, a: 1}
+  futureAlpha: 100
+--- !u!114 &274890982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 274890978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9e9d841868362a588d638b214564684, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.RadioDialogue
+  source: {fileID: 0}
+  secondsPerCharacter: 0.055
+  minSeconds: 2
+  gapSeconds: 0.5
 --- !u!1 &275883540 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2675635985983543851, guid: ccc48bf37b89041966c382ee667c276d, type: 3}
@@ -14457,6 +14609,41 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -1573749349500005866, guid: 41193ba1276305d34a0bbda89ff798b1, type: 3}
+--- !u!1 &400480095
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 400480096}
+  m_Layer: 0
+  m_Name: Progression
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &400480096
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 400480095}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 274890979}
+  - {fileID: 1169135890}
+  - {fileID: 2116395414}
+  - {fileID: 1645670864}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &406521478
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19916,7 +20103,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6343882114831353271, guid: 8949c000732394929b7782f6d892d262, type: 3}
   m_PrefabInstance: {fileID: 37420491}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 734211113}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 278ed86533f823f2a91560b649ecc0ef, type: 3}
@@ -24369,6 +24556,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1177834198837478460, guid: 29018ddad935b727c4e5605ea6147224, type: 3}
+      propertyPath: kind
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 5967510924733270487, guid: 29018ddad935b727c4e5605ea6147224, type: 3}
       propertyPath: m_LocalPosition.x
       value: -34.82
@@ -25538,6 +25729,30 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 8274207961594462700, guid: 033bfafe7787b1e171e4270b073d30fa, type: 3}
+--- !u!1 &734211113 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5660753982958524052, guid: 8949c000732394929b7782f6d892d262, type: 3}
+  m_PrefabInstance: {fileID: 37420491}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &734211115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734211113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d513c061ccc7e0f7b8406d33c30248af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepInteraction
+  interactionId: generator
+  completionEvent: GeneratorStarted
+  blockedText: 
+  disableCollidersWhenInactive: 0
+  onForceCompleted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &738537770 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 233320122798110445, guid: 9d4028de0a3ce0a3fb3abbf087a81af5, type: 3}
@@ -34068,6 +34283,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3448765691133692420, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1490251124}
     - targetCorrespondingSourceObject: {fileID: 3373918316950238179, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
       insertIndex: -1
       addedObject: {fileID: 967671600}
@@ -34077,7 +34295,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4455648213913062698, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
   m_PrefabInstance: {fileID: 967671597}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1490251121}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e5dea3542d2b79791a32e7d06551e7d0, type: 3}
@@ -36774,6 +36992,11 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -7013643388599153830, guid: 1a7f9ee8900dd8308629f58ac6c623c2, type: 3}
+--- !u!1 &1067450956 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3781328895066531382, guid: 22da81a94ffbc59baaea3778f6868f4e, type: 3}
+  m_PrefabInstance: {fileID: 1528876894}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1068725002 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 233320122798110445, guid: 9d4028de0a3ce0a3fb3abbf087a81af5, type: 3}
@@ -36927,6 +37150,7 @@ GameObject:
   - component: {fileID: 1072752601}
   - component: {fileID: 1072752603}
   - component: {fileID: 1072752602}
+  - component: {fileID: 1072752604}
   m_Layer: 0
   m_Name: FlashlightPickup
   m_TagString: Untagged
@@ -36985,6 +37209,25 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.12, y: 0.08, z: 0.26}
   m_Center: {x: 0, y: 0.03, z: 0}
+--- !u!114 &1072752604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1072752600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d513c061ccc7e0f7b8406d33c30248af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepInteraction
+  interactionId: flashlight
+  completionEvent: FlashlightTaken
+  blockedText: 
+  disableCollidersWhenInactive: 0
+  onForceCompleted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1073778398 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 233320122798110445, guid: 9d4028de0a3ce0a3fb3abbf087a81af5, type: 3}
@@ -40173,6 +40416,57 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 5047713639574946923, guid: 91359a4a0eb64e1535ba37919e73db88, type: 3}
+--- !u!1 &1169135889
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1169135890}
+  - component: {fileID: 1169135891}
+  m_Layer: 0
+  m_Name: LightGroup_Park
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1169135890
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1169135889}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 400480096}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1169135891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1169135889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73bbd458873aaef97a7ca81645c9f0f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.LightGroup
+  groupId: park
+  lights: []
+  objects: []
+  startOn: 1
+  onChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &1171174388
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44062,6 +44356,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7992910102361705969, guid: 67de3c84d909cb45f90d2a641e7f7729, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1286408784}
     - targetCorrespondingSourceObject: {fileID: 8122641297678570432, guid: 67de3c84d909cb45f90d2a641e7f7729, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
@@ -44576,6 +44873,30 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2021763550}
   m_SourcePrefab: {fileID: 100100000, guid: 35209e583051ebbf62d17e665d51419e, type: 3}
+--- !u!1 &1286408782 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7992910102361705969, guid: 67de3c84d909cb45f90d2a641e7f7729, type: 3}
+  m_PrefabInstance: {fileID: 1271798718}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1286408784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1286408782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d513c061ccc7e0f7b8406d33c30248af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepInteraction
+  interactionId: zatan_repair
+  completionEvent: ZatanFixed
+  blockedText: 
+  disableCollidersWhenInactive: 0
+  onForceCompleted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1288311951 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8541193676417243268, guid: cac94174bfab2c55858090fad66caa95, type: 3}
@@ -50910,6 +51231,30 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 8274207961594462700, guid: 033bfafe7787b1e171e4270b073d30fa, type: 3}
+--- !u!1 &1490251121 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3448765691133692420, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
+  m_PrefabInstance: {fileID: 967671597}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1490251124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1490251121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d513c061ccc7e0f7b8406d33c30248af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepInteraction
+  interactionId: carousel_mechanism
+  completionEvent: MechanismFixed
+  blockedText: 
+  disableCollidersWhenInactive: 0
+  onForceCompleted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &1493503624
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -52054,6 +52399,9 @@ PrefabInstance:
     - {fileID: 8364742991358690592, guid: 22da81a94ffbc59baaea3778f6868f4e, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3781328895066531382, guid: 22da81a94ffbc59baaea3778f6868f4e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1528876903}
     - targetCorrespondingSourceObject: {fileID: 4463737866820514097, guid: 22da81a94ffbc59baaea3778f6868f4e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
@@ -52120,12 +52468,31 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8094882466903980381, guid: 22da81a94ffbc59baaea3778f6868f4e, type: 3}
   m_PrefabInstance: {fileID: 1528876894}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1067450956}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a949ceec53d7f2396a74baae5104f934, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RadioMinigame
+--- !u!114 &1528876903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1067450956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d513c061ccc7e0f7b8406d33c30248af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepInteraction
+  interactionId: radio
+  completionEvent: RadioFixed
+  blockedText: 
+  disableCollidersWhenInactive: 0
+  onForceCompleted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1529266016 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5445529089602431412, guid: 3b34f97a5cc4a2edfd28e18d9beee931, type: 3}
@@ -55907,6 +56274,81 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -7013643388599153830, guid: 1a7f9ee8900dd8308629f58ac6c623c2, type: 3}
+--- !u!1 &1645670863
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1645670864}
+  - component: {fileID: 1645670866}
+  - component: {fileID: 1645670865}
+  m_Layer: 0
+  m_Name: Trigger_GeneratorZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1645670864
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645670863}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -34.9, y: 1.5, z: 63.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 400480096}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1645670865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645670863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e0657d8695819183bf34e2035a7ab9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepTrigger
+  triggerId: generator_zone
+  startActive: 0
+  oneShot: 1
+  sound: {fileID: 0}
+  volume: 1
+  completionEvent: GeneratorReached
+  onEntered:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!65 &1645670866
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645670863}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 10, y: 3, z: 10}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1646329851
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -63211,6 +63653,7 @@ GameObject:
   - component: {fileID: 1866371993}
   - component: {fileID: 1866371992}
   - component: {fileID: 1866371995}
+  - component: {fileID: 1866371996}
   m_Layer: 0
   m_Name: Horse_Headless
   m_TagString: Untagged
@@ -63362,6 +63805,27 @@ MonoBehaviour:
   requiredItem: horse_head
   headLocation: {fileID: 678140523}
   headPickupPrefab: {fileID: 5410376772242574749, guid: c8369121f60480b9b9e071375bdbcc77, type: 3}
+  headPickupInteractionId: head_pickup
+  headPickupCompletionEvent: HeadPicked
+--- !u!114 &1866371996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1866371990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d513c061ccc7e0f7b8406d33c30248af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepInteraction
+  interactionId: carousel_horse
+  completionEvent: HeadMounted
+  blockedText: "Preciso achar a cabe\xE7a desse cavalo primeiro."
+  disableCollidersWhenInactive: 0
+  onForceCompleted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &1867154981
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -71400,6 +71864,81 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 5706592661379249832, guid: df37cf2c7e32faed2a6cb87ff32ca764, type: 3}
+--- !u!1 &2116395413
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2116395414}
+  - component: {fileID: 2116395416}
+  - component: {fileID: 2116395415}
+  m_Layer: 0
+  m_Name: Trigger_GlassBreak
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2116395414
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2116395413}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -23.8, y: 1.5, z: 54.8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 400480096}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2116395415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2116395413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e0657d8695819183bf34e2035a7ab9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepTrigger
+  triggerId: glass_break
+  startActive: 0
+  oneShot: 1
+  sound: {fileID: 0}
+  volume: 1
+  completionEvent: 
+  onEntered:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!65 &2116395416
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2116395413}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 6, y: 3, z: 6}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2120474161 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 233320122798110445, guid: 9d4028de0a3ce0a3fb3abbf087a81af5, type: 3}
@@ -72738,3 +73277,4 @@ SceneRoots:
   - {fileID: 678140523}
   - {fileID: 1905791000}
   - {fileID: 1126976712}
+  - {fileID: 400480096}

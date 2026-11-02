@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using HeyHeyThere.PSXCarnivalKit;
+using Jamlloween.Progression;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -47,6 +48,11 @@ public class CarouselHeadMinigame : Minigame
     [Tooltip("Onde a cabeca fica no mapa. Se preenchido junto com o prefab, o pickup nasce neste ponto.")]
     [SerializeField] Transform headLocation;
     [SerializeField] GameObject headPickupPrefab;
+    [Header("Progressao")]
+    [Tooltip("Id da interacao de pegar a cabeca nas etapas do ProgressionDirector. Vazio = o pickup nasce sem controle do diretor.")]
+    [SerializeField] string headPickupInteractionId = "head_pickup";
+    [Tooltip("Evento enviado ao diretor ao pegar a cabeca.")]
+    [SerializeField] string headPickupCompletionEvent = "HeadPicked";
 
     // --- estado do conserto (persiste ao sair) ---
     bool mounted, locked, docking;
@@ -101,6 +107,21 @@ public class CarouselHeadMinigame : Minigame
         pk.item = requiredItem;
         pk.amount = 1;
         if (pk.title == "") pk.title = "Cabeca do cavalo";
+        if (!string.IsNullOrEmpty(headPickupInteractionId))
+            go.AddComponent<StepInteraction>().Configure(headPickupInteractionId, headPickupCompletionEvent, null, true);
+    }
+
+    /// <summary>Usado pelo pulo de etapas do debug: a cabeca ja aparece encaixada no cavalo.</summary>
+    public override void ForceComplete()
+    {
+        if (IsCompleted) return;
+        mounted = locked = true;
+        headRoll = 0f;
+        head.gameObject.SetActive(true);
+        head.transform.SetLocalPositionAndRotation(neckMount.localPosition + SeatOffset(seatDepth), RollRot(0f));
+        var col = head.GetComponent<Collider>();
+        if (col != null) col.enabled = false;
+        base.ForceComplete();
     }
 
     protected override void OnBegin(PlayerInteractor interactor)
