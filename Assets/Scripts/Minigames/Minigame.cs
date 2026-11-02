@@ -45,10 +45,31 @@ public abstract class Minigame : MonoBehaviour, IInteractable
     [Tooltip("Disparado uma unica vez, quando o minigame e concluido.")]
     public UnityEvent onCompleted;
 
+    /// <summary>
+    /// Opt-in gate for a whole scene: when set and it returns a text, no minigame can be entered and that text is
+    /// shown as the prompt (ex.: "Precisa da lanterna"). Null or an empty text lets the player in.
+    /// </summary>
+    public static System.Func<string> EntryBlocker;
+    /// <summary>Any minigame started / any minigame left. Lets scene-wide systems (the flashlight) follow the player in and out.</summary>
+    public static event System.Action<Minigame> AnyStarted, AnyExited;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetStatics() { EntryBlocker = null; AnyStarted = null; AnyExited = null; }
+
+    static string BlockedBy => EntryBlocker?.Invoke();
+
     public State CurrentState { get; private set; }
     public bool IsCompleted { get; private set; }
     public bool IsPlaying => CurrentState == State.Playing;
-    public string Prompt => IsCompleted || CurrentState != State.Idle ? string.Empty : prompt;
+    public string Prompt
+    {
+        get
+        {
+            if (IsCompleted || CurrentState != State.Idle) return string.Empty;
+            string blocked = BlockedBy;
+            return string.IsNullOrEmpty(blocked) ? prompt : blocked;
+        }
+    }
 
     Transform camTransform, camParent;
     Camera cam;
@@ -67,6 +88,7 @@ public abstract class Minigame : MonoBehaviour, IInteractable
     public void Begin(PlayerInteractor interactor)
     {
         if (IsCompleted || CurrentState != State.Idle || viewPoint == null) return;
+        if (!string.IsNullOrEmpty(BlockedBy)) return;
 
         camTransform = interactor.ViewCamera;
         cam = camTransform.GetComponent<Camera>();
@@ -88,6 +110,7 @@ public abstract class Minigame : MonoBehaviour, IInteractable
         OnBegin(interactor);
         CurrentState = State.Entering;
         onStarted?.Invoke();
+        AnyStarted?.Invoke(this);
         StartMove(true, enterTime);
     }
 
@@ -244,6 +267,7 @@ public abstract class Minigame : MonoBehaviour, IInteractable
         SetPlayingObjects(false);
         CurrentState = State.Idle;
         onExited?.Invoke();
+        AnyExited?.Invoke(this);
     }
 
     void SetPlayingObjects(bool value)

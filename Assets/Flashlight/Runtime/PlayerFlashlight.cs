@@ -7,6 +7,8 @@ namespace Jamlloween.Flashlight
     /// <summary>
     /// Owns the radial fog globals. F toggles the light: only surfaces inside the beam see through the fog,
     /// because most of the scene is unlit and ignores the spot light itself.
+    /// The player may start without it (<see cref="startOwned"/> off) and pick it up later with <see cref="Acquire"/>.
+    /// While <see cref="WorkMode"/> is on (a minigame is being played) the beam is held on, whatever F says.
     /// </summary>
     public class PlayerFlashlight : MonoBehaviour
     {
@@ -21,12 +23,18 @@ namespace Jamlloween.Flashlight
 
         [SerializeField] FlashlightConfig config;
         [SerializeField] Light beam;
+        [Tooltip("Off: the player must find the flashlight and call Acquire() before F does anything.")]
+        [SerializeField] bool startOwned = true;
 
-        float blend, cosOuter;
+        float blend, workBlend, cosOuter, cosInner;
+        bool workMode;
 
         public bool IsOn { get; private set; }
+        public bool IsOwned { get; private set; }
+        public bool WorkMode => workMode;
         public float ConeAmount => blend;
         public event Action<bool> Toggled;
+        public event Action Acquired;
 
         void Awake()
         {
@@ -39,7 +47,9 @@ namespace Jamlloween.Flashlight
             beam.range = config.ConeDistance;
             beam.intensity = 0f;
             beam.enabled = false;
+            IsOwned = startOwned;
             cosOuter = Mathf.Cos(config.spotAngle * 0.5f * Mathf.Deg2Rad);
+            cosInner = Mathf.Cos(config.innerSpotAngle * 0.5f * Mathf.Deg2Rad);
         }
 
         void OnEnable()
@@ -49,7 +59,6 @@ namespace Jamlloween.Flashlight
             Shader.SetGlobalFloat(ConeDensityId, config.coneFogDensity);
             Shader.SetGlobalFloat(BaseBrightnessId, config.baseBrightness);
             Shader.SetGlobalFloat(ConeBrightnessId, config.coneBrightness);
-            Shader.SetGlobalFloat(CosInnerId, Mathf.Cos(config.innerSpotAngle * 0.5f * Mathf.Deg2Rad));
         }
 
         void OnDisable() => Shader.SetGlobalFloat(EnabledId, 0f);
@@ -58,11 +67,23 @@ namespace Jamlloween.Flashlight
         {
             // Keyboard.current is legitimately null on a machine with no keyboard.
             Keyboard keys = Keyboard.current;
-            if (keys != null && keys.fKey.wasPressedThisFrame) SetOn(!IsOn);
+            if (IsOwned && keys != null && keys.fKey.wasPressedThisFrame) SetOn(!IsOn);
 
-            blend = Mathf.MoveTowards(blend, IsOn ? 1f : 0f, Time.deltaTime / config.transitionSeconds);
+            bool lit = IsOwned && (IsOn || workMode);
+            blend = Mathf.MoveTowards(blend, lit ? 1f : 0f, Time.deltaTime / config.transitionSeconds);
             beam.enabled = blend > 0f;
-            beam.intensity = config.intensity * blend;
+
+            // Work mode opens the beam wide, so a close-up minigame is lit all over and not just in the middle.
+            workBlend = workMode ? 1f : 0f;   // no fade: the beam changes at once when a minigame starts or ends
+            float outer = Mathf.Lerp(config.spotAngle, config.workSpotAngle, workBlend);
+            float inner = Mathf.Lerp(config.innerSpotAngle, config.workInnerSpotAngle, workBlend);
+            beam.intensity = Mathf.Lerp(config.intensity, config.workIntensity, workBlend) * blend;
+            Shader.SetGlobalFloat(ConeDensityId, Mathf.Lerp(config.coneFogDensity, config.workConeFogDensity, workBlend));
+            Shader.SetGlobalFloat(ConeBrightnessId, Mathf.Lerp(config.coneBrightness, config.workConeBrightness, workBlend));
+            beam.spotAngle = outer;
+            beam.innerSpotAngle = inner;
+            cosOuter = Mathf.Cos(outer * 0.5f * Mathf.Deg2Rad);
+            cosInner = Mathf.Cos(inner * 0.5f * Mathf.Deg2Rad);
         }
 
         void LateUpdate()
@@ -70,11 +91,30 @@ namespace Jamlloween.Flashlight
             Transform t = beam.transform;
             Vector3 position = t.position, forward = t.forward;
             Shader.SetGlobalVector(PositionId, new Vector4(position.x, position.y, position.z, blend));
+            Shader.SetGlobalFloat(CosInnerId, cosInner);
             Shader.SetGlobalVector(DirectionId, new Vector4(forward.x, forward.y, forward.z, cosOuter));
+        }
+
+        /// <summary>The player now has the flashlight. It is switched on at once, so the pickup is felt.</summary>
+        public void Acquire()
+        {
+            if (IsOwned) return;
+            IsOwned = true;
+            Acquired?.Invoke();
+            SetOn(true);
+        }
+
+        /// <summary>Holds the beam on while the player works on a minigame, then gives it back to the F toggle.</summary>
+        public void SetWorkMode(bool on)
+        {
+            if (on == workMode) return;
+            workMode = on;
+            blend = IsOwned && (IsOn || workMode) ? 1f : 0f;   // snap, so the beam does not fade in or out around a minigame
         }
 
         public void SetOn(bool on)
         {
+            if (on && !IsOwned) return;
             if (on == IsOn) return;
             IsOn = on;
             Toggled?.Invoke(on);

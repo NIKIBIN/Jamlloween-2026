@@ -27,6 +27,17 @@ namespace Jamlloween.Flashlight
         [Range(10f, 120f)] public float spotAngle = 38f;
         [Range(1f, 120f)] public float innerSpotAngle = 18f;
 
+        [Header("Work mode (minigames)")]
+        [Tooltip("Outer angle of the beam while a minigame is played: wide, to light the whole machine.")]
+        [Range(10f, 170f)] public float workSpotAngle = 120f;
+        [Range(1f, 170f)] public float workInnerSpotAngle = 90f;
+        [Tooltip("Beam intensity while a minigame is played. Lower than the normal one: the light is a few centimetres from the surface.")]
+        [Range(0f, 20f)] public float workIntensity = 0.12f;
+        [Tooltip("Cone brightness while a minigame is played. Close to baseBrightness: a soft lift, still dark.")]
+        [Range(0f, 1f)] public float workConeBrightness = 0.58f;
+        [Tooltip("Cone fog density while a minigame is played. Close to baseFogDensity: the dark stays around the machine.")]
+        [Range(0.01f, 0.5f)] public float workConeFogDensity = 0.3f;
+
         public float BaseDistance => FogEdge / baseFogDensity;
         public float ConeDistance => FogEdge / coneFogDensity;
     }
