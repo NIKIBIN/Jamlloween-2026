@@ -10,12 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce996ab14216ced2eaaf30e60f90bcb3, type: 3}
-  m_Name: Step_10_Mecanismo
+  m_Name: Step_10_Fim
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.ProgressionStep
-  taskText: Consertar o mecanismo do carrossel
-  activeInteractions:
-  - carousel_mechanism
+  label: "Fim provis\xF3rio"
+  activeInteractions: []
   interceptedInteractions: []
-  completionEvent: MechanismFixed
+  completionEvents: []
   onStart: []
   onComplete: []

@@ -9603,18 +9603,58 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.ProgressionDirector
   steps:
-  - {fileID: 11400000, guid: 216af791dd2357562b0598b9f13917d9, type: 2}
-  - {fileID: 11400000, guid: f69b7ca48b12fc3baa649a39695d7c6e, type: 2}
-  - {fileID: 11400000, guid: f394afc6a073f6c078018feff3acc42a, type: 2}
-  - {fileID: 11400000, guid: 00d3a818842acafb2bd58341a47b1adb, type: 2}
-  - {fileID: 11400000, guid: d0700a0f55cfc77af96c5ee1eb82e38d, type: 2}
-  - {fileID: 11400000, guid: 4034b8e9658c632fa9a9fb172f0981fd, type: 2}
-  - {fileID: 11400000, guid: 8e35246902d834bcf83c67c8d5a690a6, type: 2}
-  - {fileID: 11400000, guid: e3325fb74ba906b9bbcc631f170aeba3, type: 2}
-  - {fileID: 11400000, guid: 852ba1a2fe80534d1b0de303484e66ba, type: 2}
-  - {fileID: 11400000, guid: a8e803ba7ec9c6a2db140086522664a9, type: 2}
-  - {fileID: 11400000, guid: 50ded72af338651ec8671ad2f92e4915, type: 2}
-  - {fileID: 11400000, guid: 2f172a989fe2726108eecc64e6ac109c, type: 2}
+  - {fileID: 11400000, guid: 3030cf1a58c2150ca8438626a2e1392e, type: 2}
+  - {fileID: 11400000, guid: 6c0d67545b1c84bdd9afebd0c43e232f, type: 2}
+  - {fileID: 11400000, guid: 72ef4902131bbec43b5ca8b7f561b79d, type: 2}
+  - {fileID: 11400000, guid: 6e2054104f7d50098838c6af50e5193d, type: 2}
+  - {fileID: 11400000, guid: 093dedcdf2f3128a18c168646a504714, type: 2}
+  - {fileID: 11400000, guid: 4f0b60b6deac041db86c772f08e82a05, type: 2}
+  - {fileID: 11400000, guid: 462af50f130d27437b5665691bc5b131, type: 2}
+  - {fileID: 11400000, guid: c429741eb0769a56cbdf66d107c5a40a, type: 2}
+  - {fileID: 11400000, guid: ae6e40ee7c23762c2a77a7420e9d5aa2, type: 2}
+  - {fileID: 11400000, guid: 5694dfed189695bd08f483cd9ca6e343, type: 2}
+  - {fileID: 11400000, guid: b223b36ce232d846bbc290acdc18d056, type: 2}
+  tasks:
+  - id: flashlight
+    text: Pegar a lanterna
+    indent: 0
+    initialState: 2
+    doneEvent: FlashlightTaken
+  - id: radio
+    text: "Consertar o r\xE1dio"
+    indent: 0
+    initialState: 2
+    doneEvent: RadioFixed
+  - id: zatan
+    text: Consertar o Zatan
+    indent: 0
+    initialState: 1
+    doneEvent: ZatanFixed
+  - id: generator
+    text: Ligar o gerador
+    indent: 0
+    initialState: 0
+    doneEvent: GeneratorStarted
+  - id: carousel
+    text: Consertar o carrossel
+    indent: 0
+    initialState: 1
+    doneEvent: MechanismFixed
+  - id: head_find
+    text: "Achar a cabe\xE7a do cavalo"
+    indent: 1
+    initialState: 0
+    doneEvent: HeadPicked
+  - id: head_mount
+    text: "Encaixar a cabe\xE7a no cavalo"
+    indent: 1
+    initialState: 0
+    doneEvent: HeadMounted
+  - id: mechanism
+    text: Consertar o mecanismo
+    indent: 1
+    initialState: 0
+    doneEvent: MechanismFixed
   radio: {fileID: 0}
   sfx: {fileID: 0}
   defaultBlockedTexts:

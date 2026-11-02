@@ -10,21 +10,35 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce996ab14216ced2eaaf30e60f90bcb3, type: 3}
-  m_Name: Step_06_Reportar
+  m_Name: Step_04_LigarGerador
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.ProgressionStep
-  taskText: Reportar
-  activeInteractions: []
+  label: Ligar o gerador
+  activeInteractions:
+  - generator
   interceptedInteractions: []
-  completionEvent: RadioQueueEmpty
-  onStart:
-  - kind: 0
+  completionEvents:
+  - GeneratorStarted
+  onStart: []
+  onComplete:
+  - kind: 1
     line:
       speaker: "PATR\xC3O"
-      text: "Virou a cabe\xE7a? Para de besteira, a m\xE1quina faz isso. Vai pro carrossel e termina logo."
+      text: 
       audio: {fileID: 0}
       volume: 1
-    targetId: 
+    targetId: park
     state: 1
+    taskState: 2
     clip: {fileID: 0}
     volume: 1
-  onComplete: []
+  - kind: 4
+    line:
+      speaker: "PATR\xC3O"
+      text: 
+      audio: {fileID: 0}
+      volume: 1
+    targetId: GeneratorRestored
+    state: 1
+    taskState: 2
+    clip: {fileID: 0}
+    volume: 1

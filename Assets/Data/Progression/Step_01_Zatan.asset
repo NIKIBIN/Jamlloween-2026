@@ -10,25 +10,35 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce996ab14216ced2eaaf30e60f90bcb3, type: 3}
-  m_Name: Step_07_IrAoCarrossel
+  m_Name: Step_01_Zatan
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.ProgressionStep
-  taskText: Ir ao carrossel
-  activeInteractions: []
-  interceptedInteractions:
-  - interactionId: carousel_mechanism
-    text: "Preciso achar a cabe\xE7a desse cavalo primeiro."
-  - interactionId: carousel_horse
-    text: "Preciso achar a cabe\xE7a desse cavalo primeiro."
-  completionEvent: CarouselInspected
+  label: Consertar o Zatan
+  activeInteractions:
+  - zatan_repair
+  interceptedInteractions: []
+  completionEvents:
+  - ZatanFixed
   onStart: []
   onComplete:
-  - kind: 0
+  - kind: 1
     line:
       speaker: "PATR\xC3O"
-      text: "T\xE1 faltando a cabe\xE7a? O pessoal do circo disse que pode estar na casa de divers\xE3o dos palha\xE7os. Tenta l\xE1 primeiro."
+      text: 
       audio: {fileID: 0}
       volume: 1
-    targetId: 
+    targetId: park
+    state: 0
+    taskState: 2
+    clip: {fileID: 0}
+    volume: 1
+  - kind: 5
+    line:
+      speaker: "PATR\xC3O"
+      text: 
+      audio: {fileID: 0}
+      volume: 1
+    targetId: generator
     state: 1
+    taskState: 2
     clip: {fileID: 0}
     volume: 1

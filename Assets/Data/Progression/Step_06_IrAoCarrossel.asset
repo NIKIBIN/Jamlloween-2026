@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce996ab14216ced2eaaf30e60f90bcb3, type: 3}
+  m_Name: Step_06_IrAoCarrossel
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.ProgressionStep
+  label: Ir ao carrossel
+  activeInteractions: []
+  interceptedInteractions:
+  - interactionId: carousel_mechanism
+    text: "Preciso achar a cabe\xE7a desse cavalo primeiro."
+  - interactionId: carousel_horse
+    text: "Preciso achar a cabe\xE7a desse cavalo primeiro."
+  completionEvents:
+  - CarouselInspected
+  onStart: []
+  onComplete:
+  - kind: 0
+    line:
+      speaker: "PATR\xC3O"
+      text: "T\xE1 faltando a cabe\xE7a? O pessoal do circo disse que pode estar na casa de divers\xE3o dos palha\xE7os. Tenta l\xE1 primeiro."
+      audio: {fileID: 0}
+      volume: 1
+    targetId: 
+    state: 1
+    taskState: 2
+    clip: {fileID: 0}
+    volume: 1
+  - kind: 5
+    line:
+      speaker: "PATR\xC3O"
+      text: 
+      audio: {fileID: 0}
+      volume: 1
+    targetId: head_find
+    state: 1
+    taskState: 2
+    clip: {fileID: 0}
+    volume: 1

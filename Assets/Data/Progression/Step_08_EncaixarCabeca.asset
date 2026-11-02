@@ -10,12 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce996ab14216ced2eaaf30e60f90bcb3, type: 3}
-  m_Name: Step_08_AcharCabeca
+  m_Name: Step_08_EncaixarCabeca
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.ProgressionStep
-  taskText: "Achar a cabe\xE7a do cavalo"
+  label: "Encaixar a cabe\xE7a no cavalo"
   activeInteractions:
-  - head_pickup
+  - carousel_horse
   interceptedInteractions: []
-  completionEvent: HeadPicked
+  completionEvents:
+  - HeadMounted
   onStart: []
-  onComplete: []
+  onComplete:
+  - kind: 5
+    line:
+      speaker: "PATR\xC3O"
+      text: 
+      audio: {fileID: 0}
+      volume: 1
+    targetId: mechanism
+    state: 1
+    taskState: 2
+    clip: {fileID: 0}
+    volume: 1

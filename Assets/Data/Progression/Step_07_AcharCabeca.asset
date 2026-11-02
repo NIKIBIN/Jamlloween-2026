@@ -10,22 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce996ab14216ced2eaaf30e60f90bcb3, type: 3}
-  m_Name: Step_01_Radio
+  m_Name: Step_07_AcharCabeca
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.ProgressionStep
-  taskText: "Consertar o r\xE1dio"
+  label: "Achar a cabe\xE7a do cavalo"
   activeInteractions:
-  - radio
+  - head_pickup
   interceptedInteractions: []
-  completionEvent: RadioFixed
+  completionEvents:
+  - HeadPicked
   onStart: []
   onComplete:
-  - kind: 0
+  - kind: 5
     line:
       speaker: "PATR\xC3O"
-      text: "At\xE9 que enfim. Escuta: o circo t\xE1 cobrando, tudo tem que funcionar at\xE9 amanh\xE3. Ningu\xE9m vai te buscar antes de terminar. Come\xE7a pela cabine da cartomante."
+      text: 
       audio: {fileID: 0}
       volume: 1
-    targetId: 
+    targetId: head_mount
     state: 1
+    taskState: 2
     clip: {fileID: 0}
     volume: 1

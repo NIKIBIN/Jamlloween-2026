@@ -10,11 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce996ab14216ced2eaaf30e60f90bcb3, type: 3}
-  m_Name: Step_11_Fim
+  m_Name: Step_02_FalaQuedaDeLuz
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.ProgressionStep
-  taskText: 
+  label: 'Fala: queda de luz'
   activeInteractions: []
   interceptedInteractions: []
-  completionEvent: 
-  onStart: []
+  completionEvents:
+  - RadioQueueEmpty
+  onStart:
+  - kind: 0
+    line:
+      speaker: "PATR\xC3O"
+      text: "Caiu tudo? Tem um gerador reserva atr\xE1s do dep\xF3sito. Liga ele."
+      audio: {fileID: 0}
+      volume: 1
+    targetId: 
+    state: 1
+    taskState: 2
+    clip: {fileID: 0}
+    volume: 1
   onComplete: []

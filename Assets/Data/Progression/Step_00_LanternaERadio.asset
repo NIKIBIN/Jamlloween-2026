@@ -10,51 +10,37 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce996ab14216ced2eaaf30e60f90bcb3, type: 3}
-  m_Name: Step_04_IrAoGerador
+  m_Name: Step_00_LanternaERadio
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.ProgressionStep
-  taskText: "Ir at\xE9 o gerador"
-  activeInteractions: []
+  label: "Lanterna e r\xE1dio"
+  activeInteractions:
+  - flashlight
+  - radio
   interceptedInteractions: []
-  completionEvent: GeneratorReached
-  onStart:
-  - kind: 3
-    line:
-      speaker: "PATR\xC3O"
-      text: 
-      audio: {fileID: 0}
-      volume: 1
-    targetId: glass_break
-    state: 1
-    clip: {fileID: 0}
-    volume: 1
-  - kind: 3
-    line:
-      speaker: "PATR\xC3O"
-      text: 
-      audio: {fileID: 0}
-      volume: 1
-    targetId: generator_zone
-    state: 1
-    clip: {fileID: 0}
-    volume: 1
+  completionEvents:
+  - FlashlightTaken
+  - RadioFixed
+  onStart: []
   onComplete:
-  - kind: 3
+  - kind: 0
     line:
       speaker: "PATR\xC3O"
-      text: 
+      text: "At\xE9 que enfim. Escuta: o circo t\xE1 cobrando, tudo tem que funcionar at\xE9 amanh\xE3. Ningu\xE9m vai te buscar antes de terminar. Come\xE7a pela cabine da cartomante."
       audio: {fileID: 0}
       volume: 1
-    targetId: glass_break
-    state: 0
+    targetId: 
+    state: 1
+    taskState: 2
     clip: {fileID: 0}
     volume: 1
-  - kind: 3
+  - kind: 5
     line:
       speaker: "PATR\xC3O"
       text: 
       audio: {fileID: 0}
       volume: 1
-    targetId: generator_zone
-    state: 0
+    targetId: zatan
+    state: 1
+    taskState: 2
     clip: {fileID: 0}
     volume: 1

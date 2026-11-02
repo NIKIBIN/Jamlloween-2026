@@ -24,6 +24,10 @@ namespace Jamlloween.Progression
         [Header("Etapas (em ordem)")]
         [SerializeField] List<ProgressionStep> steps = new List<ProgressionStep>();
 
+        [Header("Prancheta")]
+        [Tooltip("Linhas da prancheta, na ordem em que aparecem. As etapas mudam o estado delas com ações do tipo Task.")]
+        [SerializeField] List<ClipboardTask> tasks = new List<ClipboardTask>();
+
         [Header("Sistemas")]
         [SerializeField] RadioDialogue radio;
         [Tooltip("Toca as ações de som. Vazio = cria um 2D.")]
@@ -42,6 +46,8 @@ namespace Jamlloween.Progression
         [SerializeField] Key debugKey = Key.F4;
 
         int current = -1;
+        readonly HashSet<string> satisfied = new HashSet<string>();
+        TaskState[] taskStates = new TaskState[0];
         bool transitioning, finished;
         string blockedText;
         float blockedLeft;
@@ -50,6 +56,10 @@ namespace Jamlloween.Progression
         Vector2 debugScroll;
 
         public IReadOnlyList<ProgressionStep> Steps => steps;
+        public IReadOnlyList<ClipboardTask> Tasks => tasks;
+        /// <summary>Sobe a cada mudança na prancheta. A prancheta usa para saber quando redesenhar.</summary>
+        public int TasksVersion { get; private set; }
+        public TaskState GetTaskState(int index) => index >= 0 && index < taskStates.Length ? taskStates[index] : TaskState.Hidden;
         public int CurrentIndex => current;
         public ProgressionStep Current => current >= 0 && current < steps.Count ? steps[current] : null;
         /// <summary>True depois que a última etapa foi concluída.</summary>
@@ -93,7 +103,39 @@ namespace Jamlloween.Progression
 
         void Start()
         {
+            ResetTasks();
             if (steps.Count > 0) StartStep(0);
+        }
+
+        // ------------------------------------------------------------------ prancheta
+
+        void ResetTasks()
+        {
+            taskStates = new TaskState[tasks.Count];
+            for (int i = 0; i < tasks.Count; i++) taskStates[i] = tasks[i].initialState;
+            TasksVersion++;
+        }
+
+        void SetTask(string id, TaskState state)
+        {
+            bool found = false;
+            for (int i = 0; i < tasks.Count; i++)
+            {
+                if (tasks[i].id != id) continue;
+                found = true;
+                // Uma tarefa riscada não volta atrás por uma ação posterior.
+                if (taskStates[i] != TaskState.Done) taskStates[i] = state;
+            }
+            if (!found) Debug.LogWarning($"[Progression] tarefa '{id}' nao existe na prancheta.", this);
+            TasksVersion++;
+        }
+
+        void MarkDone(string eventId)
+        {
+            bool any = false;
+            for (int i = 0; i < tasks.Count; i++)
+                if (tasks[i].doneEvent == eventId && taskStates[i] != TaskState.Done) { taskStates[i] = TaskState.Done; any = true; }
+            if (any) TasksVersion++;
         }
 
         void OnRadioIdle() => Raise(RadioIdleEvent);
@@ -105,7 +147,11 @@ namespace Jamlloween.Progression
         {
             var step = Current;
             if (step == null || finished || transitioning || string.IsNullOrEmpty(eventId)) return;
-            if (step.completionEvent != eventId) return;
+            if (!step.completionEvents.Contains(eventId)) return;
+            satisfied.Add(eventId);
+            MarkDone(eventId);
+            foreach (var e in step.completionEvents)
+                if (!satisfied.Contains(e)) return;   // faltam eventos desta etapa
             CompleteCurrent();
         }
 
@@ -115,7 +161,7 @@ namespace Jamlloween.Progression
             var step = Current;
             int index = current;
             Run(step.onComplete, true);
-            Debug.Log($"[Progression] etapa {index} concluida: {step.taskText}", this);
+            Debug.Log($"[Progression] etapa {index} concluida: {step.label}", this);
             OnStepCompleted?.Invoke(step, index);
             transitioning = false;
 
@@ -128,10 +174,11 @@ namespace Jamlloween.Progression
             transitioning = true;
             current = index;
             finished = false;
+            satisfied.Clear();
             var step = steps[index];
             RefreshInteractions();
             Run(step.onStart, true);
-            Debug.Log($"[Progression] etapa {index} iniciada: {step.taskText}", this);
+            Debug.Log($"[Progression] etapa {index} iniciada: {step.label}", this);
             OnStepStarted?.Invoke(step, index);
             transitioning = false;
         }
@@ -162,6 +209,9 @@ namespace Jamlloween.Progression
                     case StepAction.Kind.Trigger:
                         if (!StepTrigger.Set(a.targetId, a.state))
                             Debug.LogWarning($"[Progression] StepTrigger '{a.targetId}' nao existe na cena.", this);
+                        break;
+                    case StepAction.Kind.Task:
+                        SetTask(a.targetId, a.taskState);
                         break;
                     case StepAction.Kind.Event:
                         OnNamedEvent?.Invoke(a.targetId);
@@ -194,7 +244,7 @@ namespace Jamlloween.Progression
                 {
                     if (hit.interactionId != id) continue;
                     d.ShowBlocked(hit.text);
-                    d.Raise(step.completionEvent);
+                    foreach (var e in step.completionEvents.ToArray()) d.Raise(e);
                     return false;
                 }
                 if (step.activeInteractions.Contains(id)) return true;
@@ -229,12 +279,17 @@ namespace Jamlloween.Progression
             if (target < 0 || target >= steps.Count) return;
             transitioning = true;
             if (radio != null) radio.Clear();
+            ResetTasks();
             for (int i = 0; i < target; i++)
             {
                 Run(steps[i].onStart, false);
-                foreach (var inter in StepInteraction.All.ToArray())
-                    if (!string.IsNullOrEmpty(steps[i].completionEvent) && inter.CompletionEvent == steps[i].completionEvent)
-                        inter.ForceComplete();
+                foreach (var e in steps[i].completionEvents)
+                {
+                    MarkDone(e);
+                    foreach (var inter in StepInteraction.All.ToArray())
+                        if (!string.IsNullOrEmpty(e) && inter.CompletionEvent == e)
+                            inter.ForceComplete();
+                }
                 Run(steps[i].onComplete, false);
             }
             transitioning = false;
@@ -280,7 +335,7 @@ namespace Jamlloween.Progression
             for (int i = 0; i < steps.Count; i++)
             {
                 var s = steps[i];
-                string label = $"{(i == current ? ">" : " ")} {i}  {(s == null ? "(vazia)" : string.IsNullOrEmpty(s.taskText) ? s.name : s.taskText)}";
+                string label = $"{(i == current ? ">" : " ")} {i}  {(s == null ? "(vazia)" : string.IsNullOrEmpty(s.label) ? s.name : s.label)}";
                 if (GUILayout.Button(label, GUI.skin.button) && s != null) JumpTo(i);
             }
             GUILayout.EndScrollView();

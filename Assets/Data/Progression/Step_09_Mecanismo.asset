@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce996ab14216ced2eaaf30e60f90bcb3, type: 3}
-  m_Name: Step_09_EncaixarCabeca
+  m_Name: Step_09_Mecanismo
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.ProgressionStep
-  taskText: "Encaixar a cabe\xE7a no cavalo"
+  label: Consertar o mecanismo do carrossel
   activeInteractions:
-  - carousel_horse
+  - carousel_mechanism
   interceptedInteractions: []
-  completionEvent: HeadMounted
+  completionEvents:
+  - MechanismFixed
   onStart: []
   onComplete: []
