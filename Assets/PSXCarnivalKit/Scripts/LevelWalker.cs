@@ -73,6 +73,8 @@ namespace HeyHeyThere.PSXCarnivalKit
 #endif
         }
 
+        string aimPrompt = "";
+
         void Update()
         {
 #if PICKUPS
@@ -99,6 +101,12 @@ namespace HeyHeyThere.PSXCarnivalKit
                 transform.position = start;
                 body.enabled = true;
             }
+#if PICKUPS
+            var aimedPickup = Aimed()?.GetComponentInParent<Pickup>();
+            aimPrompt = aimedPickup != null && aimedPickup.kind == Pickup.Kind.Item
+                ? "[E] PEGAR " + (aimedPickup.title != "" ? aimedPickup.title : aimedPickup.item.Replace('_', ' ')).ToUpperInvariant()
+                : "";
+#endif
             if (Use())
                 Open();
             for (var i = opening.Count - 1; i >= 0; i--)
@@ -202,6 +210,15 @@ namespace HeyHeyThere.PSXCarnivalKit
                 return;
 #endif
             GUI.Label(new Rect(Screen.width / 2f - 4f, Screen.height / 2f - 10f, 20f, 20f), "+");
+            if (aimPrompt != "")
+            {
+                var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = Mathf.Max(16, Screen.height / 34) };
+                var r = new Rect(0f, Screen.height * 0.56f, Screen.width, style.fontSize * 1.6f);
+                style.normal.textColor = Color.black;
+                GUI.Label(new Rect(r.x + 2f, r.y + 2f, r.width, r.height), aimPrompt, style);
+                style.normal.textColor = Color.white;
+                GUI.Label(r, aimPrompt, style);
+            }
             noteLeft -= Time.unscaledDeltaTime;
             if (noteLeft > 0f)
                 GUI.Label(new Rect(Screen.width / 2f - 150f, Screen.height * 0.8f, 300f, 24f), note, new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter });

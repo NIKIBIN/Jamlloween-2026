@@ -247,9 +247,8 @@ public abstract class Minigame : MonoBehaviour, IInteractable
     void OnGUI()
     {
         if (!showExitHint || CurrentState != State.Playing) return;
-        var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.LowerCenter, fontSize = Mathf.Max(12, Screen.height / 50) };
-        style.normal.textColor = new Color(1f, 1f, 1f, 0.5f);
-        GUI.Label(new Rect(0, Screen.height - 36, Screen.width, 28), "Esc, Q ou mover para sair", style);
+        float h = Screen.height;
+        Circus.UIStyle.OsdText(new Rect(0, h * 0.92f, Screen.width, 30 * Circus.UIStyle.Scale), "[ESC] SAIR", Circus.UIStyle.Prompt, 0.9f);
     }
 
     void OnDrawGizmosSelected()
