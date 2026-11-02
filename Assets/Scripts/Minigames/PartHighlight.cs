@@ -7,6 +7,7 @@ using UnityEngine;
 public static class PartHighlight
 {
     static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
+    static readonly int KitColor = Shader.PropertyToID("_Color");   // shader PSX do kit
     static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
     static MaterialPropertyBlock block;
 
@@ -22,6 +23,8 @@ public static class PartHighlight
             var mat = r.sharedMaterial;
             if (mat != null && mat.HasProperty(BaseColor))
                 block.SetColor(BaseColor, Color.Lerp(mat.GetColor(BaseColor), new Color(color.r, color.g, color.b, 1f), 0.45f) + color * 0.35f);
+            else if (mat != null && mat.HasProperty(KitColor))
+                block.SetColor(KitColor, Color.Lerp(mat.GetColor(KitColor), Color.white, 0.2f) + color * 0.9f);
             block.SetColor(EmissionColor, color);
             r.SetPropertyBlock(block);
         }
