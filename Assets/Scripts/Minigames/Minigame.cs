@@ -85,6 +85,7 @@ public abstract class Minigame : MonoBehaviour, IInteractable
         Cursor.visible = true;
 
         SetPlayingObjects(true);
+        OnBegin(interactor);
         CurrentState = State.Entering;
         onStarted?.Invoke();
         StartMove(true, enterTime);
@@ -101,17 +102,21 @@ public abstract class Minigame : MonoBehaviour, IInteractable
         StartMove(false, duration);
     }
 
-    protected void Complete()
+    /// <summary>Conclui o minigame. exitDelay controla quanto o jogador fica antes de voltar ao controle (padrao: exitDelayAfterComplete).</summary>
+    protected void Complete(float exitDelay = -1f)
     {
         if (IsCompleted) return;
         IsCompleted = true;
         Debug.Log($"[Minigame] {name} concluido", this);
         onCompleted?.Invoke();
-        StartCoroutine(ExitAfter(exitDelayAfterComplete));
+        StartCoroutine(ExitAfter(exitDelay >= 0f ? exitDelay : exitDelayAfterComplete));
     }
 
     /// <summary>Chamado a cada frame enquanto o minigame esta em andamento.</summary>
     protected abstract void Tick(Camera viewCamera);
+
+    /// <summary>Chamado ao entrar, com o jogador que interagiu (para ler o inventario dele, por exemplo).</summary>
+    protected virtual void OnBegin(PlayerInteractor interactor) { }
 
     /// <summary>Chamado quando o jogador pede para sair (use para soltar o que estiver na mao).</summary>
     protected virtual void OnExitRequested() { }
@@ -175,6 +180,30 @@ public abstract class Minigame : MonoBehaviour, IInteractable
         else { pos = camSavedPos; rot = camSavedRot; }
     }
 
+    /// <summary>Onde a camera fica ao entrar. Sobrescreva para escolher o enquadramento conforme o estado.</summary>
+    protected virtual Transform EntryViewPoint => viewPoint;
+
+    /// <summary>Move a camera suavemente para outro enquadramento durante o minigame.</summary>
+    protected void GlideView(Transform target, float duration)
+    {
+        if (CurrentState != State.Playing || camTransform == null || target == null) return;
+        if (moveRoutine != null) StopCoroutine(moveRoutine);
+        moveRoutine = StartCoroutine(GlideRoutine(target, duration));
+    }
+
+    IEnumerator GlideRoutine(Transform target, float duration)
+    {
+        Vector3 p0 = camTransform.position;
+        Quaternion r0 = camTransform.rotation;
+        for (float t = 0f; t < 1f; t += Time.deltaTime / Mathf.Max(duration, 0.01f))
+        {
+            float k = Mathf.SmoothStep(0f, 1f, t);
+            camTransform.SetPositionAndRotation(Vector3.Lerp(p0, target.position, k), Quaternion.Slerp(r0, target.rotation, k));
+            yield return null;
+        }
+        camTransform.SetPositionAndRotation(target.position, target.rotation);
+    }
+
     IEnumerator MoveCamera(bool entering, float duration)
     {
         Vector3 startPos = camTransform.position;
@@ -182,7 +211,7 @@ public abstract class Minigame : MonoBehaviour, IInteractable
         for (float t = 0f; t < 1f; t += Time.deltaTime / Mathf.Max(duration, 0.01f))
         {
             Vector3 endPos; Quaternion endRot;
-            if (entering) { endPos = viewPoint.position; endRot = viewPoint.rotation; }
+            if (entering) { var v = EntryViewPoint; endPos = v.position; endRot = v.rotation; }
             else GetHomePose(out endPos, out endRot);
             float k = Mathf.SmoothStep(0f, 1f, t);
             camTransform.SetPositionAndRotation(Vector3.Lerp(startPos, endPos, k), Quaternion.Slerp(startRot, endRot, k));
@@ -191,7 +220,8 @@ public abstract class Minigame : MonoBehaviour, IInteractable
 
         if (entering)
         {
-            camTransform.SetPositionAndRotation(viewPoint.position, viewPoint.rotation);
+            var final = EntryViewPoint;
+            camTransform.SetPositionAndRotation(final.position, final.rotation);
             CurrentState = State.Playing;
             yield break;
         }

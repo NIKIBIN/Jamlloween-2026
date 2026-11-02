@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 ///  2. Clicar na tampa para tirar.
 ///  3. Achar o fusivel queimado (escuro) e clicar para remover.
 ///  4. Pegar o fusivel novo na prateleira e clicar no encaixe vazio.
+///  5. Arrastar a alavanca para baixo ate o fim (se soltar antes, ela volta).
 /// O painel nao fecha de volta (e um jogo de terror).
 /// </summary>
 public class FuseBoxMinigame : Minigame
@@ -19,9 +20,12 @@ public class FuseBoxMinigame : Minigame
     [Tooltip("Um fusivel por encaixe, na mesma ordem.")]
     [SerializeField] FuseBoxPart[] fuses;
     [SerializeField] FuseBoxPart spareFuse;
+    [Tooltip("Alavanca final. Gira em torno do eixo X local e fica travada ate o fusivel encaixar.")]
+    [SerializeField] FuseBoxPart lever;
 
     [Header("Visual")]
     [SerializeField] Renderer statusLed;
+    [SerializeField] Material ledReadyMaterial;
     [SerializeField] Material ledOkMaterial;
     [SerializeField] Material burntFuseMaterial;
     [SerializeField] Color hoverColor = new Color(0.45f, 0.4f, 0.15f);
@@ -32,6 +36,10 @@ public class FuseBoxMinigame : Minigame
     [SerializeField] float unscrewTime = 0.7f;
     [SerializeField] float unscrewDistance = 0.03f;
     [SerializeField] float unscrewTurns = 2f;
+    [Tooltip("Quanto a alavanca gira de ponta a ponta, em graus.")]
+    [SerializeField] float leverAngle = 160f;
+    [Tooltip("Quanto do tamanho da tela o mouse precisa descer para puxar a alavanca ate o fim.")]
+    [SerializeField] float leverDragScreenFraction = 0.35f;
 
     bool[] screwOut;
     bool[] fusePresent;
@@ -39,7 +47,10 @@ public class FuseBoxMinigame : Minigame
     Vector3[] screwHome, fuseHome;
     Vector3 spareHomePos;
     Quaternion spareHomeRot;
-    bool coverOff, burntRemoved, holdingSpare, inserted;
+    bool coverOff, burntRemoved, holdingSpare, inserted, fuseSeated, leverDone, leverDragging;
+    float leverDragStartY, leverDragStartProgress;
+    Quaternion leverHomeRot;
+    Coroutine leverRoutine;
     FuseBoxPart hovered;
     Coroutine spareRoutine;
 
@@ -65,6 +76,7 @@ public class FuseBoxMinigame : Minigame
 
         spareHomePos = spareFuse.transform.localPosition;
         spareHomeRot = spareFuse.transform.localRotation;
+        leverHomeRot = lever.transform.localRotation;
 
         if (burntIndex < 0 || burntIndex >= fuses.Length) burntIndex = Random.Range(0, fuses.Length);
         var glass = fuses[burntIndex].transform.Find("Glass");
@@ -88,6 +100,7 @@ public class FuseBoxMinigame : Minigame
             case FuseBoxPart.Kind.Fuse: return coverOff && fusePresent[p.index];
             case FuseBoxPart.Kind.Slot: return holdingSpare && !fusePresent[p.index];
             case FuseBoxPart.Kind.SpareFuse: return burntRemoved && !holdingSpare && !inserted;
+            case FuseBoxPart.Kind.Lever: return fuseSeated && !leverDone;
         }
         return false;
     }
@@ -102,6 +115,14 @@ public class FuseBoxMinigame : Minigame
         Ray ray = viewCamera.ScreenPointToRay(mouse.position.ReadValue());
         bool down = mouse.leftButton.wasPressedThisFrame;
         bool held = mouse.leftButton.isPressed;
+
+        if (leverDragging)
+        {
+            SetHover(lever);
+            if (held) DragLever(mouse.position.ReadValue().y);
+            else ReleaseLever();   // no frame da soltura vale a posicao do frame anterior
+            return;
+        }
 
         FuseBoxPart hit = Pick(ray);
         FuseBoxPart usable = hit != null && CanUse(hit) ? hit : null;
@@ -126,12 +147,14 @@ public class FuseBoxMinigame : Minigame
                 if (down) { if (usable.index == burntIndex) PullBurnt(); else Shake(usable.index); }
                 break;
             case FuseBoxPart.Kind.SpareFuse: if (down) PickUpSpare(); break;
+            case FuseBoxPart.Kind.Lever: if (down) GrabLever(mouse.position.ReadValue().y); break;
         }
     }
 
     protected override void OnExitRequested()
     {
         SetHover(null);
+        if (leverDragging) ReleaseLever();   // solta a alavanca: se nao chegou ao fim, ela volta
         if (holdingSpare) DropSpare(instant: true);   // o resto do progresso fica como esta
     }
 
@@ -259,6 +282,54 @@ public class FuseBoxMinigame : Minigame
     IEnumerator InsertRoutine(int slot)
     {
         yield return Slide(spareFuse.transform, fuseHome[slot], Quaternion.identity, 0.2f, hideAtEnd: false);
+        fuseSeated = true;   // destrava a alavanca; o LED ambar avisa que tem energia
+        if (statusLed != null && ledReadyMaterial != null) statusLed.sharedMaterial = ledReadyMaterial;
+    }
+
+    // ---------- Alavanca ----------
+
+    void GrabLever(float mouseY)
+    {
+        if (leverRoutine != null) StopCoroutine(leverRoutine);
+        leverDragging = true;
+        leverDragStartY = mouseY;
+        leverDragStartProgress = lever.progress;
+    }
+
+    void DragLever(float mouseY)
+    {
+        float pixels = Mathf.Max(1f, Screen.height * leverDragScreenFraction);
+        lever.progress = Mathf.Clamp01(leverDragStartProgress + (leverDragStartY - mouseY) / pixels);
+        ApplyLever();
+    }
+
+    void ReleaseLever()
+    {
+        leverDragging = false;
+        bool pulled = lever.progress >= 0.9f;
+        leverRoutine = StartCoroutine(LeverTo(pulled ? 1f : 0f));
+    }
+
+    void ApplyLever() => lever.transform.localRotation = leverHomeRot * Quaternion.Euler(-leverAngle * lever.progress, 0f, 0f);
+
+    IEnumerator LeverTo(float target)
+    {
+        if (target >= 1f)
+        {
+            leverDone = true;
+            Disable(lever);
+        }
+        float from = lever.progress;
+        for (float k = 0f; k < 1f; k += Time.deltaTime / 0.2f)
+        {
+            lever.progress = Mathf.Lerp(from, target, Mathf.SmoothStep(0f, 1f, k));
+            ApplyLever();
+            yield return null;
+        }
+        lever.progress = target;
+        ApplyLever();
+        if (target < 1f) yield break;
+
         if (statusLed != null && ledOkMaterial != null) statusLed.sharedMaterial = ledOkMaterial;
         Complete();
     }
