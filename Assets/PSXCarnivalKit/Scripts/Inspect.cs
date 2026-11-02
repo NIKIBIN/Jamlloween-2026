@@ -160,7 +160,7 @@ namespace HeyHeyThere.PSXCarnivalKit
             zoom = Mathf.Clamp(zoom * Mathf.Pow(1.1f, Wheel()), 0.5f, 2.5f);
             if (Pressed(out var close) && Time.frameCount != opened)
             {
-                if (close) Close(); else ToggleReveal();
+                if (close || reveal == "") Close(); else ToggleReveal();   // sem animacao de abrir, o E tambem continua
                 if (!Showing) return;
             }
             pivot.rotation = Quaternion.Euler(pitch, 0f, 0f) * Quaternion.Euler(0f, yaw, 0f);
@@ -192,9 +192,9 @@ namespace HeyHeyThere.PSXCarnivalKit
             style.fontSize = (int)px;
             style.normal.textColor = Color.white;
             GUI.Label(new Rect(w * 0.15f, h * 0.74f, w * 0.7f, h * 0.18f), text, style);
-            style.fontSize = (int)(px * 0.75f);
-            style.normal.textColor = new Color(1f, 1f, 1f, 0.55f);
-            GUI.Label(new Rect(0, h - px * 1.6f, w, px), "drag or arrows to turn, wheel to zoom" + (reveal != "" ? ", E to open" : "") + ", Esc to put it away", style);
+            style.fontSize = (int)px;
+            style.normal.textColor = new Color(1f, 1f, 1f, 0.9f);
+            GUI.Label(new Rect(0, h - px * 2.2f, w, px * 1.4f), reveal != "" ? "[E] ABRIR / FECHAR   [ESC] CONTINUAR" : "[E] CONTINUAR", style);
         }
 
 #if ENABLE_INPUT_SYSTEM && INPUT_SYSTEM_PACKAGE

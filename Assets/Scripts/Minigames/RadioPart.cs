@@ -1,17 +1,11 @@
-using System.Collections;
 using UnityEngine;
 
-/// <summary>Peca clicavel do radio.</summary>
+/// <summary>Peca clicavel do radio. Guarda o tipo e cuida do realce ao passar o mouse.</summary>
 public class RadioPart : MonoBehaviour
 {
-    public enum Kind { Body, Cover, Battery, Volume, Dial, Antenna, Talk }
+    public enum Kind { Body, Cover, Batteries, Dial }
 
     public Kind kind;
-    /// <summary>Pilha nova (true) ou velha e vazada (false). So para Kind.Battery.</summary>
-    public bool isNew;
-    /// <summary>Encaixe onde a pilha esta (-1 = solta na mesa).</summary>
-    [HideInInspector] public int slot = -1;
-    [System.NonSerialized] public Coroutine glide;
 
     Renderer[] renderers;
 

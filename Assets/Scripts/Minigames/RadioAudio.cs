@@ -1,237 +1,109 @@
 using UnityEngine;
 
 /// <summary>
-/// Som do radio, todo sintetizado (nao ha clipes no projeto): estatica, musica de carrossel distorcida,
-/// voz do patrao e cliques. A estatica e o carrossel sao somados em OnAudioFilterRead; clipes de verdade
-/// podem substituir a voz e o carrossel (bossVoice / carouselClip).
-/// O som sai do proprio radio (3D), entao continua audivel depois que o jogador sai do minigame.
+/// Som do radio: estatica em loop, clique de encaixe e a voz do patrao.
+/// Tudo e gerado por codigo, entao funciona sem nenhum arquivo de audio.
+/// Para usar uma voz de verdade, arraste um clipe em bossVoice.
+/// O som e 3D: a estatica continua audivel perto do radio mesmo fora do minigame.
 /// </summary>
-[RequireComponent(typeof(AudioSource))]
 public class RadioAudio : MonoBehaviour
 {
-    [SerializeField, Range(0f, 1f)] float spatialBlend = 0.65f;
-    [SerializeField] float minDistance = 0.4f;
-    [SerializeField] float maxDistance = 10f;
+    const int Rate = 22050;
 
-    AudioSource source, carouselSource;
-    AudioClip bossClip, carouselClip, mumble, click, burst;
-    int sampleRate;
+    [Tooltip("Opcional. Se vazio, toca uma fala sintetica de placeholder.")]
+    [SerializeField] AudioClip bossVoice;
+    [SerializeField] float maxDistance = 8f;
+    [SerializeField, Range(0f, 1f)] float staticVolume = 0.6f;
 
-    // Lidos na thread de audio
-    volatile float staticLevel, carouselLevel;
-    uint rng = 2463534242u;
-    float lowpass, crackle, carouselLow;
-    double phase;
-    float wowPhase, vibPhase;
-    int noteIndex, noteSamples;
-
-    static readonly float[] Melody =
-    {
-        523.25f, 659.25f, 783.99f, 659.25f, 523.25f, 392.00f, 440.00f, 523.25f,
-        587.33f, 493.88f, 392.00f, 493.88f, 523.25f, 0f
-    };
-    const float NoteSeconds = 0.21f;
-
-    public void Configure(AudioClip bossVoice, AudioClip carousel)
-    {
-        bossClip = bossVoice;
-        carouselClip = carousel;
-        if (carouselClip != null && carouselSource == null)
-        {
-            carouselSource = gameObject.AddComponent<AudioSource>();
-            Setup3D(carouselSource);
-            carouselSource.clip = carouselClip;
-            carouselSource.loop = true;
-            carouselSource.volume = 0f;
-            carouselSource.Play();
-        }
-    }
+    AudioSource hiss, sfx;
+    AudioClip click, voice;
 
     void Awake()
     {
-        sampleRate = AudioSettings.outputSampleRate;
-        source = GetComponent<AudioSource>();
-        Setup3D(source);
-        var bed = AudioClip.Create("radio-bed", sampleRate, 1, sampleRate, false);
-        bed.SetData(new float[sampleRate], 0);   // silencio em loop: so existe para o filtro rodar
-        source.clip = bed;
-        source.loop = true;
-        source.Play();
+        hiss = NewSource();
+        hiss.clip = MakeNoise(2f);
+        hiss.loop = true;
+        sfx = NewSource();
+        click = MakeClick();
+        voice = bossVoice != null ? bossVoice : MakeVoice(2.6f);
     }
 
-    void Setup3D(AudioSource s)
+    AudioSource NewSource()
     {
+        var s = gameObject.AddComponent<AudioSource>();
         s.playOnAwake = false;
-        s.spatialBlend = spatialBlend;
-        s.minDistance = minDistance;
-        s.maxDistance = maxDistance;
+        s.spatialBlend = 1f;
         s.rolloffMode = AudioRolloffMode.Linear;
+        s.minDistance = 0.5f;
+        s.maxDistance = maxDistance;
+        return s;
     }
 
-    /// <summary>Niveis finais (ja com volume) da estatica e do carrossel.</summary>
-    public void SetLevels(float staticAmount, float carouselAmount)
+    /// <summary>level 0 = sinal limpo (estatica baixa), 1 = estatica maxima. Negativo desliga.</summary>
+    public void SetStatic(float level)
     {
-        staticLevel = staticAmount;
-        if (carouselClip != null)
+        if (level < 0f)
         {
-            carouselLevel = 0f;
-            if (carouselSource != null) carouselSource.volume = carouselAmount;
+            if (hiss.isPlaying) hiss.Stop();
+            return;
         }
-        else carouselLevel = carouselAmount;
+        if (!hiss.isPlaying) hiss.Play();
+        hiss.volume = staticVolume * Mathf.Lerp(0.04f, 1f, level);
     }
 
-    /// <summary>Toca a voz do patrao. Devolve a duracao.</summary>
-    public float PlayBoss(float volume)
+    public void Click() => sfx.PlayOneShot(click, 0.8f);
+
+    /// <summary>Toca a fala do patrao. Devolve a duracao em segundos.</summary>
+    public float PlayBoss()
     {
-        var clip = bossClip != null ? bossClip : (mumble = mumble != null ? mumble : MakeMumble(sampleRate));
-        source.PlayOneShot(clip, volume);
-        return clip.length;
+        sfx.PlayOneShot(voice, 1f);
+        return voice.length;
     }
 
-    public void PlayClick(float volume = 1f)
+    static AudioClip Build(string name, float seconds, System.Func<int, float, float> sample)
     {
-        if (click == null) click = MakeClick(sampleRate);
-        source.PlayOneShot(click, volume);
+        var data = new float[Mathf.CeilToInt(seconds * Rate)];
+        for (int i = 0; i < data.Length; i++) data[i] = sample(i, i / (float)Rate);
+        var clip = AudioClip.Create(name, data.Length, 1, Rate, false);
+        clip.SetData(data, 0);
+        return clip;
     }
 
-    /// <summary>Rajada de ruido (squelch) ao soltar o botao sem ninguem do outro lado.</summary>
-    public void PlayBurst(float volume = 1f)
+    static AudioClip MakeNoise(float seconds)
     {
-        if (burst == null) burst = MakeBurst(sampleRate);
-        source.PlayOneShot(burst, volume);
-    }
-
-    // ---------- Sintese em tempo real ----------
-
-    float Noise()
-    {
-        rng ^= rng << 13; rng ^= rng >> 17; rng ^= rng << 5;
-        return rng / (float)uint.MaxValue * 2f - 1f;
-    }
-
-    void OnAudioFilterRead(float[] data, int channels)
-    {
-        float st = staticLevel, car = carouselLevel;
-        if (st <= 0.0005f && car <= 0.0005f) return;
-        int noteLen = (int)(sampleRate * NoteSeconds);
-
-        for (int i = 0; i < data.Length; i += channels)
+        var rnd = new System.Random(7);
+        float last = 0f;
+        return Build("RadioStatic", seconds, (i, t) =>
         {
-            float mix = 0f;
-
-            if (st > 0.0005f)
-            {
-                float n = Noise();
-                if ((rng & 0x1FFF) == 0) crackle = 1f;
-                crackle *= 0.994f;
-                n += crackle * Noise() * 2f;
-                lowpass += (n - lowpass) * 0.55f;
-                mix += lowpass * st * 0.35f;
-            }
-
-            if (car > 0.0005f)
-            {
-                float f = Melody[noteIndex];
-                float t = noteSamples / (float)noteLen;
-                float s = 0f;
-                if (f > 0f)
-                {
-                    float wow = 1f + 0.07f * Mathf.Sin(wowPhase * 6.2832f);
-                    float vib = 1f + 0.025f * Mathf.Sin(vibPhase * 6.2832f);
-                    phase += f * wow * vib / sampleRate;
-                    phase -= System.Math.Floor(phase);
-                    float square = phase < 0.5 ? 1f : -1f;
-                    float saw = (float)(2.0 * phase - 1.0);
-                    s = (square * 0.55f + saw * 0.45f) * Mathf.Exp(-3.5f * t);
-                    s = Mathf.Round(s * 6f) / 6f;                 // bitcrush
-                    carouselLow += (s - carouselLow) * 0.3f;      // abafa
-                    s = Mathf.Clamp(carouselLow * 2.2f, -1f, 1f); // satura
-                }
-                wowPhase += 0.45f / sampleRate;
-                vibPhase += 5.5f / sampleRate;
-                if (++noteSamples >= noteLen) { noteSamples = 0; noteIndex = (noteIndex + 1) % Melody.Length; }
-                mix += s * car * 0.28f;
-            }
-
-            for (int c = 0; c < channels; c++) data[i + c] += mix;
-        }
+            float white = (float)(rnd.NextDouble() * 2.0 - 1.0);
+            last = Mathf.Lerp(last, white, 0.6f);
+            return last * 0.7f;
+        });
     }
 
-    // ---------- Clipes gerados ----------
-
-    static AudioClip MakeClick(int sr)
+    static AudioClip MakeClick()
     {
-        int n = (int)(sr * 0.06f);
-        var d = new float[n];
-        var r = new System.Random(3);
-        for (int i = 0; i < n; i++)
-        {
-            float t = i / (float)sr;
-            float noise = (float)(r.NextDouble() * 2 - 1) * Mathf.Exp(-t * 120f);
-            float thump = Mathf.Sin(2f * Mathf.PI * 190f * t) * Mathf.Exp(-t * 70f);
-            d[i] = (noise * 0.6f + thump * 0.7f) * 0.8f;
-        }
-        var c = AudioClip.Create("radio-click", n, 1, sr, false);
-        c.SetData(d, 0);
-        return c;
+        var rnd = new System.Random(3);
+        return Build("RadioClick", 0.06f, (i, t) => (float)(rnd.NextDouble() * 2.0 - 1.0) * Mathf.Exp(-t * 90f) * 0.8f);
     }
 
-    static AudioClip MakeBurst(int sr)
+    /// <summary>Murmurio de voz grave com chiado, em silabas. So um placeholder.</summary>
+    static AudioClip MakeVoice(float seconds)
     {
-        int n = (int)(sr * 0.3f);
-        var d = new float[n];
-        var r = new System.Random(5);
-        for (int i = 0; i < n; i++)
-        {
-            float t = i / (float)sr;
-            d[i] = (float)(r.NextDouble() * 2 - 1) * Mathf.Exp(-t * 14f) * 0.5f;
-        }
-        var c = AudioClip.Create("radio-burst", n, 1, sr, false);
-        c.SetData(d, 0);
-        return c;
-    }
-
-    /// <summary>Placeholder da voz do patrao: silabas com formantes variando, filtradas como radio. Troque por um clipe real.</summary>
-    static AudioClip MakeMumble(int sr)
-    {
-        int total = (int)(sr * 2.6f);
-        var d = new float[total];
         var rnd = new System.Random(11);
-        int pos = 0;
-        var gains = new float[28];
-        while (pos < total)
+        const int syllables = 9;
+        float phase = 0f;
+        return Build("RadioBossVoice", seconds, (i, t) =>
         {
-            int len = (int)(sr * (0.13f + 0.12f * (float)rnd.NextDouble()));
-            bool pause = rnd.NextDouble() < 0.16;
-            float pitch = 100f * (0.9f + 0.35f * (float)rnd.NextDouble());
-            float f1 = 320f + 480f * (float)rnd.NextDouble();
-            float f2 = 900f + 1500f * (float)rnd.NextDouble();
-            for (int h = 1; h < gains.Length; h++)
-            {
-                float fh = pitch * h;
-                float a = (fh - f1) / 170f, b = (fh - f2) / 260f;
-                gains[h] = (Mathf.Exp(-a * a) + 0.7f * Mathf.Exp(-b * b) + 0.04f) / Mathf.Sqrt(h);
-            }
-            for (int i = 0; i < len && pos + i < total; i++)
-            {
-                float u = i / (float)len;
-                float env = pause ? 0f : Mathf.Sin(Mathf.PI * u);
-                double time = (pos + i) / (double)sr;
-                float s = 0f;
-                for (int h = 1; h < gains.Length; h++)
-                    s += gains[h] * (float)System.Math.Sin(2.0 * System.Math.PI * pitch * h * time);
-                d[pos + i] = s * env * 0.09f;
-            }
-            pos += len;
-        }
-        // cara de radio: reduz a resolucao e passa um ruido por cima
-        for (int i = 0; i < total; i++)
-        {
-            float s = Mathf.Round(d[i] * 14f) / 14f;
-            d[i] = Mathf.Clamp(s + ((float)rnd.NextDouble() - 0.5f) * 0.03f, -1f, 1f);
-        }
-        var c = AudioClip.Create("boss-placeholder", total, 1, sr, false);
-        c.SetData(d, 0);
-        return c;
+            float syl = t / seconds * syllables;
+            float local = syl - Mathf.Floor(syl);
+            float env = Mathf.Sin(local * Mathf.PI) * (0.6f + 0.4f * Mathf.Sin(Mathf.Floor(syl) * 2.3f));
+            float pitch = 105f + 25f * Mathf.Sin(Mathf.Floor(syl) * 1.7f) + 10f * (1f - local);
+            phase += pitch / Rate;
+            float v = 0f;
+            for (int h = 1; h <= 6; h++) v += Mathf.Sin(2f * Mathf.PI * phase * h) / h;
+            float hiss = (float)(rnd.NextDouble() * 2.0 - 1.0) * 0.25f;
+            return Mathf.Clamp((v * 0.35f * env) + hiss * 0.5f, -1f, 1f) * 0.8f;
+        });
     }
 }
