@@ -6,7 +6,8 @@ namespace Jamlloween.Zatan.TestScene
 {
     /// <summary>
     /// Zatan_Test only. F5 scripted event, F6 objective done, F7 auto-run away from Zatan (measures the chase gap),
-    /// F8 tension 0, F9 tension 100. A catch restarts when its sequence ends. Also draws the overlay.
+    /// F8 tension 0, F9 tension 100, F10 Zatan off/on (to test the minigames in peace). A catch restarts when its
+    /// sequence ends. Also draws the overlay.
     /// </summary>
     public sealed class ZatanTestHarness : MonoBehaviour
     {
@@ -23,6 +24,7 @@ namespace Jamlloween.Zatan.TestScene
         public float MinChaseDistance { get; private set; } = float.PositiveInfinity;
         public float MaxChaseSpeed { get; private set; }
         public int Catches { get; private set; }
+        public bool ZatanEnabled => brain.gameObject.activeSelf;
 
         Vector3 playerStart;
 
@@ -61,9 +63,10 @@ namespace Jamlloween.Zatan.TestScene
                 if (keys.f7Key.wasPressedThisFrame) AutoRun = !AutoRun;
                 if (keys.f8Key.wasPressedThisFrame) tension.SetValue(0f);
                 if (keys.f9Key.wasPressedThisFrame) tension.SetValue(ZatanTension.Max);
+                if (keys.f10Key.wasPressedThisFrame) ToggleZatan();
             }
 
-            if (brain.State == ZatanBehaviourState.Caught) return;
+            if (!ZatanEnabled || brain.State == ZatanBehaviourState.Caught) return;
 
             if (brain.State == ZatanBehaviourState.Chase)
             {
@@ -92,6 +95,20 @@ namespace Jamlloween.Zatan.TestScene
             brain.Respawn(zatanSpawn.position);
         }
 
+        /// <summary>
+        /// Off: the whole Zatan object goes inactive, so his AI, sounds, eye lights and catch stop with it.
+        /// On: back at the spawn point, patrolling. Ignored during a catch sequence.
+        /// </summary>
+        [ContextMenu("Toggle Zatan")]
+        public void ToggleZatan()
+        {
+            if (brain.State == ZatanBehaviourState.Caught) return;
+            bool on = !ZatanEnabled;
+            AutoRun = false;
+            brain.gameObject.SetActive(on);
+            if (on) brain.Respawn(zatanSpawn.position);
+        }
+
         [ContextMenu("Reset Measurements")]
         public void ResetMeasurements()
         {
@@ -101,10 +118,17 @@ namespace Jamlloween.Zatan.TestScene
 
         void OnGUI()
         {
+            if (!ZatanEnabled)
+            {
+                GUI.Box(new Rect(10f, 10f, 330f, 58f), GUIContent.none);
+                GUI.Label(new Rect(20f, 16f, 310f, 20f), "ZATAN DESLIGADO (minigames sem perigo)");
+                if (GUI.Button(new Rect(20f, 38f, 310f, 24f), "F10  Ligar Zatan")) ToggleZatan();
+                return;
+            }
             if (brain.State == ZatanBehaviourState.Caught) return;
 
             ZatanTuning tuning = tension.Tuning;
-            GUI.Box(new Rect(10f, 10f, 330f, 240f), GUIContent.none);
+            GUI.Box(new Rect(10f, 10f, 330f, 270f), GUIContent.none);
             GUI.Box(new Rect(20f, 18f, 310f, 16f), GUIContent.none);
             Color previous = GUI.color;
             GUI.color = Color.Lerp(Color.green, Color.red, tension.Normalized);
@@ -122,6 +146,7 @@ namespace Jamlloween.Zatan.TestScene
                 $"Menor distância {MinChaseDistance:0.00}  capturas {Catches}\n" +
                 "F5 evento  F6 objetivo  F7 auto-corrida  F8 tensão 0  F9 tensão 100";
             GUI.Label(new Rect(20f, 38f, 310f, 205f), text);
+            if (GUI.Button(new Rect(20f, 248f, 310f, 24f), "F10  Desligar Zatan")) ToggleZatan();
         }
     }
 }

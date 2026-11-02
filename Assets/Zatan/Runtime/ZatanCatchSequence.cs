@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Jamlloween.Zatan
 {
@@ -28,6 +29,10 @@ namespace Jamlloween.Zatan
         [SerializeField] AudioClip grabClip;
         [SerializeField] AudioClip shakeLoop;
         [SerializeField] AudioClip biteClip;
+
+        [Header("Eventos")]
+        [Tooltip("Depois do corte para preto. Ex.: Minigame.Exit para tirar o jogador de um minigame em que foi pego.")]
+        [SerializeField] UnityEvent onFinished = new UnityEvent();
 
         public event Action Finished = delegate { };
 
@@ -185,6 +190,7 @@ namespace Jamlloween.Zatan
             if (phaseTime < config.scareBlackTime) return;
             Restore();
             Finished();
+            onFinished.Invoke();
         }
 
         void ApplyHeldPose(float shake, float distance, float faceRaise, float kick)
