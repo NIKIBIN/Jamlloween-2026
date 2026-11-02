@@ -121,11 +121,19 @@ public abstract class Minigame : MonoBehaviour, IInteractable
     /// <summary>Chamado quando o jogador pede para sair (use para soltar o que estiver na mao).</summary>
     protected virtual void OnExitRequested() { }
 
+    /// <summary>Se false, ESC/Q e as teclas de movimento nao tiram o jogador do minigame (ex.: saida forcada por um jumpscare). Exit() chamado por codigo continua valendo.</summary>
+    protected virtual bool PlayerCanExit => true;
+
     void Update()
     {
         if (CurrentState != State.Entering && CurrentState != State.Playing) return;
 
         var k = Keyboard.current;
+        if (!PlayerCanExit)
+        {
+            if (CurrentState == State.Playing) Tick(cam);
+            return;
+        }
         if (k != null && (k.escapeKey.wasPressedThisFrame || k.qKey.wasPressedThisFrame))
         {
             Exit();
@@ -246,7 +254,7 @@ public abstract class Minigame : MonoBehaviour, IInteractable
 
     void OnGUI()
     {
-        if (!showExitHint || CurrentState != State.Playing) return;
+        if (!showExitHint || CurrentState != State.Playing || !PlayerCanExit) return;
         float h = Screen.height;
         Circus.UIStyle.OsdText(new Rect(0, h * 0.92f, Screen.width, 30 * Circus.UIStyle.Scale), "[ESC] SAIR", Circus.UIStyle.Prompt, 0.9f);
     }

@@ -4,6 +4,7 @@ Shader "Jamlloween/Flashlight Fog Surface"
     Properties
     {
         _BaseColor ("Color", Color) = (1, 1, 1, 1)
+        [HDR] _EmissionColor ("Emission", Color) = (0, 0, 0, 1)
         [Toggle] _IgnoreBlackout ("Stays Visible In Catch Blackout", Float) = 0
     }
     SubShader
@@ -15,6 +16,7 @@ Shader "Jamlloween/Flashlight Fog Surface"
 
         CBUFFER_START(UnityPerMaterial)
             float4 _BaseColor;
+            float4 _EmissionColor;
             float _IgnoreBlackout;
         CBUFFER_END
         ENDHLSL
@@ -81,7 +83,7 @@ Shader "Jamlloween/Flashlight Fog Surface"
                 }
 
                 float3 blackout = _IgnoreBlackout > 0.5 ? ZatanScareLight(_BaseColor.rgb, input.positionWS, normalWS) : float3(0, 0, 0);
-                return float4(lerp(color, blackout, _ZatanBlackout), 1);
+                return float4(lerp(color + _EmissionColor.rgb, blackout, _ZatanBlackout), 1);
             }
             ENDHLSL
         }

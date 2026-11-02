@@ -2,6 +2,7 @@
 #define ZATAN_EYE_LIGHT_INCLUDED
 
 #include "Assets/Flashlight/Shaders/FlashlightFog.hlsl"
+#include "Assets/Scripts/Minigames/Shaders/MinigameWorkLamp.hlsl"
 
 // The light of Zatan's eyes on the scenery, set globally by ZatanEyeLights. Most of the scene is unlit, so real spot lights can't
 // show on it. Only evaluated under the radial fog: scenes without it never reach this code.
