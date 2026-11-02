@@ -1,0 +1,6 @@
+{
+    "name": "Jamlloween.Flashlight",
+    "rootNamespace": "Jamlloween.Flashlight",
+    "references": ["Unity.InputSystem"],
+    "autoReferenced": true
+}

@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2699ec1a43babf444a318a51772a936e, type: 3}
+  m_Name: ZatanConfig
+  m_EditorClassIdentifier: Jamlloween.Zatan::Jamlloween.Zatan.ZatanConfig
+  patrolOverWalk: 0.25
+  investigateBlend: 0.5
+  chaseMarginFraction: 0.05
+  attenuationStartDistance: 5
+  attenuationEndDistance: 2
+  catchDistance: 1.2
+  corneredExtraReach: 0.6
+  acceleration: 20
+  angularSpeed: 360
+  chaseGain: 3
+  nearGain: 2
+  nearDistance: 12
+  observedGain: 3
+  scriptedEventGain: 20
+  indoorDecay: 3
+  quietDecay: 2
+  quietDelay: 45
+  objectiveRelief: 15
+  startTension: 20
+  calmVisionRange: 22
+  calmVisionAngle: 110
+  calmHearingMult: 1.4
+  calmPatrolMinRadius: 8
+  calmPatrolMaxRadius: 14
+  calmFootstepVolume: 0.2
+  calmLoseTime: 6
+  tenseVisionRange: 10
+  tenseVisionAngle: 80
+  tenseHearingMult: 0.6
+  tensePatrolMinRadius: 20
+  tensePatrolMaxRadius: 45
+  tenseFootstepVolume: 1
+  tenseLoseTime: 2
+  sightConfirmTime: 0.3
+  walkNoiseRadius: 6
+  runNoiseRadius: 14
+  noiseInterval: 0.35
+  playerViewDistance: 60
+  patrolDwellMin: 1
+  patrolDwellMax: 3
+  investigateLookTime: 3
+  searchTime: 8
+  searchRadius: 6
+  repathInterval: 0.15
+  vanishMinDistance: 30
+  vanishDelay: 4
+  vanishCooldown: 20
+  vanishDurationCalm: 4
+  vanishDurationTense: 15
+  beamIdleColor: {r: 1, g: 1, b: 1, a: 1}
+  beamAlertColor: {r: 1, g: 0.8, b: 0.1, a: 1}
+  beamDangerColor: {r: 1, g: 0, b: 0, a: 1}
+  beamAlertDistance: 15
+  beamTransitionTime: 0.35
+  beamIdlePitch: 28
+  beamChasePitch: 6
+  beamLength: 16
+  beamConeAngle: 22
+  beamInnerConeAngle: 12
+  beamSurfaceIntensity: 5
+  beamSurfaceFogCut: 0.75
+  beamSurfaceMinAlbedo: 0.25
+  beamOpacity: 0.35
+  beamFogResistance: 0.6
+  beamBlockers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  beamFanRays: 6
+  beamFanSpread: 0.7
+  beamBlockFraction: 0.4
+  beamFloorNormalY: 0.7
+  beamProbeInterval: 0.05
+  beamShrinkSpeed: 80
+  beamGrowSpeed: 12
+  beamMinLength: 0.3
+  beamWallRays: 5
+  beamWallSpread: 26
+  beamWallProbeDrop: 0.7
+  beamWallMinHits: 2
+  beamWallClipMargin: 0.5

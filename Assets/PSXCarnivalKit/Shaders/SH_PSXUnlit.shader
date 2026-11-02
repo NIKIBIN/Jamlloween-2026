@@ -21,6 +21,7 @@ Shader "PSXCarnivalKit/PSX Unlit"
             #pragma fragment frag
             #pragma multi_compile_fog
             #include "UnityCG.cginc"
+            #include "Assets/Zatan/Beam/ZatanEyeLight.hlsl"
 
             sampler2D _MainTex;
             CBUFFER_START(UnityPerMaterial) // for URP's SRP Batcher
@@ -43,12 +44,14 @@ Shader "PSXCarnivalKit/PSX Unlit"
                 float3 affine : TEXCOORD1; // uv * w and w: their ratio interpolates linearly on screen
                 fixed4 color : COLOR;
                 UNITY_FOG_COORDS(2)
+                float3 positionWS : TEXCOORD3;
             };
 
             v2f vert (appdata v)
             {
                 v2f o;
                 o.pos = UnityObjectToClipPos(v.vertex);
+                o.positionWS = mul(unity_ObjectToWorld, v.vertex).xyz;
                 if (_SnapRows > 0)
                 {
                     float2 grid = float2(_SnapRows * _ScreenParams.x / _ScreenParams.y, _SnapRows) * 0.5;
@@ -69,7 +72,16 @@ Shader "PSXCarnivalKit/PSX Unlit"
                 float2 uv = lerp(i.uv, i.affine.xy / i.affine.z, _Affine);
                 fixed4 c = tex2D(_MainTex, uv) * i.color * _Color;
                 clip(c.a - _Cutoff);
+                if (_RadialFogEnabled > 0.5)
+                {
+                    float3 eyeLight = ZatanEyeLight(c.rgb, i.positionWS);
+                    c.rgb *= FlashlightBrightness(i.positionWS);
+                    c.rgb = FlashlightApplyFog(c.rgb, i.positionWS, unity_FogColor.rgb) + eyeLight;
+                    c.rgb *= 1.0 - _ZatanBlackout;
+                    return c;
+                }
                 UNITY_APPLY_FOG(i.fogCoord, c);
+                c.rgb *= 1.0 - _ZatanBlackout;
                 return c;
             }
             ENDCG
