@@ -68,6 +68,16 @@ public static class PSXPhaseRadio
             foreach (Transform t in root.transform.Find("Radio"))
                 if (t.name.StartsWith("BackFrame")) t.GetComponent<MeshRenderer>().sharedMaterial = caseMat;
 
+            // As tres cenas sobrescrevem o WorkMat para y = 0 (o prefab tem -0.003). O bake funde o WorkMat na malha
+            // da raiz e o override fica sem alvo: sem isto o tapete desce 3 mm e encosta no tampo da mesa (z-fighting).
+            var workMat = root.transform.Find("WorkMat");
+            if (workMat != null) workMat.localPosition = new Vector3(workMat.localPosition.x, 0f, workMat.localPosition.z);
+            else
+            {
+                var baked = root.transform.Find("RadioMinigame_mesh");   // prefab ja convertido: sobe a malha fundida
+                if (baked != null) baked.localPosition = new Vector3(0f, 0.003f, 0f);
+            }
+
             var led = root.transform.Find("Radio/Led");
             var mf = led.GetComponent<MeshFilter>();
             if (mf.sharedMesh != null && mf.sharedMesh.name == "Sphere")
