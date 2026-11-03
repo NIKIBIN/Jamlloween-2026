@@ -6810,18 +6810,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 967671598}
-        m_TargetAssemblyTypeName: CarouselMechanismMinigame, Assembly-CSharp
-        m_MethodName: Exit
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &184792717
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15558,7 +15546,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarouselRepair
   headPhase: {fileID: 1866371995}
-  mechanismPhase: {fileID: 967671598}
+  mechanismPhase: {fileID: 0}
   powerPanel: {fileID: 116376883}
   repairedGate: {fileID: 247884130}
   rotor: {fileID: 0}
@@ -32283,7 +32271,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1554901690}
-  - {fileID: 967671601}
   - {fileID: 432158662}
   - {fileID: 678140523}
   - {fileID: 116376884}
@@ -34555,140 +34542,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -697988627513435448, guid: f157059e7fcb73b7f8491869be9ee151, type: 3}
---- !u!1001 &967671597
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 889114770}
-    m_Modifications:
-    - target: {fileID: 2372211607716929545, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.60000014
-      objectReference: {fileID: 0}
-    - target: {fileID: 2372211607716929545, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.60000014
-      objectReference: {fileID: 0}
-    - target: {fileID: 2372211607716929545, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 6.671154
-      objectReference: {fileID: 0}
-    - target: {fileID: 2372211607716929545, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.1499995
-      objectReference: {fileID: 0}
-    - target: {fileID: 2372211607716929545, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 37.62991
-      objectReference: {fileID: 0}
-    - target: {fileID: 2372211607716929545, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7933534
-      objectReference: {fileID: 0}
-    - target: {fileID: 2372211607716929545, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2372211607716929545, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.6087614
-      objectReference: {fileID: 0}
-    - target: {fileID: 2372211607716929545, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2372211607716929545, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2372211607716929545, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2372211607716929545, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3373918316950238179, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3448765691133692420, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: m_Name
-      value: CarouselMechanismHatch
-      objectReference: {fileID: 0}
-    - target: {fileID: 4455648213913062698, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: carouselAudio
-      value: 
-      objectReference: {fileID: 432158661}
-    - target: {fileID: 4455648213913062698, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: coverSnapDistance
-      value: 0.12
-      objectReference: {fileID: 0}
-    - target: {fileID: 4455648213913062698, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      propertyPath: activeWhilePlaying.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3373918316950238179, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 967671600}
-  m_SourcePrefab: {fileID: 100100000, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
---- !u!114 &967671598 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4455648213913062698, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-  m_PrefabInstance: {fileID: 967671597}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5dea3542d2b79791a32e7d06551e7d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CarouselMechanismMinigame
---- !u!1 &967671599 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3373918316950238179, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-  m_PrefabInstance: {fileID: 967671597}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &967671600
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 967671599}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
-  m_UsePipelineSettings: 1
-  m_AdditionalLightsShadowResolutionTier: 2
-  m_CustomShadowLayers: 0
-  m_LightCookieSize: {x: 1, y: 1}
-  m_LightCookieOffset: {x: 0, y: 0}
-  m_SoftShadowQuality: 0
-  m_RenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_ShadowRenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_Version: 4
-  m_LightLayerMask: 1
-  m_ShadowLayerMask: 1
-  m_RenderingLayers: 1
-  m_ShadowRenderingLayers: 1
---- !u!4 &967671601 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2372211607716929545, guid: a35ca8c2dd722bef1a202409a49b2e47, type: 3}
-  m_PrefabInstance: {fileID: 967671597}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &968088796
 GameObject:
   m_ObjectHideFlags: 0
@@ -52633,7 +52486,7 @@ PrefabInstance:
     - target: {fileID: 2698614342201317429, guid: 1db7a217020cb4d21879eb7cc660f667, type: 3}
       propertyPath: minigame
       value: 
-      objectReference: {fileID: 967671598}
+      objectReference: {fileID: 0}
     - target: {fileID: 5326646442147229375, guid: 1db7a217020cb4d21879eb7cc660f667, type: 3}
       propertyPath: m_Name
       value: WorkLamp_CarouselMechanismHatch
