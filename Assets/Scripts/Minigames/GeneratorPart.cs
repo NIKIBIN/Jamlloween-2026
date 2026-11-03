@@ -1,0 +1,17 @@
+using UnityEngine;
+
+/// <summary>Peca clicavel do gerador (tampa, galao, corda). Guarda o tipo e o realce ao passar o mouse.</summary>
+public class GeneratorPart : MonoBehaviour
+{
+    public enum Kind { Cap, Can, Cord }
+
+    public Kind kind;
+
+    Renderer[] renderers;
+
+    public void SetHighlight(bool on, Color color)
+    {
+        if (renderers == null || renderers.Length == 0) renderers = GetComponentsInChildren<Renderer>(true);
+        HighlightTint.Tint(renderers, on, color);
+    }
+}

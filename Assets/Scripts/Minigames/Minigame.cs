@@ -96,9 +96,14 @@ public abstract class Minigame : MonoBehaviour, IInteractable, IStepForceComplet
         }
     }
 
+    /// <summary>Texto mostrado (e o minigame nao abre) quando falta algo ao jogador, ex.: o galao no gerador. Null ou vazio = pode entrar.</summary>
+    protected virtual string MissingRequirementText(PlayerInteractor interactor) => null;
+
     public void Interact(PlayerInteractor interactor)
     {
         if (StepGate != null && !StepGate.TryUse()) return;   // fora da etapa: mostra o texto e nao abre
+        string missing = MissingRequirementText(interactor);
+        if (!string.IsNullOrEmpty(missing)) { ProgressionDirector.ShowText(missing); return; }
         Begin(interactor);
     }
 

@@ -87,6 +87,9 @@ namespace Jamlloween.Progression
         [Tooltip("Ids que, ao serem usados, mostram o texto daqui, não abrem e concluem a etapa.")]
         public List<InterceptedInteraction> interceptedInteractions = new List<InterceptedInteraction>();
 
+        [Tooltip("Textos mostrados ao usar uma interação que ainda não funciona nesta etapa. Não concluem nada; sem texto aqui vale o da interação ou o padrão.")]
+        public List<InterceptedInteraction> blockedTexts = new List<InterceptedInteraction>();
+
         [Header("Conclusão")]
         [Tooltip("Eventos que concluem a etapa (enviados por StepInteraction, StepTrigger ou pelo rádio). Todos são necessários, em qualquer ordem. Vazio = nunca conclui.")]
         public List<string> completionEvents = new List<string>();

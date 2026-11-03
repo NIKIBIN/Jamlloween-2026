@@ -10,7 +10,7 @@ namespace Jamlloween.Progression
     /// Diretor da progressão linear. Tem a lista ordenada de etapas, ativa a atual, escuta o evento de conclusão,
     /// executa as ações de início/fim e avança. Só controla etapas, interações, prancheta, rádio e eventos simples
     /// (luzes, sons, triggers). Quem quiser reagir (ex.: o sistema do Zatan) escuta OnStepStarted / OnStepCompleted
-    /// e OnNamedEvent / GeneratorRestored.
+    /// e OnNamedEvent / ZatanReleased / GeneratorRestored.
     /// </summary>
     public class ProgressionDirector : MonoBehaviour
     {
@@ -18,6 +18,8 @@ namespace Jamlloween.Progression
         public const string RadioIdleEvent = "RadioQueueEmpty";
         /// <summary>Nome do evento nomeado que a etapa do gerador emite.</summary>
         public const string GeneratorRestoredEvent = "GeneratorRestored";
+        /// <summary>Nome do evento nomeado emitido ao pegar a gasolina. O comportamento do Zatan escuta este evento.</summary>
+        public const string ZatanReleasedEvent = "ZatanReleased";
 
         public static ProgressionDirector Instance { get; private set; }
 
@@ -70,6 +72,7 @@ namespace Jamlloween.Progression
         /// <summary>Qualquer evento nomeado emitido por uma ação Event (ex.: GeneratorRestored).</summary>
         public event Action<string> OnNamedEvent;
         public event Action GeneratorRestored;
+        public event Action ZatanReleased;
 
         void Awake()
         {
@@ -216,6 +219,7 @@ namespace Jamlloween.Progression
                     case StepAction.Kind.Event:
                         OnNamedEvent?.Invoke(a.targetId);
                         if (a.targetId == GeneratorRestoredEvent) GeneratorRestored?.Invoke();
+                        if (a.targetId == ZatanReleasedEvent) ZatanReleased?.Invoke();
                         break;
                 }
             }
@@ -248,6 +252,8 @@ namespace Jamlloween.Progression
                     return false;
                 }
                 if (step.activeInteractions.Contains(id)) return true;
+                foreach (var b in step.blockedTexts)
+                    if (b.interactionId == id && !string.IsNullOrEmpty(b.text)) { d.ShowBlocked(b.text); return false; }
             }
             d.ShowBlocked(interactionBlockedText);
             return false;
@@ -255,6 +261,9 @@ namespace Jamlloween.Progression
 
         /// <summary>Atalho para quem envia eventos de conclusão sem ter o diretor em mãos.</summary>
         public static void RaiseEvent(string eventId) => Instance?.Raise(eventId);
+
+        /// <summary>Mostra um texto curto na tela (o mesmo dos textos de bloqueio). Sem diretor na cena nao faz nada.</summary>
+        public static void ShowText(string text) => Instance?.ShowBlocked(text);
 
         void ShowBlocked(string text)
         {

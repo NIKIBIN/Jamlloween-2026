@@ -3,13 +3,9 @@ using UnityEngine;
 using UnityEngine.Events;
 
 /// <summary>
-/// Conserto do carrossel. Junta as duas fases, que sao minigames independentes em dois pontos diferentes:
-///  - Fase 1 (CarouselHeadMinigame, no cavalo): recolocar a cabeca do cavalo.
-///  - Fase 2 (CarouselMechanismMinigame, no painel do eixo): destravar o mecanismo e puxar a alavanca de partida.
-/// As fases podem ser feitas em qualquer ordem. O carrossel so e considerado consertado quando as duas
-/// estao completas. Ai (e com o jogador de volta ao controle) ele gira com a musica distorcida,
-/// e o cavalo consertado fica sempre virado para o jogador.
-/// Sem HUD: o estado aparece no proprio carrossel (cabeca no cavalo, LED do painel, giro e musica).
+/// Liga o carrossel quando o quadro de fusiveis (FuseBoxMinigame) e consertado. Com o jogador de volta ao controle ele
+/// gira com a musica distorcida, e o cavalo fica sempre virado para o jogador.
+/// Sem HUD: o estado aparece no proprio carrossel (LED do quadro, giro e musica).
 /// </summary>
 public class CarouselRepair : MonoBehaviour
 {
@@ -18,14 +14,14 @@ public class CarouselRepair : MonoBehaviour
     /// <summary>Disparado uma unica vez quando o carrossel passa a girar.</summary>
     public static event System.Action Started;
 
-    [Header("Fases")]
-    [SerializeField] CarouselHeadMinigame headPhase;
-    [SerializeField] CarouselMechanismMinigame mechanismPhase;
+    [Header("Quadro de fusiveis")]
+    [Tooltip("O minigame que, ao ser concluido, liga o carrossel.")]
+    [SerializeField] Minigame fuseBox;
 
     [Header("Carrossel do kit (Machine)")]
-    [Tooltip("Machine do painel de forca. Fica travado ate a fase 2 terminar; ai a alavanca dele e puxada (clipe 'throw') e a lampada acende. Opcional.")]
+    [Tooltip("Machine do painel de forca. Fica travado ate o quadro de fusiveis ser consertado; ai a alavanca dele e puxada (clipe 'throw') e a lampada acende. Opcional.")]
     [SerializeField] Machine powerPanel;
-    [Tooltip("Machine interno, sem visual, que liga quando as duas fases estao completas. O Machine do carrossel (Powered) deve ter este e o painel de forca em Needs. Opcional.")]
+    [Tooltip("Machine interno, sem visual, que liga quando o quadro de fusiveis e consertado. O Machine do carrossel (Powered) deve ter este e o painel de forca em Needs. Opcional.")]
     [SerializeField] Machine repairedGate;
 
     [Header("Carrossel proprio (sem Machine)")]
@@ -49,8 +45,7 @@ public class CarouselRepair : MonoBehaviour
     [Header("Eventos")]
     public UnityEvent onRepaired;
 
-    public bool HeadDone => headPhase != null && headPhase.IsCompleted;
-    public bool MechanismDone => mechanismPhase != null && mechanismPhase.IsCompleted;
+    public bool FuseBoxDone => fuseBox != null && fuseBox.IsCompleted;
     public bool Spinning { get; private set; }
 
     float speed, noiseTimer;
@@ -70,8 +65,8 @@ public class CarouselRepair : MonoBehaviour
 
     void Update()
     {
-        // Fase 2 completa: a alavanca de forca do painel e puxada pelo proprio kit.
-        if (!panelThrown && powerPanel != null && MechanismDone)
+        // Quadro consertado: a alavanca de forca do painel e puxada pelo proprio kit.
+        if (!panelThrown && powerPanel != null && FuseBoxDone)
         {
             panelThrown = true;
             powerPanel.kind = panelKind;
@@ -80,7 +75,7 @@ public class CarouselRepair : MonoBehaviour
 
         if (!Spinning)
         {
-            if (HeadDone && MechanismDone && Idle(headPhase) && Idle(mechanismPhase)) StartCarousel();
+            if (FuseBoxDone && Idle(fuseBox)) StartCarousel();
             return;
         }
 
