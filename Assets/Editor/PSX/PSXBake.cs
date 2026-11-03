@@ -303,10 +303,28 @@ public static class PSXBake
         if (folder == null) return mesh;
         string path = $"{folder}/{fileName}.asset";
         var existing = AssetDatabase.LoadAssetAtPath<Mesh>(path);
-        if (existing != null) { EditorUtility.CopySerialized(mesh, existing); existing.name = mesh.name; EditorUtility.SetDirty(existing); mesh = existing; }
+        if (existing != null) { CopyMesh(mesh, existing); EditorUtility.SetDirty(existing); mesh = existing; }
         else AssetDatabase.CreateAsset(mesh, path);
         report.meshesWritten++;
         return mesh;
+    }
+
+    /// <summary>
+    /// Reescreve uma malha existente pela API da Mesh. EditorUtility.CopySerialized gravava os dados novos no asset,
+    /// mas o editor continuava desenhando a malha antiga ate reiniciar (submeshes novas sobre vertices velhos).
+    /// </summary>
+    public static void CopyMesh(Mesh src, Mesh dst)
+    {
+        dst.Clear();
+        dst.name = src.name;
+        dst.indexFormat = src.indexFormat;
+        dst.SetVertices(src.vertices);
+        dst.SetNormals(src.normals);
+        dst.SetUVs(0, src.uv);
+        dst.colors = src.colors;
+        dst.subMeshCount = src.subMeshCount;
+        for (int s = 0; s < src.subMeshCount; s++) dst.SetTriangles(src.GetTriangles(s), s);
+        dst.RecalculateBounds();
     }
 
     static string PathName(Transform root, Transform t)

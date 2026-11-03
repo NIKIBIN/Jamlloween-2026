@@ -23,7 +23,7 @@ public static class PSXMeshFactory
         {
             string path = $"{KitMeshFolder}/{m.name}.asset";
             var existing = UnityEditor.AssetDatabase.LoadAssetAtPath<Mesh>(path);
-            if (existing != null) { UnityEditor.EditorUtility.CopySerialized(m, existing); UnityEditor.EditorUtility.SetDirty(existing); }
+            if (existing != null) { PSXBake.CopyMesh(m, existing); UnityEditor.EditorUtility.SetDirty(existing); }
             else UnityEditor.AssetDatabase.CreateAsset(m, path);
             made.Add($"{m.name} ({m.triangles.Length / 3} tris)");
         }
