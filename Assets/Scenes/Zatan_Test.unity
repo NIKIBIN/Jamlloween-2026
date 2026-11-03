@@ -27678,6 +27678,72 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 109345385}
   m_SourcePrefab: {fileID: 100100000, guid: 80f85749b64eab83fac23386e49129c0, type: 3}
+--- !u!1 &785742262
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 785742265}
+  - component: {fileID: 785742264}
+  - component: {fileID: 785742263}
+  m_Layer: 0
+  m_Name: PF_jerry_can_gasolina
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &785742263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 785742262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d513c061ccc7e0f7b8406d33c30248af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepInteraction
+  interactionId: gas_can
+  completionEvent: GasCanTaken
+  blockedText: 
+  disableCollidersWhenInactive: 0
+  onForceCompleted:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &785742264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 785742262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64c68d2b80458ffaa9e70292000e67fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GasCan
+  prompt: "Pegar gal\xE3o"
+--- !u!4 &785742265
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 785742262}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0.25881907, z: 0, w: 0.9659259}
+  m_LocalPosition: {x: -3.6850002, y: -0.00000034928416, z: 66.444}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1379357353}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &785798059 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5557962145579133036, guid: 874e93e0589a175e0162d0998e037355, type: 3}
@@ -47734,6 +47800,119 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 971101562}
   m_SourcePrefab: {fileID: 100100000, guid: 874e93e0589a175e0162d0998e037355, type: 3}
+--- !u!1 &1379357352
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1379357353}
+  - component: {fileID: 1379357356}
+  - component: {fileID: 1379357355}
+  - component: {fileID: 1379357354}
+  m_Layer: 0
+  m_Name: jerry_can
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1379357353
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1379357352}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.077, y: 0, z: 2.312}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 785742265}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1379357354
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1379357352}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -3247676525659482054, guid: 9c6bf0d1a17bb5e7a4e6898d2e575f4d, type: 3}
+--- !u!23 &1379357355
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1379357352}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: c4b3d539f8f9033533cc58fb0067b984, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1379357356
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1379357352}
+  m_Mesh: {fileID: -3247676525659482054, guid: 9c6bf0d1a17bb5e7a4e6898d2e575f4d, type: 3}
 --- !u!1 &1380574484 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 233320122798110445, guid: 9d4028de0a3ce0a3fb3abbf087a81af5, type: 3}
@@ -48155,43 +48334,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1919025174}
   m_SourcePrefab: {fileID: 100100000, guid: 92be9eab09dd504721458faf7d377238, type: 3}
---- !u!1 &1397246853 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8555120926737912941, guid: bf93508a14025957a40ccb9d2d92f4ce, type: 3}
-  m_PrefabInstance: {fileID: 1768498820}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1397246855
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1397246853}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d513c061ccc7e0f7b8406d33c30248af, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepInteraction
-  interactionId: gas_can
-  completionEvent: GasCanTaken
-  blockedText: 
-  disableCollidersWhenInactive: 0
-  onForceCompleted:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &1397246856
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1397246853}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64c68d2b80458ffaa9e70292000e67fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GasCan
-  prompt: "Pegar gal\xE3o"
 --- !u!1 &1399404949 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6097109730250407264, guid: a7db968bcd5bc953a7f9c09b2496dc74, type: 3}
@@ -60293,12 +60435,6 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8555120926737912941, guid: bf93508a14025957a40ccb9d2d92f4ce, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1397246856}
-    - targetCorrespondingSourceObject: {fileID: 8555120926737912941, guid: bf93508a14025957a40ccb9d2d92f4ce, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1397246855}
     - targetCorrespondingSourceObject: {fileID: 7842804693659675132, guid: bf93508a14025957a40ccb9d2d92f4ce, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1801146271}
@@ -72368,7 +72504,7 @@ PrefabInstance:
     - target: {fileID: 7288449727604706036, guid: ba59a0b4c6f4de1d8a6b9ee5e425e3de, type: 3}
       propertyPath: gasCan
       value: 
-      objectReference: {fileID: 1397246856}
+      objectReference: {fileID: 785742264}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -73050,3 +73186,4 @@ SceneRoots:
   - {fileID: 1126976712}
   - {fileID: 400480096}
   - {fileID: 1275156912}
+  - {fileID: 785742265}
