@@ -6654,7 +6654,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 8610268512662742059}
+      - m_Target: {fileID: 4104483891573703694}
         m_TargetAssemblyTypeName: GeneratorFuelMinigame, Assembly-CSharp
         m_MethodName: Exit
         m_Mode: 1
@@ -6965,7 +6965,7 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 5448768862527023462, guid: 40e3a09e65e9f98c251ac1710a6a78c2, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4527716057682426697}
+      addedObject: {fileID: 8169092180691917676}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 945854406811722112, guid: 40e3a09e65e9f98c251ac1710a6a78c2, type: 3}
       insertIndex: -1
@@ -72760,12 +72760,18 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1068725007}
   m_SourcePrefab: {fileID: 100100000, guid: 9d4028de0a3ce0a3fb3abbf087a81af5, type: 3}
---- !u!4 &4527716057682426697 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3210426882573702550, guid: ba59a0b4c6f4de1d8a6b9ee5e425e3de, type: 3}
-  m_PrefabInstance: {fileID: 6760967587095088890}
+--- !u!114 &4104483891573703694 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7288449727604706036, guid: ba59a0b4c6f4de1d8a6b9ee5e425e3de, type: 3}
+  m_PrefabInstance: {fileID: 6056934904955171132}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &6760967587095088890
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fb4c6d2580204a7fb6b3b2d2cb07093, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GeneratorFuelMinigame
+--- !u!1001 &6056934904955171132
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -72830,17 +72836,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ba59a0b4c6f4de1d8a6b9ee5e425e3de, type: 3}
---- !u!114 &8610268512662742059 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7288449727604706036, guid: ba59a0b4c6f4de1d8a6b9ee5e425e3de, type: 3}
-  m_PrefabInstance: {fileID: 6760967587095088890}
+--- !u!4 &8169092180691917676 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3210426882573702550, guid: ba59a0b4c6f4de1d8a6b9ee5e425e3de, type: 3}
+  m_PrefabInstance: {fileID: 6056934904955171132}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fb4c6d2580204a7fb6b3b2d2cb07093, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GeneratorFuelMinigame
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

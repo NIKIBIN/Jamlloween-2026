@@ -6,7 +6,8 @@ using UnityEngine;
 /// <summary>
 /// Monta o minigame de abastecer o gerador no PF_generator_trailer da cena aberta e salva como prefab em
 /// Assets/Prefabs/Minigames/GeneratorFuelMinigame.prefab. Tudo fica na face da frente do gerador (a de z = -0.62, do
-/// lado do jogador): bocal lateral com tampa, medidor, lampada piloto e corda de partida. O galao entra pela esquerda.
+/// lado do jogador): bocal lateral com tampa, medidor, lampada piloto e corda de partida. O galao entra pela esquerda
+/// e, com o bocal aberto, segue o cursor.
 /// Se o objeto ja existe, so as pecas (filhos) sao refeitas: a raiz, o componente, o StepInteraction e as referencias
 /// da cena a ele continuam valendo. Medidas no espaco local do gerador (o modelo gira 270 graus em Y).
 /// Menu: Jamlloween/Build Generator Fuel Minigame.
@@ -106,10 +107,12 @@ public static class GeneratorFuelBuilder
         var splash = splashGo.AddComponent<ParticleSystem>();
         ConfigureSplash(splash, splashMat);
 
-        // Galao: pivo no bico. Corpo para a esquerda (-X do gerador), entrando pela lateral da tela.
+        // Galao: pivo no bico. Na lateral fica em pe; seguindo o cursor fica pre-inclinado 60 graus, com o corpo para a
+        // esquerda e o bico embaixo, para nao tapar o bocal enquanto o jogador mira.
         var canHold = New("CanHoldPose", root, new Vector3(-1.2f, 1.62f, Face - 0.2f));
         var canPour = New("CanPourPose", root, mouth.localPosition + new Vector3(-0.13f, 0.15f, -0.05f));
-        canHold.localRotation = canPour.localRotation = Quaternion.Euler(0f, -90f, 0f);   // -Z do modelo (lado do bico) aponta para o bocal
+        canHold.localRotation = Quaternion.Euler(0f, -90f, 0f);   // -Z do modelo (lado do bico) aponta para o bocal
+        canPour.localRotation = Quaternion.Euler(0f, 0f, -60f) * canHold.localRotation;
         var pivot = New("PourCan", root, canHold.localPosition);
         pivot.localRotation = canHold.localRotation;
         var canPart = pivot.gameObject.AddComponent<GeneratorPart>();
@@ -119,10 +122,7 @@ public static class GeneratorFuelBuilder
         model.localPosition = -CanSpout;
         model.gameObject.AddComponent<MeshFilter>().sharedMesh = canMesh.sharedMesh;
         model.gameObject.AddComponent<MeshRenderer>().sharedMaterials = canMesh.GetComponent<MeshRenderer>().sharedMaterials;
-        var canBox = model.gameObject.AddComponent<BoxCollider>();
-        canBox.center = canMesh.sharedMesh.bounds.center;
-        canBox.size = canMesh.sharedMesh.bounds.size;
-        pivot.gameObject.SetActive(false);
+        pivot.gameObject.SetActive(false);   // sem colisor: ele segue o cursor e o fio vertical nao pode bater nele
         var streamTarget = New("StreamTarget", root, mouth.localPosition);
         var stream = Prim(PrimitiveType.Cube, "Stream", root, mouth.localPosition, Vector3.one * 0.01f, fuel);
         stream.gameObject.SetActive(false);
@@ -183,6 +183,8 @@ public static class GeneratorFuelBuilder
         Ref(so, "splash", splash); Ref(so, "exhaustSmoke", smoke);
         Ref(so, "pilotLamp", lamp.GetComponent<Renderer>()); Ref(so, "lampOffMaterial", lampOff); Ref(so, "lampOnMaterial", lampOn);
         Ref(so, "viewPoint", view);
+        so.FindProperty("maxTiltDegrees").floatValue = 80f;   // somados aos 60 da pose: o corpo termina acima do bico
+        so.FindProperty("pullsToStart").intValue = 2;
         so.FindProperty("activeWhilePlaying").arraySize = 0;   // o galao e ligado pelo proprio minigame, so quando o jogador o traz
         so.FindProperty("prompt").stringValue = "Abastecer gerador";
         so.ApplyModifiedProperties();
