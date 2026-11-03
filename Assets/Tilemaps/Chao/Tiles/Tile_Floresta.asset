@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df8cb9baa9ac5f04087b5658600333ed, type: 3}
+  m_Name: Tile_Floresta
+  m_EditorClassIdentifier: Jamlloween.Tilemaps::Jamlloween.Tilemaps.GroundTile
+  kind: 3
+  prefab: {fileID: 4596331890726253951, guid: f4bfd4918947bddbde8e4f126d8d87da, type: 3}
+  preview: {fileID: 21300000, guid: feae9086b63e5a749b110ff894a7f18c, type: 3}
+  midwayEdge: {fileID: 0}
+  midwayCornerIn: {fileID: 0}
+  midwayCornerOut: {fileID: 0}
+  forestEdge: {fileID: 0}
+  forestCornerIn: {fileID: 0}
+  forestCornerOut: {fileID: 0}

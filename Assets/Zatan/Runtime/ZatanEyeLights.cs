@@ -39,7 +39,7 @@ namespace Jamlloween.Zatan
         Color huntColor;
         float huntBlend;
         float[] lengths, targetLengths, probeDistances;
-        float probeTimer, coneSlope, cosOuter;
+        float probeTimer, coneSlope, cosOuter, cosInner, maxLength;
 
         void Awake()
         {
@@ -53,8 +53,7 @@ namespace Jamlloween.Zatan
             eyeBlock = new MaterialPropertyBlock();
             volumeBlock = new MaterialPropertyBlock();
             huntColor = config.beamAlertColor;
-            coneSlope = Mathf.Tan(config.beamConeAngle * 0.5f * Mathf.Deg2Rad);
-            cosOuter = Mathf.Cos(config.beamConeAngle * 0.5f * Mathf.Deg2Rad);
+            SetShape(0f);
             lengths = new float[pivots.Length];
             targetLengths = new float[pivots.Length];
             probeDistances = new float[config.beamFanRays + 1];
@@ -65,7 +64,6 @@ namespace Jamlloween.Zatan
         void OnEnable()
         {
             brain.StateChanged += OnStateChanged;
-            Shader.SetGlobalFloat(LightCosInnerId, Mathf.Cos(config.beamInnerConeAngle * 0.5f * Mathf.Deg2Rad));
             Shader.SetGlobalFloat(LightClipMarginId, config.beamWallClipMargin);
             Shader.SetGlobalFloat(LightFogCutId, config.beamSurfaceFogCut);
             Shader.SetGlobalFloat(LightMinAlbedoId, config.beamSurfaceMinAlbedo);
@@ -90,7 +88,7 @@ namespace Jamlloween.Zatan
         {
             if (!IsLit) return;
 
-            bool hunting = brain.State == ZatanBehaviourState.Chase;
+            bool hunting = brain.State == ZatanBehaviourState.Spotted || brain.State == ZatanBehaviourState.Chase;
             if (hunting)
                 huntColor = Color.Lerp(config.beamAlertColor, config.beamDangerColor, config.BeamDanger(brain.DistanceToPlayer));
 
@@ -181,7 +179,7 @@ namespace Jamlloween.Zatan
         float BlockDistance(Vector3 origin, Vector3 direction)
         {
             bool found = TryNearestHit(origin, direction, out RaycastHit nearest);
-            if (!found || nearest.normal.y > config.beamFloorNormalY) return config.beamLength;
+            if (!found || nearest.normal.y > config.beamFloorNormalY) return maxLength;
             return nearest.distance;
         }
 
@@ -216,7 +214,7 @@ namespace Jamlloween.Zatan
 
         bool TryNearestHit(Vector3 origin, Vector3 direction, out RaycastHit nearest)
         {
-            int count = Physics.RaycastNonAlloc(origin, direction, hits, config.beamLength, config.beamBlockers, QueryTriggerInteraction.Ignore);
+            int count = Physics.RaycastNonAlloc(origin, direction, hits, maxLength, config.beamBlockers, QueryTriggerInteraction.Ignore);
             nearest = default;
             float nearestDistance = float.PositiveInfinity;
             for (int i = 0; i < count; i++)
@@ -254,10 +252,22 @@ namespace Jamlloween.Zatan
         {
             Vector3 position = EyeCentre();
             Vector3 forward = pivots[0].forward;
-            Shader.SetGlobalVector(LightPositionId, new Vector4(position.x, position.y, position.z, config.beamLength));
+            Shader.SetGlobalVector(LightPositionId, new Vector4(position.x, position.y, position.z, maxLength));
             Shader.SetGlobalVector(LightDirectionId, new Vector4(forward.x, forward.y, forward.z, cosOuter));
+            Shader.SetGlobalFloat(LightCosInnerId, cosInner);
             Shader.SetGlobalVector(LightColorId, CurrentColor * config.beamSurfaceIntensity);
             Shader.SetGlobalVector(LightClipPlaneId, WallPlane);
+        }
+
+        /// <summary>Wider and longer as he hunts: 0 = patrol beam, 1 = chase beam.</summary>
+        void SetShape(float blend)
+        {
+            float outer = Mathf.Lerp(config.beamConeAngle, config.beamChaseConeAngle, blend) * 0.5f * Mathf.Deg2Rad;
+            float inner = Mathf.Lerp(config.beamInnerConeAngle, config.beamChaseInnerConeAngle, blend) * 0.5f * Mathf.Deg2Rad;
+            coneSlope = Mathf.Tan(outer);
+            cosOuter = Mathf.Cos(outer);
+            cosInner = Mathf.Cos(inner);
+            maxLength = Mathf.Lerp(config.beamLength, config.beamChaseLength, blend);
         }
 
         void Apply(float blend)
@@ -265,6 +275,7 @@ namespace Jamlloween.Zatan
             huntBlend = blend;
             CurrentColor = Color.Lerp(config.beamIdleColor, huntColor, blend);
             CurrentPitch = Mathf.Lerp(config.beamIdlePitch, config.beamChasePitch, blend);
+            SetShape(blend);
 
             Quaternion rotation = Quaternion.Euler(CurrentPitch, 0f, 0f);
             foreach (Transform p in pivots) p.localRotation = rotation;

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df8cb9baa9ac5f04087b5658600333ed, type: 3}
+  m_Name: Tile_Grama
+  m_EditorClassIdentifier: Jamlloween.Tilemaps::Jamlloween.Tilemaps.GroundTile
+  kind: 0
+  prefab: {fileID: 5943328811241090933, guid: f6500dae6d65bdfe0abef4b40c684111, type: 3}
+  preview: {fileID: 21300000, guid: dcb8af459a7b42b41a68376a473068dd, type: 3}
+  midwayEdge: {fileID: 6820010392963083409, guid: 84e1639dc7aa490d518688c8d4a62653, type: 3}
+  midwayCornerIn: {fileID: 7127560368330793670, guid: ec238b4298a45f987a17f9dae940b394, type: 3}
+  midwayCornerOut: {fileID: 3280112162903861519, guid: 80f85749b64eab83fac23386e49129c0, type: 3}
+  forestEdge: {fileID: 4642170669383366892, guid: a65f8185dd4aecc1687620bbc5babcbb, type: 3}
+  forestCornerIn: {fileID: 8052752765650042905, guid: 63c1032edef16c7015d6b787b0f9e3fe, type: 3}
+  forestCornerOut: {fileID: 386613975058660437, guid: b4e476ba988174b5c345b7327d06cad8, type: 3}

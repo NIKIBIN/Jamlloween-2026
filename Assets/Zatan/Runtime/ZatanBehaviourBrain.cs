@@ -4,7 +4,7 @@ using UnityEngine.AI;
 
 namespace Jamlloween.Zatan
 {
-    public enum ZatanBehaviourState { Patrol, Investigate, Chase, Search, Caught, Vanished }
+    public enum ZatanBehaviourState { Patrol, Investigate, Spotted, Chase, Search, Caught, Vanished }
 
     /// <summary>The general brain: spot, hear, chase, catch and lose the player. Reads its limits from the tension brain.</summary>
     [RequireComponent(typeof(NavMeshAgent))]
@@ -69,12 +69,13 @@ namespace Jamlloween.Zatan
             repathTimer -= Time.deltaTime;
 
             bool hunting = State == ZatanBehaviourState.Patrol || State == ZatanBehaviourState.Investigate || State == ZatanBehaviourState.Search;
-            if (hunting && perception.SightConfirmed) SetState(ZatanBehaviourState.Chase);
+            if (hunting && perception.SightConfirmed) EnterSpotted();
 
             switch (State)
             {
                 case ZatanBehaviourState.Patrol: UpdatePatrol(); break;
                 case ZatanBehaviourState.Investigate: UpdateInvestigate(); break;
+                case ZatanBehaviourState.Spotted: UpdateSpotted(); break;
                 case ZatanBehaviourState.Chase: UpdateChase(); break;
                 case ZatanBehaviourState.Search: UpdateSearch(); break;
                 case ZatanBehaviourState.Vanished: UpdateVanished(); break;
@@ -103,6 +104,20 @@ namespace Jamlloween.Zatan
             agent.speed = config.InvestigateSpeed(target.WalkSpeed, target.RunSpeed);
             if (!Arrived()) { stateTime = 0f; return; }
             if (stateTime >= config.investigateLookTime) EnterPatrol();
+        }
+
+        /// <summary>Stands still and stares at the player, then the chase starts.</summary>
+        void UpdateSpotted()
+        {
+            Vector3 toPlayer = Vector3.ProjectOnPlane(target.Position - transform.position, Vector3.up);
+            if (toPlayer.sqrMagnitude > 0.0001f)
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(toPlayer), config.spotTurnSpeed * Time.deltaTime);
+            if (stateTime < config.spotStareTime) return;
+
+            agent.isStopped = false;
+            agent.updateRotation = true;
+            repathTimer = 0f;
+            SetState(ZatanBehaviourState.Chase);
         }
 
         void UpdateChase()
@@ -166,6 +181,14 @@ namespace Jamlloween.Zatan
             vanishTimer = 0f;
             waitingAtPoint = false;
             StateChanged(next);
+        }
+
+        void EnterSpotted()
+        {
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+            agent.updateRotation = false;
+            SetState(ZatanBehaviourState.Spotted);
         }
 
         void EnterPatrol()

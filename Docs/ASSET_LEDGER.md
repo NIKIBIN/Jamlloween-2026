@@ -37,3 +37,10 @@ Os três sons do jump scare tocam em `ZatanCatchSequence`, por duas fontes 2D no
 | Arrombar porta | Quando Zatan tratar portas trancadas | Loop + one-shot | Pancadas de madeira e latão, depois a porta cedendo |
 | Vasculhar esconderijo | Quando houver esconderijos | One-shot | Dedos de metal abrindo e tateando |
 | Risada | Jogador escapa ou evento roteirizado | One-shot | Gargalhada mecânica que trava e repete |
+
+## Modelo
+
+| Asset | Arquivo | Status |
+|---|---|---|
+| Zatan V00 | `Assets/Zatan/Model/Zatan_V00.fbx`, com material `Assets/Zatan/Materials/M_ZatanModel.mat` | Em uso na `Level_Design`; falta uma boca articulada |
+| Animações de Zatan | `Assets/Zatan/Animation/Zatan_Idle.anim`, `Zatan_Walk.anim`, `Zatan_Run.anim` e `Zatan.controller` | Placeholder procedural (andar rígido e mecânico); substituir por animação feita à mão |

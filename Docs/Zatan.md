@@ -53,7 +53,7 @@ Correndo em linha reta, o jogador não é alcançado. Ele é pego quando para, a
 | Caught | Vermelho máximo | 6° para baixo |
 | Vanished | Apagada | — |
 
-O vermelho máximo usa `attenuationStartDistance`, o mesmo valor que inicia a desaceleração. As mudanças de estado levam 0,35 s, e ao reaparecer ele já volta branco. Os olhos usam a mesma cor e ignoram a névoa. Os pontos `EyeBeam_L` e `EyeBeam_R` são provisórios até o modelo final chegar.
+O vermelho máximo usa `attenuationStartDistance`, o mesmo valor que inicia a desaceleração. As mudanças de estado levam 0,35 s, e ao reaparecer ele já volta branco. Os olhos usam a mesma cor e ignoram a névoa. Na `Level_Design`, os pontos `EyeBeam_L` e `EyeBeam_R` ficam nos olhos do modelo, dentro de `Model/.../Cabeca_ctrl`.
 
 ## Captura (jump scare)
 
@@ -66,7 +66,7 @@ O vermelho máximo usa `attenuationStartDistance`, o mesmo valor que inicia a de
 
 O escuro vem do global `_ZatanBlackout`, lido por `PSX Unlit` e `Flashlight Fog Surface`. Materiais com `Stays Visible In Catch Blackout` ligado (corpo e cabeça de Zatan) recebem a luz `scareLightColor` no lugar do mundo. Os feixes ficam apagados e os olhos, vermelhos.
 
-A cabeça (`Head_Placeholder`, com `Jaw`, `MouthAnchor` e `Throat`) é provisória até o modelo final. Ao trocar o modelo, ligue a dobradiça da mandíbula, o centro da boca aberta e o fundo da boca no Inspector.
+Na `Level_Design`, a mandíbula é a peça `Boca` do modelo, e `MouthAnchor` e `Throat` ficam dentro de `Cabeca_ctrl`. Na `Zatan_Test` ainda é a cabeça provisória (`Head_Placeholder`). Ao trocar o modelo, religue a mandíbula, o centro da boca e o fundo da boca no Inspector.
 
 Os ajustes ficam em "Captura" no `ZatanConfig`: tempos, distâncias, `scareHoldFaceRaise`, `scareLift`, `scareLightColor`, amplitudes do chacoalhão, ângulos da mandíbula, `scareBiteOpenFraction`, `scareBiteImpactFraction` e `scareImpactKick`.
 
@@ -99,9 +99,15 @@ Depois de uma captura, o jogador e Zatan voltam às posições iniciais quando o
 4. Chame `ZatanPerception.ReportNoise(posição, raio)` para outros sons do jogo.
 5. Assine `ZatanBehaviourBrain.PlayerCaught` para tratar a morte.
 
+## Animação
+
+`ZatanAnimation`, no objeto `Zatan`, passa a velocidade real do agente ao Animator de `Model`: parado ou encarando o jogador toca `Zatan_Idle`, na patrulha `Zatan_Walk` e na perseguição `Zatan_Run`, num blend tree em `Speed`. Os clipes pisam sem deslizar em `animWalkSpeed` (2,45 m/s) e `animRunSpeed` (4,2 m/s), no `ZatanConfig`; fora desses valores o parâmetro `Cadence` acelera ou freia o passo. Na captura o Animator desliga e o corpo volta à pose de repouso, para o jump scare controlar cabeça e boca; ele religa no reaparecimento. Os clipes não mexem na `Boca` e mantêm a cabeça nivelada, para os feixes não balançarem. São placeholders procedurais.
+
+A versão anterior, sem animação, está em `Assets/Zatan/Prefabs/Zatan_V00_SemAnimacao.prefab`. Para voltar a ela, apague o `Zatan` da cena, arraste o prefab para `_Zatan` e religue no Inspector o `target` da percepção, da tensão, do cérebro e da captura, o jogador em `beamIgnored` e os minigames no `onFinished` da captura.
+
 ## Limites atuais
 
-- Zatan é um placeholder: cápsula, cabeça de caixas, olhos e sons sintetizados. Lista de sons em [ASSET_LEDGER.md](ASSET_LEDGER.md).
+- Na `Level_Design`, Zatan usa o modelo `Assets/Zatan/Model/Zatan_V00.fbx` (3,3 m, peças rígidas), com a animação procedural acima. Na `Zatan_Test` ele ainda é a cápsula. Os sons continuam sintetizados. Lista de sons em [ASSET_LEDGER.md](ASSET_LEDGER.md).
 - As tendas têm só uma zona interior, `Zatan_IndoorZone_BigTop`, com caixa aproximada.
 - Portas fechadas e esconderijos ainda não são tratados.
 - O sistema não usa os scripts dos Spikes 1 e 2.

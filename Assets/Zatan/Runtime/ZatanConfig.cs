@@ -39,6 +39,14 @@ namespace Jamlloween.Zatan
         public float acceleration = 20f;
         public float angularSpeed = 360f;
 
+        [Header("Animação")]
+        [Tooltip("Velocidade (m/s) em que o clipe de andar pisa sem deslizar. É o limiar do blend tree.")]
+        public float animWalkSpeed = 2.45f;
+        [Tooltip("Velocidade (m/s) em que o clipe de correr pisa sem deslizar. É o limiar do blend tree.")]
+        public float animRunSpeed = 4.2f;
+        [Tooltip("Quão rápido a velocidade da animação segue a do agente.")]
+        public float animSpeedSmoothing = 8f;
+
         [Header("Tensão: subida (por segundo)")]
         public float chaseGain = 3f;
         public float nearGain = 2f;
@@ -85,6 +93,10 @@ namespace Jamlloween.Zatan
         public float patrolDwellMin = 1f;
         public float patrolDwellMax = 3f;
         public float investigateLookTime = 3f;
+        [Tooltip("Seconds he stands still staring at the player after spotting them, before the chase starts.")]
+        public float spotStareTime = 0.5f;
+        [Tooltip("Degrees per second he turns to face the player while staring.")]
+        public float spotTurnSpeed = 540f;
         public float searchTime = 8f;
         public float searchRadius = 6f;
         public float repathInterval = 0.15f;
@@ -109,10 +121,18 @@ namespace Jamlloween.Zatan
         public float beamIdlePitch = 28f;
         [Tooltip("Graus abaixo da horizontal na perseguição.")]
         public float beamChasePitch = 6f;
+        [Tooltip("Alcance fora da perseguição.")]
         public float beamLength = 16f;
+        [Tooltip("Abertura fora da perseguição.")]
         public float beamConeAngle = 22f;
         [Tooltip("Graus do miolo do feixe, sem perda de brilho. Daí até beamConeAngle a luz some aos poucos.")]
         public float beamInnerConeAngle = 12f;
+        [Tooltip("Alcance na perseguição.")]
+        public float beamChaseLength = 24f;
+        [Tooltip("Abertura na perseguição.")]
+        public float beamChaseConeAngle = 32f;
+        [Tooltip("Miolo do feixe na perseguição.")]
+        public float beamChaseInnerConeAngle = 18f;
         [Tooltip("Brilho da luz no chão e nas paredes.")]
         public float beamSurfaceIntensity = 5f;
         [Range(0f, 1f), Tooltip("Quanto a luz no chão e nas paredes atravessa a névoa. 0 = some com a névoa, 1 = ignora a névoa.")]

@@ -21,6 +21,9 @@ MonoBehaviour:
   corneredExtraReach: 0.6
   acceleration: 20
   angularSpeed: 360
+  animWalkSpeed: 2.45
+  animRunSpeed: 4.2
+  animSpeedSmoothing: 8
   chaseGain: 3
   nearGain: 2
   nearDistance: 12
@@ -31,14 +34,14 @@ MonoBehaviour:
   quietDelay: 45
   objectiveRelief: 15
   startTension: 20
-  calmVisionRange: 22
+  calmVisionRange: 33
   calmVisionAngle: 110
   calmHearingMult: 1.4
   calmPatrolMinRadius: 8
   calmPatrolMaxRadius: 14
   calmFootstepVolume: 0.2
   calmLoseTime: 6
-  tenseVisionRange: 10
+  tenseVisionRange: 15
   tenseVisionAngle: 80
   tenseHearingMult: 0.6
   tensePatrolMinRadius: 20
@@ -53,6 +56,8 @@ MonoBehaviour:
   patrolDwellMin: 1
   patrolDwellMax: 3
   investigateLookTime: 3
+  spotStareTime: 0.5
+  spotTurnSpeed: 540
   searchTime: 8
   searchRadius: 6
   repathInterval: 0.15
@@ -66,11 +71,14 @@ MonoBehaviour:
   beamDangerColor: {r: 1, g: 0, b: 0, a: 1}
   beamAlertDistance: 15
   beamTransitionTime: 0.35
-  beamIdlePitch: 28
-  beamChasePitch: 6
+  beamIdlePitch: 23
+  beamChasePitch: 1
   beamLength: 16
   beamConeAngle: 22
   beamInnerConeAngle: 12
+  beamChaseLength: 24
+  beamChaseConeAngle: 32
+  beamChaseInnerConeAngle: 18
   beamSurfaceIntensity: 5
   beamSurfaceFogCut: 0.75
   beamSurfaceMinAlbedo: 0.25
@@ -92,3 +100,25 @@ MonoBehaviour:
   beamWallProbeDrop: 0.7
   beamWallMinHits: 2
   beamWallClipMargin: 0.5
+  scareGrabTime: 0.25
+  scareShakeTime: 1
+  scareBiteTime: 0.5
+  scareBlackTime: 0.35
+  scareBlackoutFadeTime: 0.05
+  scareHoldDistance: 0.45
+  scareBiteDistance: 0.08
+  scareHoldFaceRaise: 0.2
+  scareLift: 0.08
+  scareLightColor: {r: 2.4, g: 0.9, b: 0.7, a: 1}
+  scareShakeFrequency: 14
+  scareShakePosition: 0.06
+  scareShakeRoll: 11
+  scareShakeTilt: 4
+  scareShakeBodyPosition: 0.05
+  scareShakeBodyTilt: 7
+  scareBiteShake: 0.35
+  scareJawHoldAngle: 10
+  scareJawOpenAngle: 45
+  scareBiteOpenFraction: 0.5
+  scareBiteImpactFraction: 0.9
+  scareImpactKick: 9

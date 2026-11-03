@@ -92,7 +92,7 @@ namespace Jamlloween.Zatan
             float noise = tension.Tuning.FootstepVolume;
             switch (next)
             {
-                case ZatanBehaviourState.Chase: PlayOneShot(alertSting, 1f); break;
+                case ZatanBehaviourState.Spotted: PlayOneShot(alertSting, 1f); break;
                 case ZatanBehaviourState.Investigate: PlayOneShot(investigateServo, noise); break;
                 case ZatanBehaviourState.Search: PlayOneShot(lostWindDown, noise); break;
                 case ZatanBehaviourState.Caught: PlayOneShot(caughtSting, 1f); break;
