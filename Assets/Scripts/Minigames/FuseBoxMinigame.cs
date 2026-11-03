@@ -7,7 +7,8 @@ using UnityEngine.InputSystem;
 ///  1. Segurar o botao esquerdo em cada um dos 4 parafusos ate solta-los.
 ///  2. Clicar na tampa para tirar.
 ///  3. Achar o fusivel queimado (escuro) e clicar para remover.
-///  4. Pegar o fusivel novo na prateleira e clicar no encaixe vazio.
+///  4. Pegar o fusivel novo na prateleira e clicar no encaixe vazio. Ele so aparece na prateleira ao abrir o minigame
+///     (o jogador chega com o fusivel achado no parque); antes disso a prateleira fica vazia.
 ///  5. Arrastar a alavanca para baixo ate o fim (se soltar antes, ela volta).
 /// O painel nao fecha de volta (e um jogo de terror).
 /// </summary>
@@ -75,11 +76,21 @@ public class FuseBoxMinigame : Minigame
 
         spareHomePos = spareFuse.transform.localPosition;
         spareHomeRot = spareFuse.transform.localRotation;
+        // O fusivel novo e o que o jogador acha no parque: so aparece na prateleira quando ele chega com ele (ao abrir o minigame).
+        spareFuse.gameObject.SetActive(false);
         leverHomeRot = lever.transform.localRotation;
 
         if (burntIndex < 0 || burntIndex >= fuses.Length) burntIndex = Random.Range(0, fuses.Length);
         var glass = fuses[burntIndex].transform.Find("Glass");
         if (glass != null && burntFuseMaterial != null) glass.GetComponent<Renderer>().sharedMaterial = burntFuseMaterial;
+    }
+
+    protected override void OnBegin(PlayerInteractor interactor) => spareFuse.gameObject.SetActive(true);
+
+    public override void ForceComplete()
+    {
+        base.ForceComplete();
+        spareFuse.gameObject.SetActive(true);
     }
 
     // ---------- Regras: o que pode ser usado agora ----------
