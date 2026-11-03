@@ -25770,7 +25770,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepInteraction
   interactionId: fusebox
   completionEvent: FuseBoxFixed
-  blockedText: "Falta um fus\xEDvel aqui."
+  blockedText: 
   disableCollidersWhenInactive: 0
   onForceCompleted:
     m_PersistentCalls:

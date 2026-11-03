@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.ProgressionStep
   label: "Notar o cavalo sem cabe\xE7a"
   activeInteractions: []
-  interceptedInteractions: []
+  interceptedInteractions:
+  - interactionId: fusebox
+    text: Hm... antes do painel, tem algo estranho nesse carrossel.
+  blockedTexts: []
   completionEvents:
   - HorseNoticed
   onStart:

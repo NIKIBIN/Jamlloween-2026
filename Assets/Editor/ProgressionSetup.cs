@@ -13,6 +13,7 @@ public static class ProgressionSetup
 {
     const string Folder = "Assets/Data/Progression";
     const string MissingFuseText = "Falta um fusível aqui.";
+    const string HorseFirstText = "Antes do painel, preciso pôr a cabeça daquele cavalo de volta.";
 
     // ------------------------------------------------------------------ etapas
 
@@ -43,6 +44,7 @@ public static class ProgressionSetup
             onComplete: new[] { Task("carousel", TaskState.Current) });
         // Cabeca do cavalo: o tecnico nota o cavalo sem cabeca, acha a cabeca atras do carrossel e encaixa. So depois o quadro de fusiveis.
         Step("Step_07_NotarCavalo", "Notar o cavalo sem cabeça", new[] { "HorseNoticed" },
+            intercepted: new[] { ("fusebox", "Hm... antes do painel, tem algo estranho nesse carrossel.") },
             onStart: new[] { Trigger("carousel_near", true) },
             onComplete: new[]
             {
@@ -50,8 +52,10 @@ public static class ProgressionSetup
                 Think("Que estranho... tá faltando a cabeça desse cavalo. Preciso achar e colocar de volta."),
                 Task("horse_head", TaskState.Current)
             });
-        Step("Step_08_PegarCabeca", "Pegar a cabeça do cavalo", new[] { "HorseHeadTaken" }, active: new[] { "horse_head" });
-        Step("Step_09_EncaixarCabeca", "Encaixar a cabeça do cavalo", new[] { "HorseHeadFixed" }, active: new[] { "horse_neck" });
+        Step("Step_08_PegarCabeca", "Pegar a cabeça do cavalo", new[] { "HorseHeadTaken" }, active: new[] { "horse_head" },
+            blocked: new[] { ("fusebox", HorseFirstText) });
+        Step("Step_09_EncaixarCabeca", "Encaixar a cabeça do cavalo", new[] { "HorseHeadFixed" }, active: new[] { "horse_neck" },
+            blocked: new[] { ("fusebox", HorseFirstText) });
         Step("Step_10_IrAoCarrossel", "Ir ao quadro do carrossel", new[] { "FuseBoxInspected" },
             intercepted: new[] { ("fusebox", MissingFuseText) },
             onComplete: new[]
@@ -60,7 +64,8 @@ public static class ProgressionSetup
                 Task("fuse_find", TaskState.Current)
             });
         Step("Step_11_AcharFusivel", "Achar o fusível", new[] { "FuseTaken" }, active: new[] { "fuse_pickup" },
-            onComplete: new[] { Task("fuse_fix", TaskState.Current) });
+            onComplete: new[] { Task("fuse_fix", TaskState.Current) },
+            blocked: new[] { ("fusebox", MissingFuseText) });
         Step("Step_12_QuadroDeFusiveis", "Consertar o quadro de fusíveis", new[] { "FuseBoxFixed" }, active: new[] { "fusebox" });
         Step("Step_13_Fim", "Fim provisório", new string[0]);   // acrescente etapas depois desta (ou reordene a lista do diretor)
         AssetDatabase.SaveAssets();
@@ -146,7 +151,8 @@ public static class ProgressionSetup
     }
 
     static void Step(string file, string label, string[] completion, string[] active = null,
-        (string id, string text)[] intercepted = null, StepAction[] onStart = null, StepAction[] onComplete = null)
+        (string id, string text)[] intercepted = null, StepAction[] onStart = null, StepAction[] onComplete = null,
+        (string id, string text)[] blocked = null)
     {
         string path = $"{Folder}/{file}.asset";
         if (AssetDatabase.LoadAssetAtPath<ProgressionStep>(path) != null) return;
@@ -156,6 +162,8 @@ public static class ProgressionSetup
         if (active != null) s.activeInteractions.AddRange(active);
         if (intercepted != null)
             foreach (var (id, text) in intercepted) s.interceptedInteractions.Add(new InterceptedInteraction { interactionId = id, text = text });
+        if (blocked != null)
+            foreach (var (id, text) in blocked) s.blockedTexts.Add(new InterceptedInteraction { interactionId = id, text = text });
         if (onStart != null) s.onStart.AddRange(onStart);
         if (onComplete != null) s.onComplete.AddRange(onComplete);
         AssetDatabase.CreateAsset(s, path);
@@ -192,7 +200,7 @@ public static class ProgressionSetup
         Gate<ZatanRepairMinigame>("zatan_repair", "ZatanFixed");
         Gate<GasCan>("gas_can", "GasCanTaken");
         Gate<GeneratorFuelMinigame>("generator", "GeneratorStarted");
-        Gate<FuseBoxMinigame>("fusebox", "FuseBoxFixed", MissingFuseText);
+        Gate<FuseBoxMinigame>("fusebox", "FuseBoxFixed");   // os textos de bloqueio vem de cada etapa
         Gate<HorseHead>("horse_head", "HorseHeadTaken");
         Gate<HorseNeckSocket>("horse_neck", "HorseHeadFixed");
 

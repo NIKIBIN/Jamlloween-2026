@@ -43,6 +43,7 @@ public class PlayerInteractor : MonoBehaviour
         {
             if (hit.collider.transform.IsChildOf(transform)) continue;   // ignora o proprio jogador
             current = hit.collider.GetComponentInParent<IInteractable>();
+            if (current == null && hit.collider.isTrigger) continue;     // areas invisiveis (gatilhos de etapa, zonas) nao bloqueiam
             if (current != null && string.IsNullOrEmpty(current.Prompt)) current = null;
             break;                                                        // o primeiro objeto na frente decide
         }

@@ -16,6 +16,9 @@ MonoBehaviour:
   activeInteractions:
   - fuse_pickup
   interceptedInteractions: []
+  blockedTexts:
+  - interactionId: fusebox
+    text: "Falta um fus\xEDvel aqui."
   completionEvents:
   - FuseTaken
   onStart: []

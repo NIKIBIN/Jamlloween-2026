@@ -252,6 +252,8 @@ namespace Jamlloween.Progression
                     return false;
                 }
                 if (step.activeInteractions.Contains(id)) return true;
+                foreach (var b in step.blockedTexts)
+                    if (b.interactionId == id && !string.IsNullOrEmpty(b.text)) { d.ShowBlocked(b.text); return false; }
             }
             d.ShowBlocked(interactionBlockedText);
             return false;

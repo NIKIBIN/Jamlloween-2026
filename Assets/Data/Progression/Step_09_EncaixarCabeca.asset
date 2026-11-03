@@ -16,6 +16,9 @@ MonoBehaviour:
   activeInteractions:
   - horse_neck
   interceptedInteractions: []
+  blockedTexts:
+  - interactionId: fusebox
+    text: "Antes do painel, preciso p\xF4r a cabe\xE7a daquele cavalo de volta."
   completionEvents:
   - HorseHeadFixed
   onStart: []
