@@ -18,6 +18,7 @@ public static class MinigameWorkLampBuilder
     [MenuItem("Circus/Build Minigame Work Lamp Prefab")]
     public static void BuildPrefab()
     {
+        if (!PSXLegacyGuard.Confirm("Build Minigame Work Lamp Prefab")) return;
         Directory.CreateDirectory(MatDir);
         Directory.CreateDirectory(Path.GetDirectoryName(PrefabPath));
 

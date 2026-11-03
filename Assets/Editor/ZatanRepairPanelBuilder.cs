@@ -21,6 +21,7 @@ public static class ZatanRepairPanelBuilder
     [MenuItem("Circus/Build Zatan Repair Panel Prefab")]
     public static void Build()
     {
+        if (!PSXLegacyGuard.Confirm("Build Zatan Repair Panel Prefab")) return;
         Directory.CreateDirectory(MatDir);
         Directory.CreateDirectory(Path.GetDirectoryName(PrefabPath));
         font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);

@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: ZatanTarInterior
-  m_Shader: {fileID: 4800000, guid: 91fe8a0431f3c0c40b6f82c6815aeb12, type: 3}
+  m_Shader: {fileID: 4800000, guid: 5d1369c23f1c1104e2907d7646f36c9b, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -83,6 +83,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _AddPrecomputedVelocity: 0
+    - _Affine: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _Blend: 0
@@ -91,7 +92,7 @@ Material:
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
-    - _Cutoff: 0.5
+    - _Cutoff: 0
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -110,6 +111,7 @@ Material:
     - _ScreenSpaceReflectionsContributeTransparent: 1
     - _Smoothness: 0.8
     - _SmoothnessTextureChannel: 0
+    - _SnapRows: 240
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1

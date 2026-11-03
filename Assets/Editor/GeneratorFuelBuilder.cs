@@ -30,6 +30,7 @@ public static class GeneratorFuelBuilder
     [MenuItem("Jamlloween/Build Generator Fuel Minigame")]
     public static void Build()
     {
+        if (!PSXLegacyGuard.Confirm("Build Generator Fuel Minigame")) return;
         var gen = GameObject.Find("PF_generator_trailer");
         if (gen == null) { Debug.LogError("[GeneratorFuelBuilder] PF_generator_trailer nao esta na cena aberta."); return; }
         var gasCan = Object.FindFirstObjectByType<GasCan>(FindObjectsInactive.Include);

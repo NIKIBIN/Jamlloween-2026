@@ -12,6 +12,7 @@ public static class MinigameMaterialConverter
     [MenuItem("Circus/Convert Minigame Materials To Fog Surface")]
     public static void Convert()
     {
+        if (!PSXLegacyGuard.Confirm("Convert Minigame Materials To Fog Surface")) return;
         var target = Shader.Find("Jamlloween/Flashlight Fog Surface");
         if (target == null) { Debug.LogError("[MinigameMaterialConverter] shader Jamlloween/Flashlight Fog Surface nao encontrado"); return; }
 
