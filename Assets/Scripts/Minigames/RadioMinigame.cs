@@ -14,7 +14,7 @@ using UnityEngine.InputSystem;
 ///  4. Arrastar a tampa de volta ate encaixar. O radio liga sozinho e toca estatica.
 ///  5. Clicar no radio para vira-lo para a frente.
 ///  6. Girar o dial (arrastar em circulo). A estatica diminui perto da frequencia do bilhete.
-///     Ao acertar, o patrao fala e o minigame termina.
+///     Ao acertar, o patrao fala e o minigame termina. O jogador leva o radio: ele sai da mesa ao devolver o controle.
 /// Sem HUD: tudo vem do proprio objeto (LED, estatica, bilhete, escala do dial).
 /// O progresso fica nos campos do componente, entao sair no meio nao reseta nada.
 /// </summary>
@@ -92,6 +92,7 @@ public class RadioMinigame : Minigame
     protected override void Awake()
     {
         base.Awake();
+        onExited.AddListener(() => { if (IsCompleted) TakeRadio(); });
         noteLabel.text = correctFrequency.ToString("0.0", CultureInfo.InvariantCulture) + " MHz";
         batteries.gameObject.SetActive(false);
         led.sharedMaterial = ledOffMaterial;
@@ -369,6 +370,19 @@ public class RadioMinigame : Minigame
         SetHover(null);
         float length = radioAudio.PlayBoss();
         Complete(length + 0.8f);
+    }
+
+    /// <summary>Consertado, o jogador leva o radio com ele: o radio e as pecas soltas saem da mesa.</summary>
+    void TakeRadio()
+    {
+        if (radio != null) radio.gameObject.SetActive(false);
+        if (loose != null) loose.gameObject.SetActive(false);
+    }
+
+    public override void ForceComplete()
+    {
+        base.ForceComplete();
+        TakeRadio();
     }
 
     // ---------- Virar o radio ----------
