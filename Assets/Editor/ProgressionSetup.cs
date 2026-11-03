@@ -41,17 +41,28 @@ public static class ProgressionSetup
         Step("Step_06_FalaCarrossel", "Reportar: ir ao carrossel", new[] { ProgressionDirector.RadioIdleEvent },
             onStart: new[] { Say("Saiu da caixa? Para de besteira, alguém deve ter tirado ele dali. Vai pro carrossel e termina logo.") },
             onComplete: new[] { Task("carousel", TaskState.Current) });
-        Step("Step_07_IrAoCarrossel", "Ir ao carrossel", new[] { "FuseBoxInspected" },
+        // Cabeca do cavalo: o tecnico nota o cavalo sem cabeca, acha a cabeca atras do carrossel e encaixa. So depois o quadro de fusiveis.
+        Step("Step_07_NotarCavalo", "Notar o cavalo sem cabeça", new[] { "HorseNoticed" },
+            onStart: new[] { Trigger("carousel_near", true) },
+            onComplete: new[]
+            {
+                Trigger("carousel_near", false),
+                Think("Que estranho... tá faltando a cabeça desse cavalo. Preciso achar e colocar de volta."),
+                Task("horse_head", TaskState.Current)
+            });
+        Step("Step_08_PegarCabeca", "Pegar a cabeça do cavalo", new[] { "HorseHeadTaken" }, active: new[] { "horse_head" });
+        Step("Step_09_EncaixarCabeca", "Encaixar a cabeça do cavalo", new[] { "HorseHeadFixed" }, active: new[] { "horse_neck" });
+        Step("Step_10_IrAoCarrossel", "Ir ao quadro do carrossel", new[] { "FuseBoxInspected" },
             intercepted: new[] { ("fusebox", MissingFuseText) },
             onComplete: new[]
             {
                 Say("Falta fusível? O pessoal do circo disse que pode ter um na casa de diversão dos palhaços. Tenta lá primeiro."),
                 Task("fuse_find", TaskState.Current)
             });
-        Step("Step_08_AcharFusivel", "Achar o fusível", new[] { "FuseTaken" }, active: new[] { "fuse_pickup" },
+        Step("Step_11_AcharFusivel", "Achar o fusível", new[] { "FuseTaken" }, active: new[] { "fuse_pickup" },
             onComplete: new[] { Task("fuse_fix", TaskState.Current) });
-        Step("Step_09_QuadroDeFusiveis", "Consertar o quadro de fusíveis", new[] { "FuseBoxFixed" }, active: new[] { "fusebox" });
-        Step("Step_10_Fim", "Fim provisório", new string[0]);   // acrescente etapas depois desta (ou reordene a lista do diretor)
+        Step("Step_12_QuadroDeFusiveis", "Consertar o quadro de fusíveis", new[] { "FuseBoxFixed" }, active: new[] { "fusebox" });
+        Step("Step_13_Fim", "Fim provisório", new string[0]);   // acrescente etapas depois desta (ou reordene a lista do diretor)
         AssetDatabase.SaveAssets();
         Debug.Log($"[ProgressionSetup] etapas em {Folder}");
     }
@@ -65,6 +76,7 @@ public static class ProgressionSetup
         new ClipboardTask { id = "generator", text = "Abastecer e ligar o gerador", initialState = TaskState.Hidden, doneEvent = "GeneratorStarted" },
         new ClipboardTask { id = "gas", text = "Pegar a gasolina", indent = true, initialState = TaskState.Hidden, doneEvent = "GasCanTaken" },
         new ClipboardTask { id = "carousel", text = "Consertar o carrossel", initialState = TaskState.Future, doneEvent = "FuseBoxFixed" },
+        new ClipboardTask { id = "horse_head", text = "Colocar a cabeça do cavalo", indent = true, doneEvent = "HorseHeadFixed" },
         new ClipboardTask { id = "fuse_find", text = "Achar um fusível", indent = true, doneEvent = "FuseTaken" },
         new ClipboardTask { id = "fuse_fix", text = "Consertar o quadro de fusíveis", indent = true, doneEvent = "FuseBoxFixed" },
     };
@@ -81,12 +93,36 @@ public static class ProgressionSetup
         Debug.Log("[ProgressionSetup] etapas e tarefas recriadas.");
     }
 
+    /// <summary>Migra a cena para as etapas 0-13 (cabeca do cavalo antes do fusivel): renomeia as etapas antigas 07-10 mantendo os GUIDs, cria as novas e reaplica a lista e a prancheta no diretor.</summary>
+    [MenuItem("Jamlloween/Progression/Migrate To Horse Head Steps")]
+    public static void MigrateHorseHead()
+    {
+        (string from, string to)[] moves =
+        {
+            ("Step_10_Fim", "Step_13_Fim"), ("Step_09_QuadroDeFusiveis", "Step_12_QuadroDeFusiveis"),
+            ("Step_08_AcharFusivel", "Step_11_AcharFusivel"), ("Step_07_IrAoCarrossel", "Step_10_IrAoCarrossel"),
+        };
+        foreach (var (from, to) in moves)
+        {
+            string src = $"{Folder}/{from}.asset";
+            if (AssetDatabase.LoadAssetAtPath<ProgressionStep>(src) == null) continue;
+            string err = AssetDatabase.MoveAsset(src, $"{Folder}/{to}.asset");
+            if (!string.IsNullOrEmpty(err)) Debug.LogError("[ProgressionSetup] " + err);
+        }
+        var irAo = AssetDatabase.LoadAssetAtPath<ProgressionStep>($"{Folder}/Step_10_IrAoCarrossel.asset");
+        if (irAo != null) { irAo.label = "Ir ao quadro do carrossel"; EditorUtility.SetDirty(irAo); }
+        CreateSteps();
+        var director = Object.FindFirstObjectByType<ProgressionDirector>(FindObjectsInactive.Include);
+        if (director != null) ApplyToDirector(director);
+        Debug.Log("[ProgressionSetup] etapas migradas para 0-13.");
+    }
+
     static void ApplyToDirector(ProgressionDirector d)
     {
         var steps = new List<ProgressionStep>();
         foreach (var guid in AssetDatabase.FindAssets("t:ProgressionStep", new[] { Folder }))
             steps.Add(AssetDatabase.LoadAssetAtPath<ProgressionStep>(AssetDatabase.GUIDToAssetPath(guid)));
-        steps.Sort((a, b) => string.CompareOrdinal(a.name, b.name));   // Step_00..Step_10
+        steps.Sort((a, b) => string.CompareOrdinal(a.name, b.name));   // Step_00..Step_13
 
         var so = new SerializedObject(d);
         var list = so.FindProperty("steps");
@@ -126,6 +162,9 @@ public static class ProgressionSetup
     }
 
     static StepAction Say(string text) => new StepAction { kind = StepAction.Kind.RadioLine, line = new RadioLine { text = text } };
+    /// <summary>O tecnico pensando em voz alta: legenda sem nome, na mesma fila das falas do radio.</summary>
+    static StepAction Think(string text) => new StepAction { kind = StepAction.Kind.RadioLine, line = new RadioLine { speaker = "", text = text } };
+    static StepAction Trigger(string id, bool on) => new StepAction { kind = StepAction.Kind.Trigger, targetId = id, state = on };
     static StepAction Lights(string id, bool on) => new StepAction { kind = StepAction.Kind.LightGroup, targetId = id, state = on };
     static StepAction Evt(string name) => new StepAction { kind = StepAction.Kind.Event, targetId = name };
     static StepAction Task(string id, TaskState state) => new StepAction { kind = StepAction.Kind.Task, targetId = id, taskState = state };
@@ -154,6 +193,8 @@ public static class ProgressionSetup
         Gate<GasCan>("gas_can", "GasCanTaken");
         Gate<GeneratorFuelMinigame>("generator", "GeneratorStarted");
         Gate<FuseBoxMinigame>("fusebox", "FuseBoxFixed", MissingFuseText);
+        Gate<HorseHead>("horse_head", "HorseHeadTaken");
+        Gate<HorseNeckSocket>("horse_neck", "HorseHeadFixed");
 
         // Marcador que precisa de posição na cena (placeholder).
         Place(root, "LightGroup_Park", o => Set(o.AddComponent<LightGroup>(), "groupId", "park"));

@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce996ab14216ced2eaaf30e60f90bcb3, type: 3}
-  m_Name: Step_09_QuadroDeFusiveis
+  m_Name: Step_09_EncaixarCabeca
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.ProgressionStep
-  label: "Consertar o quadro de fus\xEDveis"
+  label: "Encaixar a cabe\xE7a do cavalo"
   activeInteractions:
-  - fusebox
+  - horse_neck
   interceptedInteractions: []
   completionEvents:
-  - FuseBoxFixed
+  - HorseHeadFixed
   onStart: []
   onComplete: []

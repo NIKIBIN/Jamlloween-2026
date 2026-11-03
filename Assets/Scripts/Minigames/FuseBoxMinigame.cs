@@ -28,7 +28,6 @@ public class FuseBoxMinigame : Minigame
     [SerializeField] Material ledReadyMaterial;
     [SerializeField] Material ledOkMaterial;
     [SerializeField] Material burntFuseMaterial;
-    [SerializeField] Color hoverColor = new Color(0.45f, 0.4f, 0.15f);
 
     [Header("Ajustes")]
     [Tooltip("Qual fusivel esta queimado. -1 sorteia ao iniciar a cena.")]
@@ -177,9 +176,9 @@ public class FuseBoxMinigame : Minigame
     void SetHover(FuseBoxPart p)
     {
         if (hovered == p) return;
-        if (hovered != null) hovered.SetHighlight(false, hoverColor);
+        if (hovered != null) hovered.SetHighlight(false, HighlightTint.Contrast);
         hovered = p;
-        if (hovered != null) hovered.SetHighlight(true, hoverColor);
+        if (hovered != null) hovered.SetHighlight(true, HighlightTint.Contrast);
     }
 
     // ---------- Parafusos ----------

@@ -3,46 +3,61 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// Abastecer e ligar o gerador, diegetico. So abre se o jogador estiver carregando o galao. Passos:
-///  1. Abrir o tanque: segurar a tampa e girar o mouse em circulo (anti-horario) ate ela soltar.
-///  2. Colocar o funil: arrastar o funil ate a boca do tanque. Encaixa ao soltar perto dela.
-///  3. Despejar: segurar o botao e arrastar para baixo para inclinar o galao. A inclinacao define a vazao; passou do
-///     limite o funil transborda (respingo, som no chao e barulho). O medidor do gerador mostra o nivel; cheio, o despejo para.
-///  4. Fechar o tanque: girar a tampa de volta (sentido horario).
-///  5. Dar partida: puxar a corda para tras, rapido. Engasga na 1a e na 2a puxadas, liga na 3a (configuravel).
-/// Sem HUD: tudo aparece no gerador. O progresso fica nos campos, entao sair no meio nao reseta nada. Nada pausa o jogo.
+/// Abastecer e ligar o gerador, diegetico. Tudo fica na face da frente do gerador: bocal lateral (como num carro),
+/// tampa, medidor e corda de partida. So abre com o galao na mao enquanto o tanque nao esta cheio. Passos:
+///  1. Abrir o bocal: segurar a tampa e girar o mouse em circulo (anti-horario) ate ela sair.
+///  2. Despejar: segurar o clique no galao. Quanto mais tempo segurando, mais ele inclina e mais rapido sai. Soltar
+///     volta o galao. O bocal engole numa vazao fixa: despejando mais rapido que isso, a espuma sobe na boca e, quando
+///     chega na borda, transborda (respingo, som e barulho no NoiseSystem). O medidor mostra o nivel.
+///  3. Fechar o bocal: girar a tampa de volta (sentido horario).
+///  4. Dar partida: puxar a corda ate o fim. Engasga na 1a e na 2a (cada vez mais perto de pegar), liga na 3a.
+/// Sem HUD: so a peca do passo atual reage ao mouse. O progresso fica nos campos, entao sair no meio nao reseta nada.
 /// </summary>
 public class GeneratorFuelMinigame : Minigame
 {
-    enum Drag { None, Cap, Funnel, Pour, Cord }
+    enum Drag { None, Cap, Pour, Cord }
 
-    [Header("Pecas")]
-    [Tooltip("Boca do tanque. +Y aponta para cima.")]
+    [Header("Bocal e tampa")]
+    [Tooltip("Boca do bocal. +Y aponta para fora do bocal (eixo de giro da tampa).")]
     [SerializeField] Transform tankMouth;
     [SerializeField] GeneratorPart cap;
-    [Tooltip("Onde a tampa fica quando solta.")]
+    [Tooltip("Onde a tampa fica pendurada quando solta.")]
     [SerializeField] Transform capRest;
-    [SerializeField] GeneratorPart funnel;
-    [Tooltip("Onde o funil descansa.")]
-    [SerializeField] Transform funnelHome;
-    [Tooltip("Onde o funil fica encaixado na boca do tanque.")]
-    [SerializeField] Transform funnelSeat;
-    [SerializeField] Color hoverColor = new Color(0.45f, 0.4f, 0.15f);
+    [SerializeField] float capTurns = 1f;
+    [Tooltip("Quanto a tampa sai ao desenroscar, ao longo do bocal (m).")]
+    [SerializeField] float capLift = 0.03f;
 
-    [Header("Galao no minigame")]
-    [Tooltip("O galao inclinando. Aparece so durante o minigame (ligue-o em 'Ligados so durante o minigame').")]
-    [SerializeField] Transform pourCan;
-    [Tooltip("Pose do galao em pe, na mao do jogador.")]
+    [Header("Galao")]
+    [Tooltip("O galao do minigame (pivo no bico, com GeneratorPart Can). Fica visivel so durante o minigame.")]
+    [SerializeField] GeneratorPart pourCan;
+    [Tooltip("Galao em pe, entrando pela lateral da tela.")]
     [SerializeField] Transform canHoldPose;
-    [Tooltip("Pose do galao com o bico sobre o funil.")]
+    [Tooltip("Bico sobre a boca do bocal, ainda em pe. A inclinacao gira em torno do +Z deste minigame (o eixo que aponta para dentro do gerador).")]
     [SerializeField] Transform canPourPose;
-    [Tooltip("Fio de gasolina. Estica do bico ate o funil.")]
+    [SerializeField] float maxTiltDegrees = 100f;
+    [Tooltip("Segundos segurando o clique para inclinar o galao ao maximo.")]
+    [SerializeField] float secondsToFullTilt = 2f;
+    [Tooltip("Velocidade (inclinacao por segundo) com que o galao volta ao soltar.")]
+    [SerializeField] float returnSpeed = 3f;
+    [Tooltip("Inclinacao (0 a 1) a partir da qual comeca a sair gasolina.")]
+    [SerializeField, Range(0f, 0.9f)] float pourStartTilt = 0.25f;
+    [Tooltip("Fio de gasolina. Estica do bico ate a boca.")]
     [SerializeField] Transform stream;
-    [Tooltip("Aonde o fio de gasolina chega.")]
     [SerializeField] Transform streamTarget;
     [Tooltip("O galao do mundo (o carregado). Ao ligar o gerador ele fica vazio neste ponto.")]
     [SerializeField] GasCan gasCan;
     [SerializeField] Transform canSpentPoint;
+
+    [Header("Vazao")]
+    [Tooltip("Quanto o bocal engole por segundo (1 = tanque cheio).")]
+    [SerializeField] float intakePerSecond = 0.25f;
+    [Tooltip("Vazao do galao na inclinacao maxima, em multiplos do que o bocal engole. Acima de 1 a espuma sobe.")]
+    [SerializeField] float maxFlowRatio = 1.8f;
+    [Tooltip("Quanto cabe na boca do bocal antes de transbordar (mesma unidade do tanque).")]
+    [SerializeField] float mouthCapacity = 0.12f;
+    [Tooltip("Espuma na boca. Cresce e sobe conforme a boca enche.")]
+    [SerializeField] Transform foam;
+    [SerializeField] float foamRise = 0.03f;
 
     [Header("Medidor")]
     [SerializeField] Transform gaugeNeedle;
@@ -53,50 +68,23 @@ public class GeneratorFuelMinigame : Minigame
     [Header("Corda")]
     [SerializeField] GeneratorPart cordHandle;
     [SerializeField] Transform cordRest, cordEnd, cordAnchor;
-    [Tooltip("Fio da corda (esticado do ancoradouro ate o puxador).")]
     [SerializeField] Transform cordLine;
     [Tooltip("Corpo do gerador. Treme quando o motor engasga ou funciona.")]
     [SerializeField] Transform engineBody;
-
-    [Header("Efeitos")]
-    [SerializeField] ParticleSystem splash;
-
-    [Header("Abrir e fechar a tampa")]
-    [SerializeField] float capTurns = 1.5f;
-    [Tooltip("Quanto a tampa sobe ao desenroscar (m).")]
-    [SerializeField] float capLift = 0.04f;
-
-    [Header("Funil")]
-    [Tooltip("Distancia (m) da boca do tanque para o funil encaixar ao ser solto.")]
-    [SerializeField] float snapDistance = 0.14f;
-    [SerializeField] float funnelDragHeight = 0.12f;
-
-    [Header("Despejo")]
-    [Tooltip("Quanto o tanque enche por segundo com o despejo no limite (1 = tanque cheio).")]
-    [SerializeField] float fillPerSecond = 0.3f;
-    [Tooltip("Vazao (0 a 1) acima da qual o funil transborda. A vazao que passa disso e perdida.")]
-    [SerializeField, Range(0.1f, 1f)] float overflowLimit = 0.65f;
-    [Tooltip("Inclinacao (0 a 1) a partir da qual comeca a sair gasolina.")]
-    [SerializeField, Range(0f, 0.9f)] float pourStartTilt = 0.3f;
-    [Tooltip("Fracao da altura da tela que o mouse precisa descer para inclinar o galao ao maximo.")]
-    [SerializeField] float tiltDragScreenFraction = 0.3f;
-    [SerializeField] float tiltSpeed = 3f;
-    [Tooltip("Inclinacao maxima do galao (graus).")]
-    [SerializeField] float maxTiltDegrees = 105f;
-    [Tooltip("+1 ou -1: sentido em que o galao inclina.")]
-    [SerializeField] float tiltSign = -1f;
-
-    [Header("Partida")]
     [SerializeField] int pullsToStart = 3;
-    [Tooltip("Tempo maximo (s) para a puxada completa. Mais lento que isso nao conta.")]
-    [SerializeField] float pullMaxSeconds = 0.6f;
     [SerializeField] float shakeAmount = 0.01f;
 
+    [Header("Retorno")]
+    [SerializeField] ParticleSystem splash;
+    [Tooltip("Fumaca do escapamento: um sopro a cada engasgo, continua com o motor ligado.")]
+    [SerializeField] ParticleSystem exhaustSmoke;
+    [Tooltip("Lampada piloto na face do gerador. Pisca no 2o engasgo e acende com o motor ligado.")]
+    [SerializeField] Renderer pilotLamp;
+    [SerializeField] Material lampOffMaterial, lampOnMaterial;
+
     [Header("Barulho (NoiseSystem)")]
-    [Tooltip("Raio do barulho do transbordo, repetido a cada intervalo enquanto transborda.")]
     [SerializeField] float spillNoiseRadius = 14f;
     [SerializeField] float spillNoiseInterval = 0.7f;
-    [Tooltip("Raio do barulho de cada puxada da corda.")]
     [SerializeField] float pullNoiseRadius = 20f;
 
     [Header("Audio (vazio = som gerado em codigo)")]
@@ -118,9 +106,9 @@ public class GeneratorFuelMinigame : Minigame
     [SerializeField] string missingCanText = "Preciso de combustível.";
 
     // --- estado (persiste ao sair) ---
-    float capProgress;               // 0 = fechada no tanque, 1 = solta e de lado
-    bool funnelSeated, full, sealedTank;
-    float fuel;                      // 0 a 1
+    float capProgress;               // 0 = fechada no bocal, 1 = solta e pendurada
+    bool full, sealedTank;
+    float fuel, mouth;               // tanque e boca (mesma unidade)
     int pulls;
     bool running;
 
@@ -128,29 +116,25 @@ public class GeneratorFuelMinigame : Minigame
     Drag drag;
     GeneratorPart hovered;
     GasCanCarrier carrier;
-    float prevAngle, pourStartY, tilt, tiltTarget, needleAngle, spillTimer;
+    float prevAngle, tilt, needleAngle, spillTimer, capWrongTurn;
     bool busy;
-    Vector3 funnelHomePos, engineHome, cordHandleRestLocal;
-    Quaternion funnelHomeRot, needleHome;
-    Vector2 cordPress, cordAxis; float cordAxisLength, cordProgress, cordStartTime;
+    Vector3 engineHome;
+    Quaternion needleHome;
+    Vector2 cordPress, cordAxis; float cordAxisLength, cordProgress;
     AudioSource sfx, pourSrc, spillSrc, runSrc;
-    Coroutine funnelRoutine, cordRoutine;
+    Coroutine cordRoutine;
 
     public float Fuel => fuel;
     public bool TankOpen => capProgress >= 1f;
-    public bool FunnelSeated => funnelSeated;
     public bool TankSealed => sealedTank;
     public int Pulls => pulls;
     public bool EngineRunning => running;
 
-    bool CanPour => funnelSeated && !full;
-    bool FunnelAway => !funnelSeated;
+    bool CanPour => capProgress >= 1f && !full;
 
     protected override void Awake()
     {
         base.Awake();
-        funnelHomePos = funnel.transform.position;
-        funnelHomeRot = funnel.transform.rotation;
         if (engineBody != null) engineHome = engineBody.localPosition;
         if (gaugeNeedle != null) needleHome = gaugeNeedle.localRotation;
         needleAngle = gaugeEmptyAngle;
@@ -161,6 +145,8 @@ public class GeneratorFuelMinigame : Minigame
         runSrc = NewSource(true); runSrc.clip = runClip != null ? runClip : FuelAudio.EngineLoop();
         onExited.AddListener(OnLeft);
         if (splash != null) splash.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        if (exhaustSmoke != null) exhaustSmoke.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        SetLamp(false);
         ApplyAll();
     }
 
@@ -178,9 +164,10 @@ public class GeneratorFuelMinigame : Minigame
 
     // ---------- Entrada ----------
 
+    // O galao so e preciso enquanto falta combustivel: com o tanque cheio da para voltar so para fechar e dar partida.
     protected override string MissingRequirementText(PlayerInteractor interactor)
     {
-        if (IsCompleted) return null;
+        if (IsCompleted || full) return null;
         var c = interactor.GetComponent<GasCanCarrier>();
         return c != null && c.IsCarrying ? null : missingCanText;
     }
@@ -188,23 +175,24 @@ public class GeneratorFuelMinigame : Minigame
     protected override void OnBegin(PlayerInteractor interactor)
     {
         carrier = interactor.GetComponent<GasCanCarrier>();
-        if (carrier != null) carrier.SetHeldVisible(false);   // o galao do minigame toma o lugar do da mao
-        tilt = tiltTarget = 0f;
+        bool hasCan = carrier != null && carrier.IsCarrying;
+        if (hasCan) carrier.SetHeldVisible(false);   // o galao do minigame toma o lugar do da mao
+        if (pourCan != null) pourCan.gameObject.SetActive(hasCan && !full);
+        tilt = 0f;
         ApplyAll();
     }
 
     void OnLeft()
     {
         if (carrier != null && carrier.IsCarrying) carrier.SetHeldVisible(true);
+        if (pourCan != null) pourCan.gameObject.SetActive(false);
     }
 
     protected override void OnExitRequested()
     {
         SetHover(null);
-        if (drag == Drag.Funnel) ReleaseFunnel();
-        else if (drag == Drag.Cord) ReleaseCord();
+        if (drag == Drag.Cord) ReleaseCord();
         drag = Drag.None;
-        tiltTarget = 0f;
         StopPourEffects();
     }
 
@@ -215,9 +203,8 @@ public class GeneratorFuelMinigame : Minigame
         if (busy) return false;
         switch (p.kind)
         {
-            case GeneratorPart.Kind.Cap:
-                return (!full && !funnelSeated && capProgress < 1f) || (full && FunnelAway && !sealedTank);
-            case GeneratorPart.Kind.Funnel: return capProgress >= 1f && !funnelSeated && !full;
+            case GeneratorPart.Kind.Cap: return (!full && capProgress < 1f) || (full && !sealedTank);
+            case GeneratorPart.Kind.Can: return CanPour && p.gameObject.activeInHierarchy;
             case GeneratorPart.Kind.Cord: return sealedTank && !running;
         }
         return false;
@@ -233,27 +220,25 @@ public class GeneratorFuelMinigame : Minigame
         Vector2 pos = mouse.position.ReadValue();
         bool down = mouse.leftButton.wasPressedThisFrame;
         bool held = mouse.leftButton.isPressed && (Application.isFocused || !releaseOnFocusLoss);   // sem foco, o botao conta como solto
-        Ray ray = viewCamera.ScreenPointToRay(pos);
-
-        UpdatePour(Time.deltaTime);
 
         if (drag != Drag.None)
         {
-            ContinueDrag(viewCamera, ray, pos, held);
-            return;
+            switch (drag)
+            {
+                case Drag.Cap: DragCap(viewCamera, pos, held); break;
+                case Drag.Pour: if (!held || !CanPour) drag = Drag.None; break;
+                case Drag.Cord: DragCord(pos, held); break;
+            }
         }
-
-        var hit = Pick(ray);
-        var usable = hit != null && CanUse(hit) ? hit : null;
-        SetHover(usable);
-        if (!down) return;
-
-        if (usable != null) BeginPart(usable, viewCamera, ray, pos);
-        else if (CanPour && !busy)
+        else
         {
-            drag = Drag.Pour;
-            pourStartY = pos.y;
+            var hit = Pick(viewCamera.ScreenPointToRay(pos));
+            var usable = hit != null && CanUse(hit) ? hit : null;
+            SetHover(usable);
+            if (down && usable != null) BeginPart(usable, viewCamera, pos);
         }
+
+        UpdatePour(Time.deltaTime);
     }
 
     GeneratorPart Pick(Ray ray)
@@ -271,24 +256,23 @@ public class GeneratorFuelMinigame : Minigame
     void SetHover(GeneratorPart p)
     {
         if (hovered == p) return;
-        if (hovered != null) hovered.SetHighlight(false, hoverColor);
+        if (hovered != null) hovered.SetHighlight(false, HighlightTint.Contrast);
         hovered = p;
-        if (hovered != null) hovered.SetHighlight(true, hoverColor);
+        if (hovered != null) hovered.SetHighlight(true, HighlightTint.Contrast);
     }
 
-    void BeginPart(GeneratorPart p, Camera cam, Ray ray, Vector2 pos)
+    void BeginPart(GeneratorPart p, Camera cam, Vector2 pos)
     {
-        SetHover(null);
         switch (p.kind)
         {
             case GeneratorPart.Kind.Cap:
                 drag = Drag.Cap;
-                prevAngle = MouseAngle(cam, cap.transform.position, pos);
+                capWrongTurn = 0f;
+                prevAngle = ScreenAngle(cam, CapCenter, pos);
                 break;
-            case GeneratorPart.Kind.Funnel:
-                drag = Drag.Funnel;
-                if (funnelRoutine != null) StopCoroutine(funnelRoutine);
-                break;
+            case GeneratorPart.Kind.Can:
+                drag = Drag.Pour;   // a peca segue realcada enquanto o clique esta seguro
+                return;
             case GeneratorPart.Kind.Cord:
                 drag = Drag.Cord;
                 if (cordRoutine != null) StopCoroutine(cordRoutine);
@@ -298,28 +282,17 @@ public class GeneratorFuelMinigame : Minigame
                 cordAxis /= cordAxisLength;
                 cordPress = pos;
                 cordProgress = 0f;
-                cordStartTime = -1f;
                 break;
         }
-    }
-
-    void ContinueDrag(Camera cam, Ray ray, Vector2 pos, bool held)
-    {
-        switch (drag)
-        {
-            case Drag.Cap: DragCap(cam, pos, held); break;
-            case Drag.Funnel: DragFunnel(ray, held); break;
-            case Drag.Pour:
-                tiltTarget = held ? Mathf.Clamp01((pourStartY - pos.y) / Mathf.Max(1f, Screen.height * tiltDragScreenFraction)) : 0f;
-                if (!held) drag = Drag.None;
-                break;
-            case Drag.Cord: DragCord(pos, held); break;
-        }
+        SetHover(null);
     }
 
     // ---------- Tampa ----------
 
-    static float MouseAngle(Camera cam, Vector3 world, Vector2 mouse)
+    // Centro do giro na tela: a boca do bocal (a tampa sai do lugar ao abrir).
+    Vector3 CapCenter => tankMouth.position;
+
+    static float ScreenAngle(Camera cam, Vector3 world, Vector2 mouse)
     {
         Vector2 c = cam.WorldToScreenPoint(world);
         return Mathf.Atan2(mouse.y - c.y, mouse.x - c.x) * Mathf.Rad2Deg;
@@ -327,14 +300,29 @@ public class GeneratorFuelMinigame : Minigame
 
     void DragCap(Camera cam, Vector2 pos, bool held)
     {
-        if (!held) { drag = Drag.None; return; }
-        Vector2 c = cam.WorldToScreenPoint(cap.transform.position);
+        if (!held) { EndCapDrag(); return; }
+        Vector2 c = cam.WorldToScreenPoint(CapCenter);
         if ((pos - c).sqrMagnitude < 64f) return;   // perto demais do centro: o angulo seria instavel
 
         float a = Mathf.Atan2(pos.y - c.y, pos.x - c.x) * Mathf.Rad2Deg;
-        float delta = Mathf.DeltaAngle(prevAngle, a);   // + = anti-horario na tela
+        float delta = Mathf.DeltaAngle(prevAngle, a);   // + = anti-horario na tela = desenroscar
         prevAngle = a;
-        capProgress = Mathf.Clamp01(capProgress + delta / (capTurns * 360f));
+        float step = delta / (capTurns * 360f);
+
+        // Sentido errado: a tampa cede um pouco, resiste e estala uma vez, para o jogador entender que e para o outro lado.
+        bool wrong = full ? step > 0f && capProgress <= 0.6f : step < 0f && capProgress <= 0f;
+        if (wrong)
+        {
+            float before = capWrongTurn;
+            capWrongTurn = Mathf.Clamp(capWrongTurn + Mathf.Abs(step), 0f, 0.04f);
+            if (before < 0.04f && capWrongTurn >= 0.04f) Click();
+            ApplyCap();
+            return;
+        }
+        capWrongTurn = Mathf.MoveTowards(capWrongTurn, 0f, Mathf.Abs(step));
+
+        float min = full ? 0f : capProgress;   // abrindo nao volta; fechando nao sai de novo
+        capProgress = Mathf.Clamp(capProgress + step, full ? 0f : min, full ? capProgress : 1f);
         ApplyCap();
 
         if (!full && capProgress >= 1f)
@@ -342,6 +330,7 @@ public class GeneratorFuelMinigame : Minigame
             capProgress = 1f;
             Click();
             drag = Drag.None;
+            ApplyCap();
         }
         else if (full && capProgress <= 0f)
         {
@@ -352,74 +341,53 @@ public class GeneratorFuelMinigame : Minigame
         }
     }
 
+    void EndCapDrag()
+    {
+        drag = Drag.None;
+        capWrongTurn = 0f;
+        ApplyCap();
+    }
+
     void ApplyCap()
     {
         float p = capProgress;
+        // 0 a 0,6: desenrosca saindo pelo eixo do bocal. 0,6 a 1: vai para o gancho.
         Vector3 lifted = tankMouth.position + tankMouth.up * (capLift * Mathf.Min(1f, p / 0.6f));
         float slide = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((p - 0.6f) / 0.4f));
+        float turn = (p - capWrongTurn * (full ? -1f : 1f)) * capTurns * 360f;
+        Quaternion onMouth = tankMouth.rotation * Quaternion.Euler(0f, turn, 0f);
         cap.transform.position = Vector3.Lerp(lifted, capRest.position, slide);
-        cap.transform.rotation = tankMouth.rotation * Quaternion.Euler(0f, -p * capTurns * 360f, 0f);
-    }
-
-    // ---------- Funil ----------
-
-    void DragFunnel(Ray ray, bool held)
-    {
-        if (held)
-        {
-            var plane = new Plane(Vector3.up, funnelSeat.position + Vector3.up * funnelDragHeight);
-            if (plane.Raycast(ray, out float d))
-            {
-                Vector3 p = ray.GetPoint(d);
-                Vector3 off = p - funnelSeat.position;
-                off.y = 0f;
-                if (off.magnitude > 1.5f) p = funnelSeat.position + Vector3.up * funnelDragHeight + off.normalized * 1.5f;
-                funnel.transform.position = Vector3.Lerp(funnel.transform.position, p, 25f * Time.deltaTime);
-            }
-            funnel.transform.rotation = Quaternion.Slerp(funnel.transform.rotation, funnelSeat.rotation, 12f * Time.deltaTime);
-            return;
-        }
-        drag = Drag.None;
-        ReleaseFunnel();
-    }
-
-    void ReleaseFunnel()
-    {
-        Vector3 off = funnel.transform.position - funnelSeat.position;
-        off.y = 0f;
-        if (off.magnitude <= snapDistance)
-        {
-            funnelSeated = true;
-            Click();
-            if (funnelRoutine != null) StopCoroutine(funnelRoutine);
-            funnelRoutine = StartCoroutine(MoveTo(funnel.transform, funnelSeat.position, funnelSeat.rotation, 0.12f, null));
-        }
-        else
-        {
-            if (funnelRoutine != null) StopCoroutine(funnelRoutine);
-            funnelRoutine = StartCoroutine(MoveTo(funnel.transform, funnelHomePos, funnelHomeRot, 0.25f, null));
-        }
+        cap.transform.rotation = Quaternion.Slerp(onMouth, capRest.rotation, slide);
     }
 
     // ---------- Despejo ----------
 
     void UpdatePour(float dt)
     {
-        if (drag != Drag.Pour) tiltTarget = 0f;
-        tilt = Mathf.MoveTowards(tilt, tiltTarget, tiltSpeed * dt);
+        bool pouring = drag == Drag.Pour && CanPour;
+        tilt = pouring ? Mathf.MoveTowards(tilt, 1f, dt / Mathf.Max(0.1f, secondsToFullTilt))
+                       : Mathf.MoveTowards(tilt, 0f, returnSpeed * dt);
         ApplyCan();
 
-        float flow = CanPour ? Mathf.InverseLerp(pourStartTilt, 1f, tilt) : 0f;
-        bool overflow = flow > overflowLimit;
-
-        if (flow > 0f)
+        float flow = CanPour ? Mathf.InverseLerp(pourStartTilt, 1f, tilt) * maxFlowRatio * intakePerSecond : 0f;   // por segundo
+        bool overflow = false;
+        if (CanPour || mouth > 0f)
         {
-            fuel = Mathf.Min(1f, fuel + fillPerSecond * Mathf.Min(flow, overflowLimit) * dt);
+            mouth += flow * dt;
+            float swallowed = Mathf.Min(mouth, intakePerSecond * dt);
+            mouth -= swallowed;
+            fuel = Mathf.Min(1f, fuel + swallowed);
+            if (mouth > mouthCapacity)
+            {
+                overflow = true;     // o excesso cai fora do bocal
+                mouth = mouthCapacity;
+            }
             if (fuel >= 1f) FinishFilling();
         }
 
-        ApplyStream(flow);
-        SetLoop(pourSrc, flow > 0f, Mathf.Lerp(0.3f, 1f, flow) * volume);
+        ApplyStream(flow / (maxFlowRatio * intakePerSecond));
+        ApplyFoam();
+        SetLoop(pourSrc, flow > 0f, Mathf.Lerp(0.3f, 1f, flow / (maxFlowRatio * intakePerSecond)) * volume);
         SetLoop(spillSrc, overflow, volume);
         if (splash != null)
         {
@@ -433,7 +401,7 @@ public class GeneratorFuelMinigame : Minigame
             if (spillTimer <= 0f)
             {
                 spillTimer = spillNoiseInterval;
-                Circus.NoiseSystem.Emit(funnelSeat.position, spillNoiseRadius, Circus.NoiseSource.Machine);
+                Circus.NoiseSystem.Emit(tankMouth.position, spillNoiseRadius, Circus.NoiseSource.Machine);
             }
         }
         else spillTimer = 0f;
@@ -445,44 +413,47 @@ public class GeneratorFuelMinigame : Minigame
     {
         full = true;
         fuel = 1f;
-        tiltTarget = 0f;
+        mouth = 0f;
         if (drag == Drag.Pour) drag = Drag.None;
         Click();
-        // O funil sai da boca para o tanque poder ser fechado.
-        if (funnelRoutine != null) StopCoroutine(funnelRoutine);
-        funnelRoutine = StartCoroutine(RemoveFunnelRoutine());
-    }
-
-    IEnumerator RemoveFunnelRoutine()
-    {
-        yield return new WaitForSeconds(0.8f);
-        funnelSeated = false;
-        yield return MoveTo(funnel.transform, funnelHomePos, funnelHomeRot, 0.4f, null);
     }
 
     void ApplyCan()
     {
         if (pourCan == null) return;
-        float blend = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(tilt / 0.3f));
-        pourCan.position = Vector3.Lerp(canHoldPose.position, canPourPose.position, blend);
-        pourCan.rotation = Quaternion.Slerp(canHoldPose.rotation, canPourPose.rotation, blend)
-                           * Quaternion.Euler(tiltSign * tilt * maxTiltDegrees, 0f, 0f);
+        var t = pourCan.transform;
+        float blend = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(tilt / 0.25f));
+        t.position = Vector3.Lerp(canHoldPose.position, canPourPose.position, blend);
+        t.rotation = Quaternion.AngleAxis(-tilt * maxTiltDegrees, transform.forward)
+                     * Quaternion.Slerp(canHoldPose.rotation, canPourPose.rotation, blend);
     }
 
-    void ApplyStream(float flow)
+    void ApplyStream(float flow01)
     {
         if (stream == null) return;
-        bool on = flow > 0f && streamTarget != null;
+        bool on = flow01 > 0f && streamTarget != null && pourCan != null;
         if (stream.gameObject.activeSelf != on) stream.gameObject.SetActive(on);
         if (!on) return;
-        Vector3 a = pourCan.position, b = streamTarget.position;
+        Vector3 a = pourCan.transform.position, b = streamTarget.position;
         Vector3 dir = b - a;
         float len = dir.magnitude;
         if (len < 0.001f) return;
-        float w = Mathf.Lerp(0.008f, 0.03f, flow);
+        float w = Mathf.Lerp(0.006f, 0.022f, flow01);
         stream.position = (a + b) * 0.5f;
         stream.rotation = Quaternion.LookRotation(dir / len);
         stream.localScale = new Vector3(w, w, len);
+    }
+
+    void ApplyFoam()
+    {
+        if (foam == null) return;
+        float k = mouthCapacity > 0f ? Mathf.Clamp01(mouth / mouthCapacity) : 0f;
+        bool on = k > 0.15f;
+        if (foam.gameObject.activeSelf != on) foam.gameObject.SetActive(on);
+        if (!on) return;
+        foam.position = tankMouth.position + tankMouth.up * (foamRise * k - 0.01f);
+        float s = Mathf.Lerp(0.05f, 0.11f, k);
+        foam.localScale = new Vector3(s, 0.01f + 0.02f * k, s);
     }
 
     void UpdateGauge(float dt)
@@ -513,19 +484,15 @@ public class GeneratorFuelMinigame : Minigame
 
     // ---------- Corda ----------
 
+    // Qualquer puxada ate o fim conta, sem limite de tempo. Soltar antes faz a corda voltar.
     void DragCord(Vector2 pos, bool held)
     {
         if (!held) { drag = Drag.None; ReleaseCord(); return; }
-
         cordProgress = Mathf.Clamp01(Vector2.Dot(pos - cordPress, cordAxis) / cordAxisLength);
-        if (cordStartTime < 0f && cordProgress > 0.08f) cordStartTime = Time.time;
         ApplyCord(cordProgress);
         if (cordProgress < 1f) return;
-
         drag = Drag.None;
-        bool fastEnough = cordStartTime >= 0f && Time.time - cordStartTime <= pullMaxSeconds;
-        if (fastEnough) StartCoroutine(PullRoutine());
-        else ReleaseCord();   // devagar demais: a corda volta e nao conta
+        StartCoroutine(PullRoutine());
     }
 
     void ApplyCord(float p)
@@ -536,10 +503,10 @@ public class GeneratorFuelMinigame : Minigame
         Vector3 a = cordAnchor.position, b = cordHandle.transform.position;
         Vector3 dir = b - a;
         float len = dir.magnitude;
-        if (len < 0.001f) return;
+        if (len < 0.001f) { cordLine.localScale = Vector3.zero; return; }
         cordLine.position = (a + b) * 0.5f;
         cordLine.rotation = Quaternion.LookRotation(dir / len);
-        cordLine.localScale = new Vector3(0.012f, 0.012f, len);
+        cordLine.localScale = new Vector3(0.008f, 0.008f, len);
     }
 
     void ReleaseCord()
@@ -570,15 +537,19 @@ public class GeneratorFuelMinigame : Minigame
 
         if (pulls < pullsToStart)
         {
-            // 1a puxada: engasga curto e morre. 2a em diante: engasga mais longo, quase pega.
+            // Retorno crescente: cada engasgo e mais longo, sopra mais fumaca e, do 2o em diante, a lampada pisca.
+            float k = (pulls - 1f) / Mathf.Max(1f, pullsToStart - 2f);
             AudioClip clip = SputterClip(pulls);
             sfx.PlayOneShot(clip, volume);
-            yield return Shake(clip.length * 0.9f, shakeAmount * (pulls == 1 ? 1f : 1.6f));
+            Puff(Mathf.RoundToInt(Mathf.Lerp(6f, 16f, k)));
+            if (pulls >= 2) StartCoroutine(FlickerLamp(clip.length * 0.8f));
+            yield return Shake(clip.length * 0.9f, shakeAmount * Mathf.Lerp(1f, 1.8f, k));
             busy = false;
             yield break;
         }
 
         StartEngine();
+        Puff(24);
         yield return Shake(0.8f, shakeAmount * 1.2f);
         FinishCan();
         busy = false;
@@ -589,6 +560,28 @@ public class GeneratorFuelMinigame : Minigame
     {
         if (sputterClips != null && sputterClips.Length > 0) return sputterClips[Mathf.Min(pull - 1, sputterClips.Length - 1)];
         return FuelAudio.Sputter(longer: pull > 1);
+    }
+
+    void Puff(int count)
+    {
+        if (exhaustSmoke != null) exhaustSmoke.Emit(count);
+    }
+
+    IEnumerator FlickerLamp(float seconds)
+    {
+        for (float t = 0f; t < seconds; t += 0.07f)
+        {
+            SetLamp(Random.value > 0.45f);
+            yield return new WaitForSeconds(0.07f);
+        }
+        SetLamp(running);
+    }
+
+    void SetLamp(bool on)
+    {
+        if (pilotLamp == null) return;
+        var m = on ? lampOnMaterial : lampOffMaterial;
+        if (m != null) pilotLamp.sharedMaterial = m;
     }
 
     IEnumerator Shake(float seconds, float amount)
@@ -606,6 +599,13 @@ public class GeneratorFuelMinigame : Minigame
     void StartEngine()
     {
         running = true;
+        SetLamp(true);
+        if (exhaustSmoke != null)
+        {
+            var em = exhaustSmoke.emission;
+            em.rateOverTime = 4f;
+            exhaustSmoke.Play();
+        }
         if (!runSrc.isPlaying) { runSrc.volume = volume; runSrc.Play(); }
     }
 
@@ -632,9 +632,9 @@ public class GeneratorFuelMinigame : Minigame
     void ApplyAll()
     {
         ApplyCap();
-        if (funnelSeated) funnel.transform.SetPositionAndRotation(funnelSeat.position, funnelSeat.rotation);
         ApplyCan();
         ApplyCord(0f);
+        ApplyFoam();
         needleAngle = Mathf.Lerp(gaugeEmptyAngle, gaugeFullAngle, fuel);
         if (gaugeNeedle != null) gaugeNeedle.localRotation = needleHome * Quaternion.AngleAxis(needleAngle, Vector3.forward);
         if (stream != null) stream.gameObject.SetActive(false);
@@ -645,29 +645,14 @@ public class GeneratorFuelMinigame : Minigame
         base.ForceComplete();
         capProgress = 0f;
         fuel = 1f;
+        mouth = 0f;
         full = sealedTank = true;
-        funnelSeated = false;
         pulls = pullsToStart;
         if (carrier == null) carrier = FindFirstObjectByType<GasCanCarrier>();
         FinishCan();
         ApplyAll();
-        funnel.transform.SetPositionAndRotation(funnelHomePos, funnelHomeRot);
         StartEngine();
     }
 
     void Click() => sfx.PlayOneShot(clickClip != null ? clickClip : FuelAudio.Click(), volume);
-
-    static IEnumerator MoveTo(Transform t, Vector3 pos, Quaternion rot, float seconds, System.Action done)
-    {
-        Vector3 p0 = t.position;
-        Quaternion r0 = t.rotation;
-        for (float k = 0f; k < 1f; k += Time.deltaTime / seconds)
-        {
-            float s = Mathf.SmoothStep(0f, 1f, k);
-            t.SetPositionAndRotation(Vector3.Lerp(p0, pos, s), Quaternion.Slerp(r0, rot, s));
-            yield return null;
-        }
-        t.SetPositionAndRotation(pos, rot);
-        done?.Invoke();
-    }
 }

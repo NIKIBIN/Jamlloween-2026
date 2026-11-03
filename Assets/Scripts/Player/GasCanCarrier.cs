@@ -144,7 +144,7 @@ public class GasCanCarrier : MonoBehaviour
         if (sloshClips != null && sloshClips.Length > 0) clip = sloshClips[Random.Range(0, sloshClips.Length)];
         else
         {
-            if (fallback == null) fallback = new[] { FuelAudio.Slosh(3), FuelAudio.Slosh(4), FuelAudio.Slosh(6) };
+            if (fallback == null || fallback.Length == 0) fallback = new[] { FuelAudio.Slosh(3), FuelAudio.Slosh(4), FuelAudio.Slosh(6) };
             clip = fallback[Random.Range(0, fallback.Length)];
         }
         source.pitch = Random.Range(0.92f, 1.08f);

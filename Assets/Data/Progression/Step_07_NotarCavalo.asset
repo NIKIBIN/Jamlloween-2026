@@ -10,21 +10,41 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce996ab14216ced2eaaf30e60f90bcb3, type: 3}
-  m_Name: Step_07_IrAoCarrossel
+  m_Name: Step_07_NotarCavalo
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.ProgressionStep
-  label: Ir ao carrossel
+  label: "Notar o cavalo sem cabe\xE7a"
   activeInteractions: []
-  interceptedInteractions:
-  - interactionId: fusebox
-    text: "Falta um fus\xEDvel aqui."
+  interceptedInteractions: []
   completionEvents:
-  - FuseBoxInspected
-  onStart: []
-  onComplete:
-  - kind: 0
+  - HorseNoticed
+  onStart:
+  - kind: 3
     line:
       speaker: "PATR\xC3O"
-      text: "Falta fus\xEDvel? O pessoal do circo disse que pode ter um na casa de divers\xE3o dos palha\xE7os. Tenta l\xE1 primeiro."
+      text: 
+      audio: {fileID: 0}
+      volume: 1
+    targetId: carousel_near
+    state: 1
+    taskState: 2
+    clip: {fileID: 0}
+    volume: 1
+  onComplete:
+  - kind: 3
+    line:
+      speaker: "PATR\xC3O"
+      text: 
+      audio: {fileID: 0}
+      volume: 1
+    targetId: carousel_near
+    state: 0
+    taskState: 2
+    clip: {fileID: 0}
+    volume: 1
+  - kind: 0
+    line:
+      speaker: 
+      text: "Que estranho... t\xE1 faltando a cabe\xE7a desse cavalo. Preciso achar e colocar de volta."
       audio: {fileID: 0}
       volume: 1
     targetId: 
@@ -38,7 +58,7 @@ MonoBehaviour:
       text: 
       audio: {fileID: 0}
       volume: 1
-    targetId: fuse_find
+    targetId: horse_head
     state: 1
     taskState: 2
     clip: {fileID: 0}
