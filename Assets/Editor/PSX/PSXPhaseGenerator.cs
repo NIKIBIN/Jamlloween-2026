@@ -5,6 +5,7 @@ using UnityEngine;
 /// Fase 1 do plano: GeneratorFuelMinigame no padrao do PSX Carnival Kit. Pode rodar de novo sem duplicar nada.
 ///  - Mostrador do medidor: textura principal T_GeneratorGauge (64 px, marcas vazio/cheio pintadas). Os cubos
 ///    MarkEmpty e MarkFull saem do prefab. A tampa do prisma mostra a textura girada 180 graus; o PNG ja vem girado.
+///    Gerado por Tools/psx_textures/gauge.py.
 ///  - Materiais que o script troca ou que ficam em objetos protegidos sao refeitos no lugar (o asset e as
 ///    referencias continuam): lampada piloto, ponteiro, jato, espuma, cordao, tampa, alca.
 ///  - Pecas paradas usam a biblioteca: bocal galvanizado, carcaca da partida no amarelo do gerador, resto aco escuro.
