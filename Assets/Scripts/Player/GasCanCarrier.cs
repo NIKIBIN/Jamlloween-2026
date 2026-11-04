@@ -19,8 +19,8 @@ public class GasCanCarrier : MonoBehaviour
 
     [Header("Soltar")]
     [SerializeField] Key dropKey = Key.G;
-    [Tooltip("Distancia a frente do jogador onde o galao cai.")]
-    [SerializeField] float dropDistance = 0.8f;
+    [Tooltip("Folga entre a capsula do jogador e o galao largado. O galao cai encostado no pe, de lado.")]
+    [SerializeField] float dropGap = 0.03f;
 
     [Header("Na mao")]
     [SerializeField] Vector3 heldPosition = new Vector3(0.3f, -0.42f, 0.55f);
@@ -73,45 +73,47 @@ public class GasCanCarrier : MonoBehaviour
         Jamlloween.Progression.ProgressionDirector.ShowText($"[{dropKey}] largar o galão");
     }
 
-    /// <summary>Larga o galao no chao onde o jogador esta, um pouco a frente. Devolve o galao (ou null se nao carregava).</summary>
+    /// <summary>Larga o galao no chao, encostado no pe do jogador. Devolve o galao (ou null se nao carregava).</summary>
     public GasCan Drop()
     {
         if (!IsCarrying) return null;
         var can = Held;
-        Vector3 at = DropPoint(transform.position, transform.forward, dropDistance);   // antes do Release: o galao ainda esta sem collider
+        var body = GetComponent<CharacterController>();
+        float ahead = (body != null ? body.radius + body.skinWidth : 0.3f) + CanHalfThickness + dropGap;
+        Vector3 at = DropPoint(transform.position, transform.forward, ahead, out bool behind);   // antes do Release: o galao ainda esta sem collider
         Release(can);
-        can.transform.SetPositionAndRotation(at, Quaternion.Euler(0f, transform.eulerAngles.y, 0f));
+        // De lado (+90): a face estreita do galao fica virada para o jogador, o mais perto possivel do pe.
+        can.transform.SetPositionAndRotation(at, Quaternion.Euler(0f, transform.eulerAngles.y + (behind ? -90f : 90f), 0f));
         return can;
     }
 
-    const float KneeHeight = 0.5f;    // altura de onde se procura obstaculo e chao: abaixo de mesas e maquinas
-    const float CanRadius = 0.25f;    // folga entre o galao e o que estiver na frente
-    const float MinAhead = 0.45f;     // mais perto que isso o galao entraria no jogador
+    const float KneeHeight = 0.5f;          // altura de onde se procura obstaculo e chao: abaixo de mesas e maquinas
+    const float CanHalfThickness = 0.09f;   // SM_jerry_can tem 0.174 m de largura
 
     /// <summary>
-    /// Ponto no chao para largar o galao. Antes o chao era procurado com um raio de 1.5 m de altura no ponto a frente:
-    /// colado no gerador, esse ponto caia dentro do collider dele, o raio (que nao acerta collider de dentro) passava
-    /// direto e o galao ia parar dentro da maquina, invisivel e sem como pegar.
-    /// Agora: vai ate dropDistance a frente, parando antes de qualquer obstaculo na altura do joelho; se o obstaculo
-    /// estiver colado, cai atras do jogador. O chao e procurado a partir do joelho, sem subir em nada.
+    /// Ponto no chao para largar o galao, a 'ahead' metros do centro do jogador. Antes o galao ia 0.8 m a frente e o
+    /// chao era procurado com um raio a 1.5 m de altura: colado no gerador, o ponto caia dentro do collider dele e o
+    /// galao ia parar dentro da maquina. Agora: na frente se houver espaco na altura do joelho, senao atras; o chao e
+    /// procurado a partir do joelho, sem subir em nada.
     /// </summary>
-    public static Vector3 DropPoint(Vector3 feet, Vector3 forward, float distance)
+    public static Vector3 DropPoint(Vector3 feet, Vector3 forward, float ahead, out bool behind)
     {
         forward.y = 0f;
         forward = forward.sqrMagnitude > 1e-6f ? forward.normalized : Vector3.forward;
         Vector3 knee = feet + Vector3.up * KneeHeight;
 
-        float ahead = distance;
-        if (Physics.Raycast(knee, forward, out var block, distance + CanRadius, ~0, QueryTriggerInteraction.Ignore))
-            ahead = block.distance - CanRadius;
-        if (ahead < MinAhead)
+        float Free(Vector3 dir) =>
+            Physics.Raycast(knee, dir, out var hit, ahead + CanHalfThickness, ~0, QueryTriggerInteraction.Ignore)
+                ? hit.distance - CanHalfThickness : ahead;
+        float front = Free(forward);
+        behind = false;
+        if (front < ahead)
         {
-            forward = -forward;   // colado em algo: atras do jogador
-            ahead = Physics.Raycast(knee, forward, out var back, distance + CanRadius, ~0, QueryTriggerInteraction.Ignore)
-                ? Mathf.Max(0f, back.distance - CanRadius) : distance;
+            float back = Free(-forward);
+            if (back > front) { forward = -forward; front = back; behind = true; }
         }
 
-        Vector3 at = feet + forward * ahead;
+        Vector3 at = feet + forward * Mathf.Max(0f, Mathf.Min(ahead, front));
         if (Physics.Raycast(at + Vector3.up * KneeHeight, Vector3.down, out var ground, KneeHeight + 2f, ~0, QueryTriggerInteraction.Ignore))
             at.y = ground.point.y;
         else
