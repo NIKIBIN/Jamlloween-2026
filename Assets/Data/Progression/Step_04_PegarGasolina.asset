@@ -31,3 +31,14 @@ MonoBehaviour:
     taskState: 2
     clip: {fileID: 0}
     volume: 1
+  - kind: 2
+    line:
+      speaker: "PATR\xC3O"
+      text: 
+      audio: {fileID: 0}
+      volume: 1
+    targetId: 
+    state: 1
+    taskState: 2
+    clip: {fileID: 8300000, guid: 074b52381e0dc305b8eff3c005b566b0, type: 3}
+    volume: 1

@@ -112,6 +112,14 @@ public class GeneratorFuelMinigame : Minigame
     [SerializeField, Range(0f, 1f)] float volume = 0.8f;
     [SerializeField] float audioMaxDistance = 30f;
 
+    [Header("Passos (susto ao entrar)")]
+    [Tooltip("Toca em 2D alguns segundos depois de entrar no minigame. Vazio = nada.")]
+    [SerializeField] AudioClip stepsClip;
+    [SerializeField] float stepsDelay = 3f;
+    [SerializeField, Range(0f, 1f)] float stepsVolume = 1f;
+    [Tooltip("So na primeira vez que o som chega a tocar. Sair antes do tempo cancela e a proxima entrada tenta de novo.")]
+    [SerializeField] bool stepsOnce = true;
+
     [Header("Foco")]
     [Tooltip("Sem foco na janela do jogo o botao do mouse conta como solto (nao fica despejando sozinho). O jogo nao pausa.")]
     [SerializeField] bool releaseOnFocusLoss = true;
@@ -136,8 +144,9 @@ public class GeneratorFuelMinigame : Minigame
     Vector3 engineHome;
     Quaternion needleHome;
     Vector2 cordPress, cordAxis; float cordAxisLength, cordProgress;
-    AudioSource sfx, pourSrc, spillSrc, runSrc;
-    Coroutine cordRoutine;
+    AudioSource sfx, pourSrc, spillSrc, runSrc, stepsSrc;
+    Coroutine cordRoutine, stepsRoutine;
+    bool stepsPlayed;
 
     public float Fuel => fuel;
     public bool TankOpen => capProgress >= 1f;
@@ -158,6 +167,9 @@ public class GeneratorFuelMinigame : Minigame
         pourSrc = NewSource(true); pourSrc.clip = pourClip != null ? pourClip : FuelAudio.PourLoop();
         spillSrc = NewSource(true); spillSrc.clip = spillClip != null ? spillClip : FuelAudio.SpillLoop();
         runSrc = NewSource(true); runSrc.clip = runClip != null ? runClip : FuelAudio.EngineLoop();
+        stepsSrc = gameObject.AddComponent<AudioSource>();
+        stepsSrc.playOnAwake = false;
+        stepsSrc.spatialBlend = 0f;
         onExited.AddListener(OnLeft);
         if (splash != null) splash.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         if (exhaustSmoke != null) exhaustSmoke.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -198,6 +210,26 @@ public class GeneratorFuelMinigame : Minigame
         pouring = false;
         if (pourCan != null) spout = canHoldPose.position;
         ApplyAll();
+        if (stepsClip != null && !(stepsOnce && stepsPlayed))
+        {
+            if (stepsRoutine != null) StopCoroutine(stepsRoutine);
+            stepsRoutine = StartCoroutine(PlayStepsAfter(stepsDelay));
+        }
+    }
+
+    IEnumerator PlayStepsAfter(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        stepsRoutine = null;
+        stepsPlayed = true;
+        stepsSrc.PlayOneShot(stepsClip, stepsVolume);
+    }
+
+    void CancelSteps()
+    {
+        if (stepsRoutine == null) return;
+        StopCoroutine(stepsRoutine);
+        stepsRoutine = null;
     }
 
     void OnLeft()
@@ -208,6 +240,7 @@ public class GeneratorFuelMinigame : Minigame
 
     protected override void OnExitRequested()
     {
+        CancelSteps();
         SetHover(null);
         if (drag == Drag.Cord) ReleaseCord();
         drag = Drag.None;
