@@ -1,7 +1,7 @@
 #ifndef FLASHLIGHT_FOG_INCLUDED
 #define FLASHLIGHT_FOG_INCLUDED
 
-// Radial exp2 fog with a reveal cone, set globally by PlayerFlashlight. Works in CG and URP HLSL passes.
+// Radial exp2 fog with a reveal cone. WorldLighting sets the base values, PlayerFlashlight the cone. Works in CG and URP HLSL passes.
 // _RadialFogEnabled stays 0 in scenes without a PlayerFlashlight: their shaders keep the native fog untouched.
 float _RadialFogEnabled;
 float _RadialFogBaseDensity, _RadialFogConeDensity;
@@ -19,12 +19,13 @@ float FlashlightConeAmount(float3 positionWS)
 
 float FlashlightBrightness(float3 positionWS)
 {
-    return lerp(_RadialFogBaseBrightness, _RadialFogConeBrightness, FlashlightConeAmount(positionWS));
+    // The beam only adds light: with a bright world profile it never darkens what is outside it.
+    return lerp(_RadialFogBaseBrightness, max(_RadialFogBaseBrightness, _RadialFogConeBrightness), FlashlightConeAmount(positionWS));
 }
 
 float3 FlashlightApplyFog(float3 color, float3 positionWS, float3 fogColor)
 {
-    float density = lerp(_RadialFogBaseDensity, _RadialFogConeDensity, FlashlightConeAmount(positionWS));
+    float density = lerp(_RadialFogBaseDensity, min(_RadialFogBaseDensity, _RadialFogConeDensity), FlashlightConeAmount(positionWS));
     float depth = density * distance(positionWS, _FlashlightPosition.xyz);
     return lerp(fogColor, color, exp(-depth * depth));
 }

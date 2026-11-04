@@ -9,16 +9,14 @@ namespace Jamlloween.Flashlight
         /// <summary>sqrt(-ln(0.05)): fog density x distance at which 5% of the scene remains.</summary>
         const float FogEdge = 1.7308f;
 
+        // The fog and brightness outside the beam live in the LightingProfile that WorldLighting applies.
+        // Inside the beam the shader never shows less than outside it, so a bright profile is not darkened by the light.
         [Header("Fog")]
-        [Tooltip("Exp2 density around the player, light off or outside the beam.")]
-        [Range(0.01f, 0.5f)] public float baseFogDensity = 0.23f;
         [Tooltip("Exp2 density inside the beam: lower sees farther.")]
         [Range(0.01f, 0.5f)] public float coneFogDensity = 0.102f;
         [Range(0.05f, 2f)] public float transitionSeconds = 0.2f;
 
         [Header("Darkness")]
-        [Tooltip("Multiplies the scene's unlit colours around the player.")]
-        [Range(0f, 1f)] public float baseBrightness = 0.45f;
         [Tooltip("Multiplies the scene's unlit colours inside the beam.")]
         [Range(0f, 1f)] public float coneBrightness = 0.8f;
 
@@ -33,12 +31,11 @@ namespace Jamlloween.Flashlight
         [Range(1f, 170f)] public float workInnerSpotAngle = 90f;
         [Tooltip("Beam intensity while a minigame is played. Lower than the normal one: the light is a few centimetres from the surface.")]
         [Range(0f, 20f)] public float workIntensity = 0.12f;
-        [Tooltip("Cone brightness while a minigame is played. Close to baseBrightness: a soft lift, still dark.")]
+        [Tooltip("Cone brightness while a minigame is played. A soft lift, still dark.")]
         [Range(0f, 1f)] public float workConeBrightness = 0.58f;
-        [Tooltip("Cone fog density while a minigame is played. Close to baseFogDensity: the dark stays around the machine.")]
+        [Tooltip("Cone fog density while a minigame is played. Near the world fog: the dark stays around the machine.")]
         [Range(0.01f, 0.5f)] public float workConeFogDensity = 0.3f;
 
-        public float BaseDistance => FogEdge / baseFogDensity;
         public float ConeDistance => FogEdge / coneFogDensity;
     }
 }
