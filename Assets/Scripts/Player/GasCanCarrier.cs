@@ -73,17 +73,50 @@ public class GasCanCarrier : MonoBehaviour
         Jamlloween.Progression.ProgressionDirector.ShowText($"[{dropKey}] largar o galão");
     }
 
-    /// <summary>Larga o galao no chao a frente do jogador. Devolve o galao (ou null se nao carregava).</summary>
+    /// <summary>Larga o galao no chao onde o jogador esta, um pouco a frente. Devolve o galao (ou null se nao carregava).</summary>
     public GasCan Drop()
     {
         if (!IsCarrying) return null;
         var can = Held;
+        Vector3 at = DropPoint(transform.position, transform.forward, dropDistance);   // antes do Release: o galao ainda esta sem collider
         Release(can);
-        Vector3 at = transform.position + transform.forward * dropDistance;
-        if (Physics.Raycast(at + Vector3.up * 1.5f, Vector3.down, out var hit, 4f, ~0, QueryTriggerInteraction.Ignore)) at = hit.point;
-        else at.y = transform.position.y - 0.9f;   // sem chao embaixo: usa a altura dos pes
         can.transform.SetPositionAndRotation(at, Quaternion.Euler(0f, transform.eulerAngles.y, 0f));
         return can;
+    }
+
+    const float KneeHeight = 0.5f;    // altura de onde se procura obstaculo e chao: abaixo de mesas e maquinas
+    const float CanRadius = 0.25f;    // folga entre o galao e o que estiver na frente
+    const float MinAhead = 0.45f;     // mais perto que isso o galao entraria no jogador
+
+    /// <summary>
+    /// Ponto no chao para largar o galao. Antes o chao era procurado com um raio de 1.5 m de altura no ponto a frente:
+    /// colado no gerador, esse ponto caia dentro do collider dele, o raio (que nao acerta collider de dentro) passava
+    /// direto e o galao ia parar dentro da maquina, invisivel e sem como pegar.
+    /// Agora: vai ate dropDistance a frente, parando antes de qualquer obstaculo na altura do joelho; se o obstaculo
+    /// estiver colado, cai atras do jogador. O chao e procurado a partir do joelho, sem subir em nada.
+    /// </summary>
+    public static Vector3 DropPoint(Vector3 feet, Vector3 forward, float distance)
+    {
+        forward.y = 0f;
+        forward = forward.sqrMagnitude > 1e-6f ? forward.normalized : Vector3.forward;
+        Vector3 knee = feet + Vector3.up * KneeHeight;
+
+        float ahead = distance;
+        if (Physics.Raycast(knee, forward, out var block, distance + CanRadius, ~0, QueryTriggerInteraction.Ignore))
+            ahead = block.distance - CanRadius;
+        if (ahead < MinAhead)
+        {
+            forward = -forward;   // colado em algo: atras do jogador
+            ahead = Physics.Raycast(knee, forward, out var back, distance + CanRadius, ~0, QueryTriggerInteraction.Ignore)
+                ? Mathf.Max(0f, back.distance - CanRadius) : distance;
+        }
+
+        Vector3 at = feet + forward * ahead;
+        if (Physics.Raycast(at + Vector3.up * KneeHeight, Vector3.down, out var ground, KneeHeight + 2f, ~0, QueryTriggerInteraction.Ignore))
+            at.y = ground.point.y;
+        else
+            at.y = feet.y;   // sem chao embaixo: a altura dos pes
+        return at;
     }
 
     /// <summary>Tira o galao da mao sem larga-lo em lugar nenhum (quem chama o posiciona). Restaura a velocidade.</summary>
