@@ -83,11 +83,18 @@ public static class PSXBake
         PrefabUtility.UnloadPrefabContents(root);
     }
 
-    /// <summary>Converte uma hierarquia ja carregada. meshFolder = null deixa as malhas so na memoria (preview).</summary>
-    public static Report BakeHierarchy(GameObject root, string meshFolder)
+    /// <summary>
+    /// Converte uma hierarquia ja carregada. meshFolder = null deixa as malhas so na memoria (preview).
+    /// extraParts: objetos que viram parte propria (malha separada) mesmo sem script nem referencia, para poder mexer
+    /// neles isolados no editor. Ex.: a base da alavanca do quadro de fusiveis.
+    /// </summary>
+    public static Report BakeHierarchy(GameObject root, string meshFolder, params GameObject[] extraParts)
     {
         var report = new Report { prefab = root.name, renderersBefore = root.GetComponentsInChildren<MeshRenderer>(true).Length };
         var keep = FindProtected(root);
+        foreach (var go in extraParts)
+            if (go != null)
+                for (var t = go.transform; t != null && keep.Add(t.gameObject); t = t.parent) { }
         Vector3 up = root.transform.up;
 
         // Agrupa os renderers fundiveis pela parte protegida mais proxima acima deles.

@@ -67,7 +67,24 @@ public static class PSXPhaseFuseBox
                 led.localScale = new Vector3(0.04f, 0.028f, 0.02f);
             }
 
-            var report = PSXBake.BakeHierarchy(root, $"{PSXBake.MeshRoot}/FuseBoxMinigame");
+            // Base da alavanca separada do corpo, para mexer isolada no editor: placa, trilho, eixo e a propria Lever
+            // dentro de LeverBase, com o pivo no eixo. A Lever gira por localRotation a partir da rotacao inicial
+            // (FuseBoxMinigame.cs:81, :323), entao trocar o pai sem rotacao nao muda o comportamento.
+            var leverBase = root.transform.Find("LeverBase");
+            if (leverBase == null)
+            {
+                var hub = root.transform.Find("LeverHub");
+                leverBase = new GameObject("LeverBase").transform;
+                leverBase.SetParent(root.transform, false);
+                leverBase.localPosition = hub != null ? hub.localPosition : new Vector3(0.62f, 0f, -0.04f);
+                foreach (var n in new[] { "LeverPlate", "LeverTrack", "LeverHub", "Lever" })
+                {
+                    var t = root.transform.Find(n);
+                    if (t != null) t.SetParent(leverBase, true);
+                }
+            }
+
+            var report = PSXBake.BakeHierarchy(root, $"{PSXBake.MeshRoot}/FuseBoxMinigame", leverBase.gameObject);
             report.prefab = PrefabPath;
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             log = report.ToString();
