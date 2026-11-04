@@ -1,3 +1,4 @@
+using Jamlloween.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -332,7 +333,7 @@ namespace Jamlloween.Progression
             if (blockedLeft > 0f && !string.IsNullOrEmpty(blockedText))
             {
                 float a = Mathf.Clamp01(blockedLeft / 0.4f);
-                Circus.UIStyle.OsdText(new Rect(0, h * 0.70f, w, 40 * Circus.UIStyle.Scale), blockedText, Circus.UIStyle.Prompt, a);
+                UIStyle.OsdText(new Rect(0, h * 0.70f, w, 40 * UIStyle.Scale), blockedText, UIStyle.Prompt, a);
             }
 
 #if DEBUG

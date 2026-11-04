@@ -71,6 +71,6 @@ namespace Jamlloween.Progression
         }
 
         static bool IsPlayer(Collider c) =>
-            c.GetComponentInParent<PlayerInteractor>() != null || c.GetComponentInParent<Circus.FirstPersonController>() != null;
+            c.GetComponentInParent<PlayerInteractor>() != null;
     }
 }

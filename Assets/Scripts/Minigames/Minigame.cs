@@ -1,3 +1,4 @@
+using Jamlloween.Core;
 using System.Collections;
 using System.Collections.Generic;
 using Jamlloween.Progression;
@@ -307,7 +308,7 @@ public abstract class Minigame : MonoBehaviour, IInteractable, IStepForceComplet
     {
         if (!showExitHint || CurrentState != State.Playing || !PlayerCanExit) return;
         float h = Screen.height;
-        Circus.UIStyle.OsdText(new Rect(0, h * 0.92f, Screen.width, 30 * Circus.UIStyle.Scale), "[ESC] SAIR", Circus.UIStyle.Prompt, 0.9f);
+        UIStyle.OsdText(new Rect(0, h * 0.92f, Screen.width, 30 * UIStyle.Scale), "[ESC] SAIR", UIStyle.Prompt, 0.9f);
     }
 
     void OnDrawGizmosSelected()

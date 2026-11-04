@@ -1,3 +1,4 @@
+using Jamlloween.Core;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -148,8 +149,6 @@ public class ZatanRepairMinigame : Minigame
     [SerializeField] float jumpscareCameraTime = 0.3f;
     [Tooltip("Tempo (s) que a cabeca fica parada olhando antes de qualquer outra coisa acontecer.")]
     [SerializeField] float headStareSeconds = 1.5f;
-    [Tooltip("Id enviado ao EventBus.ScriptedEvent no fim do jumpscare. Vazio = nao envia.")]
-    [SerializeField] string finishedEventId = "zatan_repair_finished";
     [Tooltip("Depois do jumpscare o motor volta a funcionar (compressor, pistao, manometro, vapor e luzes) e segue assim.")]
     [SerializeField] bool machineRunsAfterFinish = true;
     [Tooltip("Ritmo do motor depois do jumpscare, de 0 (devagar, como no comeco do giro) a 1 (como no fim do giro).")]
@@ -566,7 +565,7 @@ public class ZatanRepairMinigame : Minigame
             // Primeira vez: liga de verdade. Depois disso a chave e so visual.
             compressorOn = true;
             if (repairAudio != null) repairAudio.Clunk();
-            Circus.NoiseSystem.Emit(transform.position, clunkNoiseRadius, Circus.NoiseSource.Machine);
+            NoiseSystem.Emit(transform.position, clunkNoiseRadius, NoiseSource.Machine);
             StartCoroutine(FlickerLamps());
         }
         else if (repairAudio != null) repairAudio.Clunk(0.8f);
@@ -737,7 +736,6 @@ public class ZatanRepairMinigame : Minigame
         // So agora, com a cabeca parada ha tempo, os outros sistemas ficam sabendo.
         try
         {
-            if (!string.IsNullOrEmpty(finishedEventId)) Circus.EventBus.RaiseScriptedEvent(finishedEventId);
             onJumpscareFinished?.Invoke();
         }
         catch (System.Exception e) { Debug.LogException(e, this); }
@@ -770,8 +768,7 @@ public class ZatanRepairMinigame : Minigame
         if (headResolved) return headPivot;
         if (headPivot == null)
         {
-            headPivot = FindNamed(Circus.ZatanLocator.Transform, "Head");
-            if (headPivot == null && transform.root != transform) headPivot = FindNamed(transform.root, "Head");
+            if (transform.root != transform) headPivot = FindNamed(transform.root, "Head");
         }
         if (headPivot == null) return null;
         headResolved = true;
