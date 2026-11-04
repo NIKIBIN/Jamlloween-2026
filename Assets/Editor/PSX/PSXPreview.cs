@@ -65,7 +65,7 @@ public static class PSXPreview
             Object.DestroyImmediate(rt);
             Object.DestroyImmediate(tex);
         }
-        finally { EditorSceneManager.ClosePreviewScene(scene); }
+        finally { go.SetActive(false); EditorSceneManager.ClosePreviewScene(scene); }   // desligar antes: ver PSXBake.UnloadContents
         return $"{pngPath} ok. {report}";
     }
 

@@ -107,7 +107,7 @@ public static class PSXPhaseZatan
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             log = $"{removed} objetos viraram pintura. " + report;
         }
-        finally { PrefabUtility.UnloadPrefabContents(root); }
+        finally { PSXBake.UnloadContents(root); }
 
         foreach (var n in Unused)
             if (M(n) != null) AssetDatabase.DeleteAsset($"{Dir}/{n}.mat");

@@ -72,7 +72,7 @@ public static class PSXPhaseFuseBox
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             log = report.ToString();
         }
-        finally { PrefabUtility.UnloadPrefabContents(root); }
+        finally { PSXBake.UnloadContents(root); }
         AssetDatabase.SaveAssets();
         return log;
     }

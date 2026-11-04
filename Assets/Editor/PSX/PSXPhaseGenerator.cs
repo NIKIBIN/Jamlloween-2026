@@ -60,7 +60,7 @@ public static class PSXPhaseGenerator
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             log = report.ToString();
         }
-        finally { PrefabUtility.UnloadPrefabContents(root); }
+        finally { PSXBake.UnloadContents(root); }
 
         // GenGreen so servia ao MarkFull
         if (AssetDatabase.LoadAssetAtPath<Material>($"{Dir}/GenGreen.mat") != null) AssetDatabase.DeleteAsset($"{Dir}/GenGreen.mat");

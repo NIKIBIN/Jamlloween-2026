@@ -69,7 +69,18 @@ public static class PSXBake
             if (save) PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
             return report;
         }
-        finally { PrefabUtility.UnloadPrefabContents(root); }
+        finally { PSXBake.UnloadContents(root); }
+    }
+
+    /// <summary>
+    /// Descarrega um prefab aberto com LoadPrefabContents. UnloadPrefabContents (e ClosePreviewScene) nao chamam o
+    /// OnDisable dos componentes: um TextMeshPro continua inscrito no TMPro_EventManager e gera
+    /// MissingReferenceException na proxima mudanca de fonte. Desligar a raiz antes dispara o OnDisable.
+    /// </summary>
+    public static void UnloadContents(GameObject root)
+    {
+        if (root != null) root.SetActive(false);
+        PrefabUtility.UnloadPrefabContents(root);
     }
 
     /// <summary>Converte uma hierarquia ja carregada. meshFolder = null deixa as malhas so na memoria (preview).</summary>

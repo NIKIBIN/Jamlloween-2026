@@ -97,7 +97,7 @@ public static class PSXPhaseRadio
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             log = $"{removed} objetos viraram pintura. " + report;
         }
-        finally { PrefabUtility.UnloadPrefabContents(root); }
+        finally { PSXBake.UnloadContents(root); }
 
         foreach (var unused in new[] { "RadioPanel", "RadioPointer", "RadioTape" })
             if (M(unused) != null) AssetDatabase.DeleteAsset($"{Dir}/{unused}.mat");
