@@ -17,6 +17,23 @@ Os minigames da `RepairMinigames` foram copiados (não movidos) para a `Zatan_Te
   3. Com o tanque cheio, o galão volta para a lateral. Clicar na tampa fecha o bocal.
   4. Puxar a corda para a direita até o fim, sem limite de tempo. A 1ª puxada tosse, solta fumaça e pisca a lâmpada; a 2ª liga, com a lâmpada acesa.
   O medidor tem vazio à esquerda e cheio à direita. O galão só é exigido enquanto o tanque não está cheio. Montado por `Jamlloween > Build Generator Fuel Minigame`; rodar de novo refaz só as peças.
+- **Roda-gigante (final, provisório):** prefab `Prefabs/FerrisWheelRide.prefab`, com a base e o anel do kit, o motor e o carrinho do jogador. Montado por `Jamlloween > Ferris Wheel > Build Prefab`. `Place In Open Scene` troca a roda solta do kit pela do prefab, na mesma posição. Numa cena nova, basta arrastar o prefab.
+  - **Estados (`FerrisWheelRide`):** `Off` (parada e apagada) → conserto do motor → `Running` (dá uma volta e para com o carrinho do jogador embaixo) → `Waiting` (porta aberta, "[E] Entrar no carrinho") → embarque → `Running` (sobe até o topo) → `Off`.
+  - **Motor (`FerrisWheelMotorMinigame`):** provisório, só um interruptor. Clicar conclui. O minigame de verdade troca só o `Tick`.
+  - **Carrinho (`FerrisWheelSeat`, no `ferris_wheel_ring_car_7`):** ao embarcar, o movimento do jogador desliga e não volta. O mouse continua olhando em volta, e a porta fecha.
+  - **Eventos para a progressão:** `onRepaired`, `onWaiting`, `onBoarded`, `onReachedTop` e `onStateChanged`. A queda de energia no topo e o susto ainda não estão ligados.
+  - O anel do prefab não tem o `Machine` nem o `Animation` do kit: o `FerrisWheelRide` gira a roda. Com eles, o E do `LevelWalker` faria a roda girar sozinha.
+  - Ainda não tem `StepInteraction`: o motor funciona em qualquer etapa.
+  - **Testar isolado:** cena `Scenes/FerrisWheel_Test`, com a roda, o `Player`, o HUD, o `WorldLighting` e o `MinigameFlashlightLink`. O jogador começa com a lanterna, ao lado do motor.
+
+## Jogador (`Prefabs/Player.prefab`)
+
+Prefab Variant do `Player_Local` do PSX Carnival Kit (movimento, câmera e `Inspect`), com o que o jogo adiciona: `PlayerInteractor`, `LevelWalkerZatanTarget`, `GasCanCarrier` e a lanterna (`Flashlight`, com `PlayerFlashlight`). Foi tirado do jogador da `Zatan_Test`, que ainda não usa o prefab.
+
+Ao colocar numa cena nova:
+1. Ligue o `promptLabel` do `PlayerInteractor` ao texto do HUD (o HUD ainda não é prefab).
+2. Para os minigames, adicione um `MinigameFlashlightLink` apontando para a lanterna.
+3. A lanterna começa sem dono (`startOwned` desligado). Para testes, ligue `startOwned` na instância.
 - **Galão:** E pega. Carregando, anda a 80% e não corre (`GasCanCarrier`), a lanterna segue normal e a gasolina balança a cada passo. G larga (configurável); ele fica no chão e pode ser pego de novo. Ao ligar o gerador o galão fica vazio no chão, perto do gerador.
 - **Cabeça do cavalo (etapas 07 a 09):**
   - Ao entrar perto do carrossel (`Trigger_CavaloSemCabeca`) ou examinar o cavalo, aparece a legenda "Que estranho... tá faltando a cabeça desse cavalo. Preciso achar e colocar de volta."
