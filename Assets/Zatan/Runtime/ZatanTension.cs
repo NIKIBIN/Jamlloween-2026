@@ -36,7 +36,7 @@ namespace Jamlloween.Zatan
         {
             if (brain.State == ZatanBehaviourState.Caught) return;
 
-            bool chasing = brain.State == ZatanBehaviourState.Chase;
+            bool chasing = brain.IsHunting;
             TimeSinceChase = chasing ? 0f : TimeSinceChase + Time.deltaTime;
 
             float perSecond = 0f;

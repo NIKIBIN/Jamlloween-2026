@@ -101,6 +101,38 @@ namespace Jamlloween.Zatan
         public float searchRadius = 6f;
         public float repathInterval = 0.15f;
 
+        [Header("Esconderijos (lixeiras)")]
+        [Tooltip("Segundos depois de perder a visão em que esconder ainda conta como 'visto entrando'.")]
+        public float hideSeenGrace = 0.3f;
+        [Tooltip("Distância do centro da lixeira em que ele consegue tombá-la.")]
+        public float tipReach = 1.4f;
+        [Tooltip("Metros na frente da lixeira, do lado dele, para onde ele anda antes de tombar.")]
+        public float tipApproachDistance = 1.1f;
+        [Tooltip("Viu o jogador entrar: segundos parado depois de tombar.")]
+        public float seenStopTime = 1f;
+        [Tooltip("Viu o jogador entrar: segundos com a cabeça virada para o jogador antes de caçar.")]
+        public float seenHoldTime = 1f;
+        [Tooltip("Desconfiado e acertou a lixeira do jogador: segundos parado depois de tombar.")]
+        public float suspiciousStopTime = 1.5f;
+        [Tooltip("Desconfiado e acertou a lixeira do jogador: segundos com a cabeça virada antes de caçar.")]
+        public float suspiciousHoldTime = 1.5f;
+        [Tooltip("Tombou uma lixeira vazia: segundos parado antes de voltar a procurar.")]
+        public float emptyTipPause = 1f;
+        [Range(0f, 1f), Tooltip("Chance de, desconfiado, tombar uma lixeira próxima (uma vez por busca).")]
+        public float tipChance = 0.3f;
+        [Tooltip("Raio, em volta de onde viu o jogador pela última vez, das lixeiras que ele pode tombar.")]
+        public float tipSearchRadius = 10f;
+        [Tooltip("Segundos que a lixeira leva para tombar.")]
+        public float tipDuration = 0.35f;
+        [Tooltip("Graus por segundo da cabeça virando para o jogador.")]
+        public float headTurnSpeed = 360f;
+        [Tooltip("Quanto a cabeça pode girar para os lados, em graus.")]
+        public float headMaxYaw = 110f;
+        [Tooltip("Metros do centro da lixeira onde o jogador cai ao ser derrubado.")]
+        public float ejectDistance = 1.1f;
+        [Tooltip("Segundos sem controle depois de cair da lixeira.")]
+        public float ejectStun = 0f;
+
         [Header("Sumiço")]
         public float vanishMinDistance = 30f;
         [Tooltip("Tempo seguido longe e fora da visão até sumir.")]

@@ -49,7 +49,8 @@ namespace Jamlloween.Zatan
         {
             if (!animator.enabled) return;
 
-            float target = brain.State == ZatanBehaviourState.Spotted ? 0f : agent.velocity.magnitude;
+            bool standing = brain.State == ZatanBehaviourState.Spotted || brain.State == ZatanBehaviourState.TipReaction;
+            float target = standing ? 0f : agent.velocity.magnitude;
             speed = Mathf.Lerp(speed, target, 1f - Mathf.Exp(-config.animSpeedSmoothing * Time.deltaTime));
 
             // Between the walk and run thresholds the blend already matches the stride; outside them, the clip

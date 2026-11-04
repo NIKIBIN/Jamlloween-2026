@@ -1,6 +1,6 @@
 {
     "name": "Jamlloween.Zatan.TestScene",
     "rootNamespace": "Jamlloween.Zatan.TestScene",
-    "references": ["Jamlloween.Zatan", "HeyHeyThere.PSXCarnivalKit", "Unity.InputSystem"],
+    "references": ["Jamlloween.Zatan", "HeyHeyThere.PSXCarnivalKit", "Unity.InputSystem", "Jamlloween.Flashlight"],
     "autoReferenced": false
 }

@@ -56,8 +56,12 @@ namespace Jamlloween.Zatan
             UpdateHearing();
         }
 
+        /// <summary>Someone told him where the player is (after tipping their can, the player lands in plain view).</summary>
+        public void NotePlayerAt(Vector3 position) => LastSeenPosition = position;
+
         bool CheckSight()
         {
+            if (target.IsHidden) return false;
             Vector3 to = target.ChestPosition - eye.position;
             if (to.magnitude > tension.Tuning.VisionRange) return false;
             Vector3 flat = Vector3.ProjectOnPlane(to, Vector3.up);
@@ -68,7 +72,7 @@ namespace Jamlloween.Zatan
         void UpdateHearing()
         {
             noiseTimer -= Time.deltaTime;
-            if (noiseTimer > 0f || !target.IsMoving) return;
+            if (noiseTimer > 0f || !target.IsMoving || target.IsHidden) return;
             noiseTimer = config.noiseInterval;
             ReportNoise(target.Position, target.IsRunning ? config.runNoiseRadius : config.walkNoiseRadius);
         }

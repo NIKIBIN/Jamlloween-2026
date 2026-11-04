@@ -24,5 +24,12 @@ namespace Jamlloween.Zatan.TestScene
         public override float RunSpeed => walker.run;
         public override Camera View => view;
         public override void SetInputEnabled(bool enabled) => walker.enabled = enabled;
+
+        public override void Teleport(Vector3 position, Quaternion rotation)
+        {
+            body.enabled = false;
+            transform.SetPositionAndRotation(position, Quaternion.Euler(0f, rotation.eulerAngles.y, 0f));
+            body.enabled = true;
+        }
     }
 }

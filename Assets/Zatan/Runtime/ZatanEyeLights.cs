@@ -88,7 +88,7 @@ namespace Jamlloween.Zatan
         {
             if (!IsLit) return;
 
-            bool hunting = brain.State == ZatanBehaviourState.Spotted || brain.State == ZatanBehaviourState.Chase;
+            bool hunting = brain.State == ZatanBehaviourState.Spotted || brain.IsHunting;
             if (hunting)
                 huntColor = Color.Lerp(config.beamAlertColor, config.beamDangerColor, config.BeamDanger(brain.DistanceToPlayer));
 

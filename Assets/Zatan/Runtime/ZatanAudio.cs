@@ -72,7 +72,7 @@ namespace Jamlloween.Zatan
         {
             ZatanBehaviourState state = brain.State;
             bool audible = state != ZatanBehaviourState.Vanished && state != ZatanBehaviourState.Caught;
-            bool chasing = state == ZatanBehaviourState.Chase;
+            bool chasing = brain.IsHunting;
             float noise = tension.Tuning.FootstepVolume;
 
             Fade(idleLoopSource, audible && !chasing ? noise : 0f);

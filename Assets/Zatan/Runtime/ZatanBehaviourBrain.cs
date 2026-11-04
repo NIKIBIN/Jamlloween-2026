@@ -4,7 +4,11 @@ using UnityEngine.AI;
 
 namespace Jamlloween.Zatan
 {
-    public enum ZatanBehaviourState { Patrol, Investigate, Spotted, Chase, Search, Caught, Vanished }
+    /// <summary>
+    /// GoToCan and TipReaction belong to the hiding mechanic: he walks to a trash can, tips it, then reacts.
+    /// Scripted belongs to the story beats (ZatanSafeRoom and others): an outside sequence moves him by hand.
+    /// </summary>
+    public enum ZatanBehaviourState { Patrol, Investigate, Spotted, Chase, Search, Caught, Vanished, GoToCan, TipReaction, Scripted }
 
     /// <summary>The general brain: spot, hear, chase, catch and lose the player. Reads its limits from the tension brain.</summary>
     [RequireComponent(typeof(NavMeshAgent))]
@@ -21,21 +25,31 @@ namespace Jamlloween.Zatan
         [SerializeField] NavMeshAgent agent;
         [SerializeField] Renderer[] renderers;
         [SerializeField] Collider[] colliders;
+        [Tooltip("Starts out of the world and stays out until a story beat calls Respawn or AppearAndChase (the game). Off = patrols from the start (test scenes).")]
+        [SerializeField] bool startDormant;
 
         public event Action<ZatanBehaviourState> StateChanged = delegate { };
         public event Action PlayerCaught = delegate { };
 
         public ZatanBehaviourState State { get; private set; } = ZatanBehaviourState.Patrol;
         public bool IsPresent => State != ZatanBehaviourState.Vanished;
+        /// <summary>After the player: chasing, going for the can they hid in, or reacting after tipping it.</summary>
+        public bool IsHunting => State == ZatanBehaviourState.Chase || State == ZatanBehaviourState.GoToCan || State == ZatanBehaviourState.TipReaction || State == ZatanBehaviourState.Scripted;
+        /// <summary>Out of the world until a story beat brings him back (he never reappears on his own).</summary>
+        public bool IsDormant => State == ZatanBehaviourState.Vanished && dormant;
+        /// <summary>A story chase: he always knows where the player is and never gives up on his own.</summary>
+        public bool Relentless { get; private set; }
         public float DistanceToPlayer => Vector3.Distance(transform.position, target.Position);
         public float CurrentSpeedLimit => agent.speed;
         public float CurrentSpeed => agent.velocity.magnitude;
+        /// <summary>Got to the end of his current path (or has none).</summary>
+        public bool ReachedDestination => Arrived();
 
         /// <summary>Scripted events hold him in the world while they run.</summary>
         public bool VanishSuspended { get; set; }
 
         float stateTime, lostTime, dwellTimer, repathTimer, vanishTimer, vanishDuration, vanishReadyAt;
-        bool waitingAtPoint;
+        bool waitingAtPoint, dormant;
 
         void Awake()
         {
@@ -60,7 +74,8 @@ namespace Jamlloween.Zatan
         void Start()
         {
             if (!agent.isOnNavMesh) throw new InvalidOperationException("Zatan must start on the NavMesh.");
-            EnterPatrol();
+            if (startDormant) Sleep();
+            else EnterPatrol();
         }
 
         void Update()
@@ -79,6 +94,7 @@ namespace Jamlloween.Zatan
                 case ZatanBehaviourState.Chase: UpdateChase(); break;
                 case ZatanBehaviourState.Search: UpdateSearch(); break;
                 case ZatanBehaviourState.Vanished: UpdateVanished(); break;
+                case ZatanBehaviourState.GoToCan: UpdateGoToCan(); break;
             }
         }
 
@@ -125,7 +141,8 @@ namespace Jamlloween.Zatan
             float distance = DistanceToPlayer;
             agent.speed = config.ChaseSpeed(distance, target.RunSpeed);
 
-            lostTime = perception.CanSeePlayer ? 0f : lostTime + Time.deltaTime;
+            if (Relentless) perception.NotePlayerAt(target.Position);
+            lostTime = perception.CanSeePlayer || Relentless ? 0f : lostTime + Time.deltaTime;
             if (lostTime >= tension.Tuning.LoseTime)
             {
                 SetState(ZatanBehaviourState.Search);
@@ -136,11 +153,11 @@ namespace Jamlloween.Zatan
             if (repathTimer <= 0f)
             {
                 repathTimer = config.repathInterval;
-                agent.SetDestination(perception.CanSeePlayer ? target.Position : perception.LastSeenPosition);
+                agent.SetDestination(perception.CanSeePlayer || Relentless ? target.Position : perception.LastSeenPosition);
             }
 
             float reach = Arrived() ? config.catchDistance + config.corneredExtraReach : config.catchDistance;
-            if (distance <= reach && ZatanLineOfSight.IsClear(perception.Eye.position, target.ChestPosition, transform, target.transform))
+            if (!target.IsHidden && distance <= reach && ZatanLineOfSight.IsClear(perception.Eye.position, target.ChestPosition, transform, target.transform))
             {
                 agent.isStopped = true;
                 // The catch sequence owns his transform until Respawn.
@@ -149,6 +166,13 @@ namespace Jamlloween.Zatan
                 SetState(ZatanBehaviourState.Caught);
                 PlayerCaught();
             }
+        }
+
+        /// <summary>On the way to a trash can. If the player climbs out where he can see them, he chases them instead.</summary>
+        void UpdateGoToCan()
+        {
+            agent.speed = config.ChaseSpeed(DistanceToPlayer, target.RunSpeed);
+            if (!target.IsHidden && perception.CanSeePlayer) SetState(ZatanBehaviourState.Chase);
         }
 
         void UpdateSearch()
@@ -167,7 +191,7 @@ namespace Jamlloween.Zatan
 
         void UpdateVanished()
         {
-            if (stateTime < vanishDuration) return;
+            if (dormant || stateTime < vanishDuration) return;
             if (TryFindHiddenPatrolPoint(out Vector3 point)) Reappear(point);
         }
 
@@ -197,6 +221,66 @@ namespace Jamlloween.Zatan
             PickPatrolPoint();
         }
 
+        // ------------------------------------------------------------------ hiding mechanic (driven by ZatanHidingReactions)
+
+        /// <summary>A point next to <paramref name="target"/> he can really walk to, or false if there is none.</summary>
+        public bool TryFindReachableNear(Vector3 target, Vector3 preferredSide, float distance, out Vector3 point)
+        {
+            const int Sides = 8;
+            float start = Mathf.Atan2(preferredSide.z, preferredSide.x);
+            for (int i = 0; i < Sides; i++)
+            {
+                // Try his own side first, then alternate left and right around the target.
+                int step = (i + 1) / 2 * (i % 2 == 0 ? 1 : -1);
+                float angle = start + step * Mathf.PI * 2f / Sides;
+                Vector3 candidate = target + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * distance;
+                if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, SampleRadius * 0.5f, agent.areaMask) && HasCompletePath(transform.position, hit.position))
+                {
+                    point = hit.position;
+                    return true;
+                }
+            }
+            point = default;
+            return false;
+        }
+
+        /// <summary>Walks, at chase speed, to a reachable point next to a trash can.</summary>
+        public void HuntCan(Vector3 standPoint)
+        {
+            agent.isStopped = false;
+            agent.updateRotation = true;
+            SetState(ZatanBehaviourState.GoToCan);
+            agent.SetDestination(standPoint);
+        }
+
+        /// <summary>Stands still after tipping a can. No catch while he reacts.</summary>
+        public void HoldForReaction()
+        {
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+            agent.ResetPath();
+            SetState(ZatanBehaviourState.TipReaction);
+        }
+
+        /// <summary>Back to the chase, knowing where the player is.</summary>
+        public void ResumeChase(Vector3 playerPosition)
+        {
+            perception.NotePlayerAt(playerPosition);
+            agent.isStopped = false;
+            agent.updateRotation = true;
+            repathTimer = 0f;
+            SetState(ZatanBehaviourState.Chase);
+        }
+
+        /// <summary>Back to searching around where he last saw the player.</summary>
+        public void ResumeSearch()
+        {
+            agent.isStopped = false;
+            agent.updateRotation = true;
+            SetState(ZatanBehaviourState.Search);
+            agent.SetDestination(RandomPointNear(perception.LastSeenPosition, config.searchRadius));
+        }
+
         void OnHeard(Vector3 position)
         {
             if (State != ZatanBehaviourState.Patrol && State != ZatanBehaviourState.Investigate && State != ZatanBehaviourState.Search) return;
@@ -223,6 +307,8 @@ namespace Jamlloween.Zatan
         /// <summary>Back in the world at this point, patrolling again. Also used after a catch.</summary>
         public void Respawn(Vector3 point)
         {
+            dormant = false;
+            Relentless = false;
             agent.updatePosition = true;
             agent.updateRotation = true;
             if (!agent.Warp(point)) throw new InvalidOperationException($"Zatan could not be placed on the NavMesh at {point}.");
@@ -236,6 +322,93 @@ namespace Jamlloween.Zatan
         {
             foreach (Renderer r in renderers) r.enabled = present;
             foreach (Collider c in colliders) c.enabled = present;
+        }
+
+        // ------------------------------------------------------------------ story beats (driven by ZatanDirector and ZatanSafeRoom)
+
+        /// <summary>Leaves the world and stays out: no senses, no sounds, no reappearing until Respawn or AppearAndChase.</summary>
+        public void Sleep()
+        {
+            Relentless = false;
+            agent.updatePosition = true;
+            agent.updateRotation = true;
+            if (agent.isOnNavMesh)
+            {
+                agent.isStopped = true;
+                agent.ResetPath();
+            }
+            perception.Sensing = false;
+            SetPresence(false);
+            dormant = true;
+            SetState(ZatanBehaviourState.Vanished);
+        }
+
+        /// <summary>Appears at this point already knowing where the player is: stares for a moment, then a chase he never gives up.</summary>
+        public void AppearAndChase(Vector3 point)
+        {
+            Respawn(point);
+            Vector3 toPlayer = Vector3.ProjectOnPlane(target.Position - transform.position, Vector3.up);
+            if (toPlayer.sqrMagnitude > 0.0001f) transform.rotation = Quaternion.LookRotation(toPlayer);
+            perception.NotePlayerAt(target.Position);
+            Relentless = true;
+            EnterSpotted();
+        }
+
+        /// <summary>Hands him to an outside sequence: he only moves where it tells him. No catch, no vanish, no state changes from his senses.</summary>
+        public void BeginScripted()
+        {
+            Relentless = false;
+            agent.isStopped = false;
+            agent.updateRotation = true;
+            SetState(ZatanBehaviourState.Scripted);
+        }
+
+        /// <summary>Scripted only: walks to the point at this speed.</summary>
+        public void ScriptedMoveTo(Vector3 point, float speed)
+        {
+            if (State != ZatanBehaviourState.Scripted) throw new InvalidOperationException("ScriptedMoveTo needs BeginScripted first.");
+            agent.speed = speed;
+            agent.isStopped = false;
+            agent.updateRotation = true;
+            agent.SetDestination(point);
+        }
+
+        /// <summary>Scripted only: stands still and turns toward the point (call every frame while turning).</summary>
+        public void ScriptedFace(Vector3 point)
+        {
+            if (State != ZatanBehaviourState.Scripted) throw new InvalidOperationException("ScriptedFace needs BeginScripted first.");
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+            agent.updateRotation = false;
+            Vector3 to = Vector3.ProjectOnPlane(point - transform.position, Vector3.up);
+            if (to.sqrMagnitude > 0.0001f)
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(to), config.spotTurnSpeed * Time.deltaTime);
+        }
+
+        /// <summary>A random NavMesh point within the radius (his own position if none is found).</summary>
+        public Vector3 PointNear(Vector3 center, float radius) => RandomPointNear(center, radius);
+
+        /// <summary>
+        /// Story finale: he appears at this point (it can be off the NavMesh, e.g. outside a Ferris wheel gondola),
+        /// facing the player, and the catch sequence starts at once.
+        /// </summary>
+        public void ScriptedCatch(Vector3 position)
+        {
+            dormant = false;
+            Relentless = false;
+            if (agent.isOnNavMesh)
+            {
+                agent.isStopped = true;
+                agent.ResetPath();
+            }
+            agent.updatePosition = false;
+            agent.updateRotation = false;
+            Vector3 toPlayer = Vector3.ProjectOnPlane(target.Position - position, Vector3.up);
+            transform.SetPositionAndRotation(position, toPlayer.sqrMagnitude > 0.0001f ? Quaternion.LookRotation(toPlayer) : transform.rotation);
+            perception.Sensing = false;
+            SetPresence(true);
+            SetState(ZatanBehaviourState.Caught);
+            PlayerCaught();
         }
 
         // ------------------------------------------------------------------ navigation

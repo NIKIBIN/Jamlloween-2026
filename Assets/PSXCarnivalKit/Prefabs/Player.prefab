@@ -166,7 +166,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.LevelWalker
   view: {fileID: 6782230777201421241}
   walk: 2.2
-  run: 4
+  run: 6
   mouse: 2
   reach: 2
   items: []

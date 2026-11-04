@@ -105,9 +105,19 @@ Depois de uma captura, o jogador e Zatan voltam às posições iniciais quando o
 
 A versão anterior, sem animação, está em `Assets/Zatan/Prefabs/Zatan_V00_SemAnimacao.prefab`. Para voltar a ela, apague o `Zatan` da cena, arraste o prefab para `_Zatan` e religue no Inspector o `target` da percepção, da tensão, do cérebro e da captura, o jogador em `beamIgnored` e os minigames no `onFinished` da captura.
 
+## Esconder nas lixeiras
+
+Na `Level_Design` há 10 lixeiras escondíveis (`Assets/Zatan/Hiding/PF_TrashCan_Hide.prefab`, o modelo do `PF_trash_can` do kit em escala 1,8) em `_Gameplay/Esconderijos`, registradas no `ZatanHidingRegistry` desse objeto.
+
+- **Jogador** (`LevelWalkerHiding`, no `Player`): `[E] ESCONDER` olhando para uma lixeira de pé e vazia; `[E] SAIR` para sair. Escondido, não anda, a câmera espia pela fresta da tampa (faixas pretas na tela) e a lanterna fica apagada; ao sair ela volta a acender se estava ligada. Zatan não vê nem ouve o jogador escondido, e não o captura.
+- **Viu entrar** (Zatan perseguindo e com visão até `hideSeenGrace` = 0,3 s antes): ele vai até a lixeira, tomba, o jogador cai do lado oposto a ele, Zatan fica parado `seenStopTime` (1 s), vira a cabeça para o jogador por `seenHoldTime` (1 s) e volta a caçar. Nada de captura durante esses 2 s.
+- **Desconfiado** (o jogador se escondeu sem ser visto e Zatan começa a busca): uma vez por busca, `tipChance` (30%) de tombar uma lixeira de pé a até `tipSearchRadius` (10 m) de onde viu o jogador por último, a do jogador incluída. Se for a do jogador: a mesma reação com 1,5 s + 1,5 s (3 s). Se estiver vazia: para `emptyTipPause` (1 s) e continua procurando.
+- Lixeira tombada fica de lado e não serve mais. Todas voltam de pé quando a cena reinicia depois de uma captura.
+- Estados novos no cérebro: `GoToCan` (indo até a lixeira) e `TipReaction` (parado reagindo). `ZatanHidingReactions`, no `Zatan`, decide e controla o giro da cabeça. Ajustes na seção "Esconderijos (lixeiras)" do `ZatanConfig`.
+
 ## Limites atuais
 
 - Na `Level_Design`, Zatan usa o modelo `Assets/Zatan/Model/Zatan_V00.fbx` (3,3 m, peças rígidas), com a animação procedural acima. Na `Zatan_Test` ele ainda é a cápsula. Os sons continuam sintetizados. Lista de sons em [ASSET_LEDGER.md](ASSET_LEDGER.md).
 - As tendas têm só uma zona interior, `Zatan_IndoorZone_BigTop`, com caixa aproximada.
-- Portas fechadas e esconderijos ainda não são tratados.
+- Portas fechadas ainda não são tratadas. Esconderijos só existem na `Level_Design`.
 - O sistema não usa os scripts dos Spikes 1 e 2.
