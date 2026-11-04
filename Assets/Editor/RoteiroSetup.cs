@@ -128,12 +128,12 @@ public static class RoteiroSetup
             Step("R15_QuadroDeFusiveis", "Consertar o quadro de fusíveis", new[] { "FuseBoxFixed" }, active: new[] { "fusebox" }),
             // 16: roda-gigante (PLACEHOLDER: painel na base da roda com conserto de segurar E).
             Step("R16_FalaRodaGigante", "Reportar: roda-gigante", new[] { ProgressionDirector.RadioIdleEvent },
-                onStart: new[] { Say("Tô ouvindo a musiquinha do carrossel daqui. Falta só a roda-gigante. Conserta o painel dela e pode ir embora.") },
+                onStart: new[] { Say("Tô ouvindo a musiquinha do carrossel daqui. Falta só a roda-gigante. Conserta o motor dela e pode ir embora.") },
                 onComplete: new[] { Task("wheel", TaskState.Current) }),
             Step("R17_ConsertarRodaGigante", "Consertar a roda-gigante", new[] { WheelFixedEvent }, active: new[] { "wheel_panel" }),
             // 17-18: depois do conserto da roda, Zatan se aproxima do jogador encurralado (relay: StalkFrom); a porta de uma gondola abre (relay: GondolaDoor.Open).
             Step("R18_Encurralado", "Encurralado: entrar na gôndola", new[] { GondolaBoardedEvent }, active: new[] { "gondola_door" },
-                onStart: new[] { Think("Ele tá vindo... não tem saída! A porta daquela gôndola abriu...") }),
+                onStart: new[] { Think("Ele tá vindo... não tem saída!") }),
             // 19: a roda gira e para no alto (FerrisWheelRide); o som de tensao comeca.
             Step("R19_RodaGigante", "A roda-gigante gira", new[] { WheelStoppedEvent }),
             // 20: olhar para tras: Zatan ataca de fora da gondola (FerrisWheelRide -> ZatanDirector.FinalAttackFrom).
