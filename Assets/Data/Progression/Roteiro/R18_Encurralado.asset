@@ -23,7 +23,7 @@ MonoBehaviour:
   - kind: 0
     line:
       speaker: 
-      text: "Ele t\xE1 vindo... n\xE3o tem sa\xEDda! A porta daquela g\xF4ndola abriu..."
+      text: "Ele t\xE1 vindo... n\xE3o tem sa\xEDda!"
       audio: {fileID: 0}
       volume: 1
     targetId: 

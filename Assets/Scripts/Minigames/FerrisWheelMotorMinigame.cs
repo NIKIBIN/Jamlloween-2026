@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 /// <summary>
 /// Motor da roda-gigante. PROVISORIO: um interruptor so; clicar nele liga o motor e conclui o minigame.
 /// O minigame de verdade entra depois, na mesma base (Minigame): so a parte de Tick muda.
-/// Concluir avisa o FerrisWheelRide, que volta a girar.
+/// Concluir avisa o FerrisWheelRide (Roteiro), que traz o carrinho do jogador para baixo.
 /// </summary>
 public class FerrisWheelMotorMinigame : Minigame
 {

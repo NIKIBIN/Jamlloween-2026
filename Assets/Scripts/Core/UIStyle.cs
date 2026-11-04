@@ -7,6 +7,7 @@ namespace Jamlloween.Core
     {
         static Font _font;
         static GUIStyle _label, _big, _center, _prompt;
+        static float _stylesScale = -1f;
         static Texture2D _white;
 
         public static Font Font
@@ -37,10 +38,13 @@ namespace Jamlloween.Core
             return s;
         }
 
-        public static GUIStyle Label => _label ??= Make(18, TextAnchor.UpperLeft);
-        public static GUIStyle Big => _big ??= Make(34, TextAnchor.MiddleCenter);
-        public static GUIStyle Center => _center ??= Make(20, TextAnchor.MiddleCenter);
-        public static GUIStyle Prompt => _prompt ??= Make(20, TextAnchor.MiddleCenter);
+        // The font size follows the screen height: when the window changes size, the styles are made again.
+        static void Refresh() { if (!Mathf.Approximately(_stylesScale, Scale)) { ResetCache(); _stylesScale = Scale; } }
+
+        public static GUIStyle Label { get { Refresh(); return _label ??= Make(18, TextAnchor.UpperLeft); } }
+        public static GUIStyle Big { get { Refresh(); return _big ??= Make(34, TextAnchor.MiddleCenter); } }
+        public static GUIStyle Center { get { Refresh(); return _center ??= Make(20, TextAnchor.MiddleCenter); } }
+        public static GUIStyle Prompt { get { Refresh(); return _prompt ??= Make(20, TextAnchor.MiddleCenter); } }
 
         public static void ResetCache() { _label = _big = _center = _prompt = null; }
 

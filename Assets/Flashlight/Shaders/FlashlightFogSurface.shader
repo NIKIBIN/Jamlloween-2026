@@ -32,6 +32,7 @@ Shader "Jamlloween/Flashlight Fog Surface"
             #pragma multi_compile_fog
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             #include "Assets/Zatan/Beam/ZatanEyeLight.hlsl"
+            #include "Assets/Lighting/Shaders/WorldBeacons.hlsl"
 
             struct Attributes
             {
@@ -75,11 +76,11 @@ Shader "Jamlloween/Flashlight Fog Surface"
                 if (_RadialFogEnabled > 0.5)
                 {
                     color = _BaseColor.rgb * (FlashlightBrightness(input.positionWS) + lit);
-                    color = FlashlightApplyFog(color, input.positionWS, unity_FogColor.rgb) + ZatanEyeLight(_BaseColor.rgb, input.positionWS);
+                    color = FlashlightApplyFog(color, input.positionWS, unity_FogColor.rgb) + ZatanEyeLight(_BaseColor.rgb, input.positionWS) + WorldBeacons(_BaseColor.rgb, input.positionWS);
                 }
                 else
                 {
-                    color = MixFog(_BaseColor.rgb * (1 + lit), input.fogFactor);
+                    color = MixFog(_BaseColor.rgb * (1 + lit), input.fogFactor) + WorldBeacons(_BaseColor.rgb, input.positionWS);
                 }
 
                 float3 blackout = _IgnoreBlackout > 0.5 ? ZatanScareLight(_BaseColor.rgb, input.positionWS, normalWS) : float3(0, 0, 0);
