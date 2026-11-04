@@ -5,7 +5,9 @@ using UnityEngine.InputSystem;
 namespace Jamlloween.Flashlight
 {
     /// <summary>
-    /// Owns the radial fog globals. F toggles the light: only surfaces inside the beam see through the fog,
+    /// Owns the beam: turns the radial fog on and drives the cone (position, angles, fog and brightness inside it).
+    /// The fog and brightness outside the beam belong to WorldLighting (Jamlloween.Lighting).
+    /// F toggles the light: only surfaces inside the beam see through the fog,
     /// because most of the scene is unlit and ignores the spot light itself.
     /// The player may start without it (<see cref="startOwned"/> off) and pick it up later with <see cref="Acquire"/>.
     /// While <see cref="WorkMode"/> is on (a minigame is being played) the beam is held on, whatever F says.
@@ -13,9 +15,7 @@ namespace Jamlloween.Flashlight
     public class PlayerFlashlight : MonoBehaviour
     {
         static readonly int EnabledId = Shader.PropertyToID("_RadialFogEnabled");
-        static readonly int BaseDensityId = Shader.PropertyToID("_RadialFogBaseDensity");
         static readonly int ConeDensityId = Shader.PropertyToID("_RadialFogConeDensity");
-        static readonly int BaseBrightnessId = Shader.PropertyToID("_RadialFogBaseBrightness");
         static readonly int ConeBrightnessId = Shader.PropertyToID("_RadialFogConeBrightness");
         static readonly int CosInnerId = Shader.PropertyToID("_FlashlightCosInner");
         static readonly int PositionId = Shader.PropertyToID("_FlashlightPosition");
@@ -55,9 +55,7 @@ namespace Jamlloween.Flashlight
         void OnEnable()
         {
             Shader.SetGlobalFloat(EnabledId, 1f);
-            Shader.SetGlobalFloat(BaseDensityId, config.baseFogDensity);
             Shader.SetGlobalFloat(ConeDensityId, config.coneFogDensity);
-            Shader.SetGlobalFloat(BaseBrightnessId, config.baseBrightness);
             Shader.SetGlobalFloat(ConeBrightnessId, config.coneBrightness);
         }
 
