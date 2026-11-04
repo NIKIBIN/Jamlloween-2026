@@ -661,6 +661,10 @@ MonoBehaviour:
   runClip: {fileID: 0}
   volume: 0.8
   audioMaxDistance: 30
+  stepsClip: {fileID: 8300000, guid: 255f82c7c6b0774a4bbbe1ea41c8f40c, type: 3}
+  stepsDelay: 3
+  stepsVolume: 1
+  stepsOnce: 1
   releaseOnFocusLoss: 1
   missingCanText: "Preciso de combust\xEDvel."
 --- !u!65 &1204377268845313563
