@@ -22,7 +22,7 @@ public static class RoteiroSetup
     // Eventos de conclusao enviados pela cena.
     public const string ZatanEscapedEvent = "ZatanEscaped";     // trigger da volta com a gasolina
     public const string ZatanGaveUpEvent = "ZatanGaveUp";       // ZatanSafeRoom: ele desistiu na porta do trailer
-    public const string WheelFixedEvent = "WheelFixed";         // PlaceholderRepair do painel da roda-gigante
+    public const string WheelFixedEvent = "WheelFixed";         // FerrisWheelMotorMinigame do motor da roda-gigante
     public const string GondolaBoardedEvent = "GondolaBoarded"; // GondolaDoor
     public const string WheelStoppedEvent = "WheelStopped";     // FerrisWheelRide: a roda parou no alto
     public const string FinalAttackDoneEvent = "FinalAttackDone"; // ZatanDirector.OnFinaleFinished
@@ -31,10 +31,8 @@ public static class RoteiroSetup
     // Triggers.
     public const string GeneratorNoiseTrigger = "gen_noise";
     public const string ZatanEscapeTrigger = "zatan_escape";
-    public const string CarouselNearTrigger = "carousel_near";
 
     const string MissingFuseText = "Falta um fusível aqui.";
-    const string HorseFirstText = "Antes do painel, preciso pôr a cabeça daquele cavalo de volta.";
 
     [MenuItem("Jamlloween/Progression/Roteiro: Rebuild Steps On Selected Director")]
     static void RebuildOnSelection()
@@ -93,20 +91,7 @@ public static class RoteiroSetup
                 onStart: new[] { Say("Saiu da caixa? Para de besteira, alguém deve ter tirado ele dali. Vai pro carrossel e termina logo.") },
                 onComplete: new[] { Task("carousel", TaskState.Current) }),
 
-            // 11: carrossel. A cabeca do cavalo (do time) vem antes do quadro de fusiveis.
-            Step("R09_NotarCavalo", "Notar o cavalo sem cabeça", new[] { "HorseNoticed" },
-                intercepted: new[] { ("fusebox", "Hm... antes do painel, tem algo estranho nesse carrossel.") },
-                onStart: new[] { Trigger(CarouselNearTrigger, true) },
-                onComplete: new[]
-                {
-                    Trigger(CarouselNearTrigger, false),
-                    Think("Que estranho... tá faltando a cabeça desse cavalo. Preciso achar e colocar de volta."),
-                    Task("horse_head", TaskState.Current)
-                }),
-            Step("R10_PegarCabeca", "Pegar a cabeça do cavalo", new[] { "HorseHeadTaken" }, active: new[] { "horse_head" },
-                blocked: new[] { ("fusebox", HorseFirstText) }),
-            Step("R11_EncaixarCabeca", "Encaixar a cabeça do cavalo", new[] { "HorseHeadFixed" }, active: new[] { "horse_neck" },
-                blocked: new[] { ("fusebox", HorseFirstText) }),
+            // 11: carrossel. O quadro de fusiveis mostra que falta um fusivel.
             Step("R12_IrAoQuadro", "Ir ao quadro do carrossel", new[] { "FuseBoxInspected" },
                 intercepted: new[] { ("fusebox", MissingFuseText) },
                 onComplete: new[]
@@ -164,7 +149,6 @@ public static class RoteiroSetup
         new ClipboardTask { id = "gas", text = "Pegar a gasolina", indent = true, initialState = TaskState.Hidden, doneEvent = "GasCanTaken" },
         new ClipboardTask { id = "hide", text = "Me esconder no trailer", initialState = TaskState.Hidden, doneEvent = ZatanGaveUpEvent },
         new ClipboardTask { id = "carousel", text = "Consertar o carrossel", initialState = TaskState.Future, doneEvent = "FuseBoxFixed" },
-        new ClipboardTask { id = "horse_head", text = "Colocar a cabeça do cavalo", indent = true, doneEvent = "HorseHeadFixed" },
         new ClipboardTask { id = "fuse_find", text = "Achar um fusível no labirinto", indent = true, doneEvent = "FuseTaken" },
         new ClipboardTask { id = "hide_maze", text = "Voltar ao trailer", indent = true, doneEvent = ZatanGaveUpEvent },
         new ClipboardTask { id = "fuse_fix", text = "Consertar o quadro de fusíveis", indent = true, doneEvent = "FuseBoxFixed" },
