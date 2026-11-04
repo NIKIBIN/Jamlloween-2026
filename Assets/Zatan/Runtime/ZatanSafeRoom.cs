@@ -82,8 +82,19 @@ namespace Jamlloween.Zatan
             if (bangClips == null || bangClips.Length == 0) throw new MissingReferenceException(nameof(bangClips));
         }
 
+        void OnEnable() => brain.StateChanged += OnBrainStateChanged;
+
         void OnDisable()
         {
+            brain.StateChanged -= OnBrainStateChanged;
+            routine = null;
+        }
+
+        /// <summary>Something else took him out of the scripted routine (Sleep, a step jump): stop driving him.</summary>
+        void OnBrainStateChanged(ZatanBehaviourState state)
+        {
+            if (routine == null || state == ZatanBehaviourState.Scripted) return;
+            StopCoroutine(routine);
             routine = null;
         }
 

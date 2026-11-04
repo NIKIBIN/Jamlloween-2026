@@ -21,30 +21,8 @@ MonoBehaviour:
     text: "Falta um fus\xEDvel aqui."
   completionEvents:
   - FuseTaken
-  onStart:
-  - kind: 3
-    line:
-      speaker: "PATR\xC3O"
-      text: 
-      audio: {fileID: 0}
-      volume: 1
-    targetId: maze_mid
-    state: 1
-    taskState: 2
-    clip: {fileID: 0}
-    volume: 1
+  onStart: []
   onComplete:
-  - kind: 3
-    line:
-      speaker: "PATR\xC3O"
-      text: 
-      audio: {fileID: 0}
-      volume: 1
-    targetId: maze_mid
-    state: 0
-    taskState: 2
-    clip: {fileID: 0}
-    volume: 1
   - kind: 5
     line:
       speaker: "PATR\xC3O"

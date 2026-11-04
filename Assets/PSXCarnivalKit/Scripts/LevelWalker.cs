@@ -58,7 +58,8 @@ namespace HeyHeyThere.PSXCarnivalKit
 #if MACHINES
             foreach (var m in All<Machine>(true))
             {
-                m.onRefused.AddListener(why => Say(why == "power" ? "No power" : why == "code" ? "Wrong code" : $"It needs the {why.Replace('_', ' ')}"));
+                // "locked": quem trancou mostra o próprio texto.
+                m.onRefused.AddListener(why => { if (why != "locked") Say(why == "power" ? "No power" : why == "code" ? "Wrong code" : $"It needs the {why.Replace('_', ' ')}"); });
                 m.onPicked.AddListener(it => Say($"Picked up the {it.Replace('_', ' ')}"));
             }
 #endif

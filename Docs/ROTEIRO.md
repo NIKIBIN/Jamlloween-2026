@@ -32,12 +32,12 @@ O roteiro inteiro, do trailer até os créditos, foi testado no Play Mode em seq
 | 6 | Na volta, ouve Zatan escapando da caixa | Placeholder | Gatilho na saída da tenda toca o som de Zatan escapando. A cabeça da cartomante some da máquina | Som final; cabine quebrada (porta aberta, vidro) |
 | 7 | Voltar para a safe zone, onde está o gerador | Pronto | Gerador do lado de fora do portão oeste | Nada |
 | 8 | Minigame do gerador | Pronto | Minigame do time ligado ao galão | Sons do gerador (corda, falha, ligado) |
-| 9 | Ao ligar o gerador, Zatan avista o jogador de longe e persegue | Placeholder | Zatan aparece a cerca de 24 m, encara e persegue sem perder o jogador. Captura devolve o jogador ao checkpoint e a perseguição recomeça | Ajuste de distância e velocidade; música de perseguição |
+| 9 | Ao ligar o gerador, Zatan avista o jogador de longe e persegue | Placeholder | Zatan aparece a cerca de 28 m (`_Roteiro/Zatan_StareSpawn_Gerador`, com linha de visão do gerador), parado, só encarando o jogador, com os holofotes ainda brancos. Quando o jogador olha para ele (câmera a até 14° dele, sem nada no meio), os olhos ficam amarelos, ele espera 2 s e corre atrás do jogador. Se o jogador nunca olhar, a perseguição começa sozinha depois de 20 s. Ajustes no `ZatanDirector` (Stare). Captura devolve o jogador ao checkpoint e a perseguição recomeça | Ajuste de distância e velocidade; música de perseguição |
 | 10 | Zatan não entra no trailer, bate na porta, ronda e some | Placeholder | Ele vai até a porta, bate 4 vezes, ronda 8 s, se afasta e some. O rádio fala do carrossel | Animação de bater (hoje ele só fica de frente para a porta); sons finais |
 | 11 | Consertar o carrossel | Pronto | Carrossel em `PF_carousel`, com a sequência do time: notar o cavalo sem cabeça, pegar a cabeça atrás do carrossel, encaixar e examinar o quadro, que diz que falta um fusível | Luzes de trabalho no carrossel; posição final da cabeça |
-| 12 | Fusível no fim do labirinto | Placeholder | Labirinto greybox de sebes (`_Roteiro/PH_Labirinto`, 16 × 28 m, a leste do parque) com o fusível na saída norte | Labirinto final, maior e com mais caminhos; caixa de peças em volta do fusível |
-| 13 | Perseguição na metade do labirinto | Placeholder | Na metade do caminho um gatilho toca um susto e Zatan entra pela entrada sul e persegue pelo labirinto. Captura volta o jogador para a metade do labirinto | Som final; ajuste para Zatan não cortar caminho por fora do labirinto |
-| 14 | Fugir para o trailer por outra entrada | Placeholder | A saída do labirinto leva ao portão leste da safe zone (o jogador abre com E). O trailer repete a desistência de Zatan | Deixar claro que é o caminho (luz, placa); portão que Zatan também atravesse |
+| 12 | Fusível numa clareira no meio do labirinto | Placeholder | Labirinto de sebes altas (`_Roteiro/PH_Labirinto`, 90 paredes `PF_HedgeWall_4m_Alta`, corredores de 4 m). A primeira metade, da entrada sul em (36, 26) até a clareira, tem bifurcações e becos (≈ 45 m). O fusível fica numa clareira aberta de ≈ 6,5 × 6,5 m em (38, 58) | Arte final do labirinto; caixa de peças em volta do fusível |
+| 13 | Perseguição ao pegar o fusível | Placeholder | Pegar o fusível começa a perseguição: Zatan surge na primeira metade, ≈ 22 m atrás, e entra na clareira atrás do jogador. Da clareira até a saída é um corredor único e sinuoso, sem bifurcações nem becos (≈ 82 m de caminho), até a saída oeste em (10, 84). Captura volta o jogador para a clareira e a perseguição recomeça | Som final |
+| 14 | Fugir para o trailer por outra entrada | Placeholder | A saída do labirinto dá na `Porta_2` da safe zone (portão leste). Ela fica trancada até o fusível ser pego; nessa hora abre sozinha e fica aberta de vez (não dá para fechar), e Zatan passa por ela. O trailer repete a desistência de Zatan | Deixar claro que é o caminho (luz, placa) |
 | 15 | Consertar o carrossel | Pronto | Quadro de fusíveis do time, ao lado do carrossel. Consertado, o carrossel gira com música | Nada |
 | 16 | Consertar a roda-gigante | Placeholder | `_Roteiro/RodaGigante_Conserto/PH_PainelRodaGigante`: painel greybox na base da roda-gigante que já existe. E no painel trava o jogador 4 s com som de ferramenta, e a roda fica pronta (ela só gira no passo 18) | Painel modelado da roda-gigante; minigame próprio |
 | 17 | Após consertar a roda-gigante, Zatan começa a se aproximar da posição do player, que está encurralado | Placeholder | Zatan aparece ao norte e anda devagar (1,3 m/s) até o jogador, parando a 4 m. Ele nunca captura nesse passo | Animação de andar lento e ameaçador; um bloqueio real que deixe a gôndola como única saída |
@@ -58,7 +58,7 @@ Prioridade para a jam (MoSCoW): **Must** sem isso o roteiro não fecha ou não d
 | Porta de verdade na gôndola da roda-gigante | 18 | Should |
 | Labirinto final de sebes, com saída e entrada bem marcadas | 12–13 | Must |
 | Cabine de Zatan quebrada depois da fuga (vidro, porta aberta) | 6 | Should |
-| Caixa de peças em volta do fusível no fim do labirinto | 12 | Could |
+| Caixa de peças em volta do fusível na clareira do labirinto | 12 | Could |
 | Fumaça e luz piscando no gerador quando ele engasga | 3 | Could |
 | Boca articulada no modelo de Zatan (já pendente no [ASSET_LEDGER](ASSET_LEDGER.md)) | 9–20 | Should |
 
@@ -82,7 +82,7 @@ Os sons do roteiro estão no [ASSET_LEDGER](ASSET_LEDGER.md), seção **Roteiro*
 | Ambiente noturno (ainda falta, item 1 do AUDIO_MOSCOW) | todos | Must |
 | Batida na porta do trailer (`DoorBang`) | 10, 14 | Must |
 | Zatan escapando da cabine (`ZatanEscape`) | 6 | Must |
-| Susto no meio do labirinto (`MazeChase_Sting`) | 13 | Must |
+| Susto ao pegar o fusível (`MazeChase_Sting`) | 13 | Must |
 | Tensão no alto da roda (`Tension_Loop`) e rangido atrás (`Gondola_Creak`) | 19–20 | Must |
 | Gerador engasgando (`Generator_Backfire`) e energia caindo (`PowerDown`) | 3–4 | Should |
 | Roda-gigante girando e parando (`Wheel_Loop`, `Wheel_Stop`), porta da gôndola (`Gondola_Door`) | 18–19 | Should |
@@ -95,7 +95,7 @@ Os sons do roteiro estão no [ASSET_LEDGER](ASSET_LEDGER.md), seção **Roteiro*
 
 | Item | Passo | Prioridade |
 |---|---|---|
-| Labirinto definitivo: hoje Zatan pode contornar o labirinto por fora, e entrar pela saída norte pega o fusível sem passar pela metade (a perseguição começa mesmo assim, ao pegar o fusível) | 12–13 | Must |
+| Labirinto definitivo: o greybox já tem o tamanho e o traçado (sebes altas, clareira do fusível no meio, corredor único até o portão leste); falta arte, iluminação e ajuste de duração | 12–13 | Should |
 | Caminho do labirinto até o portão leste da safe zone sinalizado (luz, placa, cerca guiando) | 14 | Must |
 | Portão leste: hoje começa fechado (o jogador abre com E) e o NavMesh foi gerado com ele fechado, então Zatan dá a volta pelo outro portão | 14 | Should |
 | Encurralar de verdade perto da roda-gigante (barreiras), para a gôndola ser a única saída | 17–18 | Should |

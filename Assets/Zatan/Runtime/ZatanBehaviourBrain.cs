@@ -49,6 +49,13 @@ namespace Jamlloween.Zatan
         public bool VanishSuspended { get; set; }
 
         float stateTime, lostTime, dwellTimer, repathTimer, vanishTimer, vanishDuration, vanishReadyAt;
+        float spotDuration;
+
+        /// <summary>Scripted with his beams still white (calm): he only watches. Cleared when he leaves Scripted.</summary>
+        public bool CalmEyes { get; private set; }
+
+        /// <summary>Where he looks from (his head).</summary>
+        public Vector3 EyePosition => perception.Eye.position;
         bool waitingAtPoint, dormant;
 
         void Awake()
@@ -128,7 +135,7 @@ namespace Jamlloween.Zatan
             Vector3 toPlayer = Vector3.ProjectOnPlane(target.Position - transform.position, Vector3.up);
             if (toPlayer.sqrMagnitude > 0.0001f)
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(toPlayer), config.spotTurnSpeed * Time.deltaTime);
-            if (stateTime < config.spotStareTime) return;
+            if (stateTime < spotDuration) return;
 
             agent.isStopped = false;
             agent.updateRotation = true;
@@ -200,6 +207,7 @@ namespace Jamlloween.Zatan
         void SetState(ZatanBehaviourState next)
         {
             State = next;
+            if (next != ZatanBehaviourState.Scripted) CalmEyes = false;
             stateTime = 0f;
             lostTime = 0f;
             vanishTimer = 0f;
@@ -207,8 +215,11 @@ namespace Jamlloween.Zatan
             StateChanged(next);
         }
 
-        void EnterSpotted()
+        void EnterSpotted() => EnterSpotted(config.spotStareTime);
+
+        void EnterSpotted(float stare)
         {
+            spotDuration = stare;
             agent.isStopped = true;
             agent.velocity = Vector3.zero;
             agent.updateRotation = false;
@@ -354,13 +365,27 @@ namespace Jamlloween.Zatan
             EnterSpotted();
         }
 
-        /// <summary>Hands him to an outside sequence: he only moves where it tells him. No catch, no vanish, no state changes from his senses.</summary>
-        public void BeginScripted()
+        /// <summary>
+        /// Hands him to an outside sequence: he only moves where it tells him. No catch, no vanish, no state changes from his senses.
+        /// With calmEyes his beams stay white (he only watches); otherwise they show the hunt colour.
+        /// </summary>
+        public void BeginScripted(bool calmEyes = false)
         {
             Relentless = false;
             agent.isStopped = false;
             agent.updateRotation = true;
+            CalmEyes = calmEyes;
             SetState(ZatanBehaviourState.Scripted);
+        }
+
+        /// <summary>He has seen the player: stares for this long (beams turn to the hunt colour), then a chase he never gives up.</summary>
+        public void SpotThenChase(float stareSeconds)
+        {
+            if (stareSeconds < 0f) throw new ArgumentOutOfRangeException(nameof(stareSeconds));
+            agent.updatePosition = true;
+            perception.NotePlayerAt(target.Position);
+            Relentless = true;
+            EnterSpotted(stareSeconds);
         }
 
         /// <summary>Scripted only: walks to the point at this speed.</summary>

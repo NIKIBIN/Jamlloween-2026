@@ -43,6 +43,7 @@ namespace HeyHeyThere.PSXCarnivalKit
         public int steps = 1;
         public string takes = "";
         public bool keep;
+        [Tooltip("Locked: every use is refused with \"locked\" (the game unlocks it later)")] public bool locked;
         public string item = "", code = "";
         public string[] lit = new string[0], idle = new string[0], fitted = new string[0];
 
@@ -98,6 +99,11 @@ namespace HeyHeyThere.PSXCarnivalKit
         public bool Use(List<string> items, string part = "")
         {
             items = items ?? new List<string>();
+            if (locked)
+            {
+                onRefused.Invoke("locked");
+                return false;
+            }
             if (kind == Kind.Item)
             {
                 items.Add(item);

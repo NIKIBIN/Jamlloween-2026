@@ -25,7 +25,7 @@ MonoBehaviour:
   - kind: 0
     line:
       speaker: "PATR\xC3O"
-      text: "Falta fus\xEDvel? Tem uma caixa de pe\xE7as no fim do labirinto de sebes, do lado leste do parque. Vai l\xE1 e volta r\xE1pido."
+      text: "Falta fus\xEDvel? Tem uma caixa de pe\xE7as no meio do labirinto de sebes, do lado leste do parque. Vai l\xE1 e volta r\xE1pido."
       audio: {fileID: 0}
       volume: 1
     targetId: 

@@ -34,6 +34,16 @@ namespace Jamlloween.Zatan
         [SerializeField] float stalkRepathInterval = 0.5f;
         [SerializeField, Range(0f, ZatanTension.Max)] float stalkTension = 60f;
 
+        [Header("Stare (first encounter)")]
+        [Tooltip("The player's camera: the stare ends when it looks at him.")]
+        [SerializeField] Transform playerView;
+        [Tooltip("The player counts as looking at him within this angle of the camera's forward (degrees).")]
+        [SerializeField, Range(1f, 45f)] float stareLookAngle = 14f;
+        [Tooltip("Seconds his beams stay yellow, staring, before he runs at the player.")]
+        [SerializeField, Min(0f)] float stareAlertSeconds = 2f;
+        [Tooltip("If the player never looks at him, the chase starts anyway after this many seconds.")]
+        [SerializeField, Min(1f)] float stareFallbackSeconds = 20f;
+
         [SerializeField] UnityEvent onPlayerRespawned = new UnityEvent();
         [Tooltip("The finale catch (FinalAttackFrom) finished and the screen is black. Wire the credits here.")]
         [SerializeField] UnityEvent onFinaleFinished = new UnityEvent();
@@ -45,7 +55,7 @@ namespace Jamlloween.Zatan
         public UnityEvent OnFinaleFinished => onFinaleFinished;
 
         Transform chaseSpawn;
-        Coroutine rechase, stalk;
+        Coroutine rechase, stalk, stare;
         bool finale;
 
         /// <summary>True while a story chase is running (until EndChase or Sleep).</summary>
@@ -59,6 +69,7 @@ namespace Jamlloween.Zatan
             if (target == null) throw new MissingReferenceException(nameof(target));
             if (catchSequence == null) throw new MissingReferenceException(nameof(catchSequence));
             if (checkpoint == null) throw new MissingReferenceException(nameof(checkpoint));
+            if (playerView == null) throw new MissingReferenceException(nameof(playerView));
         }
 
         void OnEnable() => catchSequence.Finished += OnCatchFinished;
@@ -68,6 +79,7 @@ namespace Jamlloween.Zatan
             catchSequence.Finished -= OnCatchFinished;
             rechase = null;
             stalk = null;
+            stare = null;
         }
 
         /// <summary>Out of the world, for good, until the next story call.</summary>
@@ -95,6 +107,47 @@ namespace Jamlloween.Zatan
             chaseSpawn = spawn;
             tension.SetValue(chaseTension);
             brain.AppearAndChase(spawn.position);
+        }
+
+        /// <summary>
+        /// First encounter: he appears at the point and only watches the player, beams still white. When the player looks
+        /// at him his beams turn yellow, he holds the stare, then chases them like ChaseFrom (a catch restarts it from the spawn).
+        /// </summary>
+        public void StareThenChase(Transform spawn)
+        {
+            if (spawn == null) throw new ArgumentNullException(nameof(spawn));
+            StopRoutines();
+            chaseSpawn = spawn;
+            tension.SetValue(chaseTension);
+            brain.Respawn(spawn.position);
+            brain.BeginScripted(calmEyes: true);
+            stare = StartCoroutine(Stare());
+        }
+
+        IEnumerator Stare()
+        {
+            for (float t = 0f; ; t += Time.deltaTime)
+            {
+                if (brain.State != ZatanBehaviourState.Scripted) { stare = null; yield break; }   // something else took him
+                brain.ScriptedFace(target.Position);
+                if (PlayerLooksAtHim()) break;
+                if (t >= stareFallbackSeconds)
+                {
+                    Debug.Log($"[ZatanDirector] the player never looked at Zatan in {stareFallbackSeconds:0} s: the chase starts anyway.", this);
+                    break;
+                }
+                yield return null;
+            }
+            stare = null;
+            brain.SpotThenChase(stareAlertSeconds);
+        }
+
+        bool PlayerLooksAtHim()
+        {
+            Vector3 eye = brain.EyePosition;
+            Vector3 to = eye - playerView.position;
+            if (Vector3.Angle(playerView.forward, to) > stareLookAngle) return false;
+            return ZatanLineOfSight.IsClear(playerView.position, eye, brain.transform, target.transform);
         }
 
         /// <summary>Starts a story chase from the spawn only if none is running (for example, the first one already ended).</summary>
@@ -181,8 +234,10 @@ namespace Jamlloween.Zatan
         {
             if (rechase != null) StopCoroutine(rechase);
             if (stalk != null) StopCoroutine(stalk);
+            if (stare != null) StopCoroutine(stare);
             rechase = null;
             stalk = null;
+            stare = null;
         }
     }
 }

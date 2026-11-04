@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 311a01def40eff9b6ac1fa4c53e5ab5e
 ModelImporter:
-  serializedVersion: 24300
+  serializedVersion: 24600
   internalIDToNameTable: []
   externalObjects:
   - first:
@@ -44,6 +44,8 @@ ModelImporter:
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
+    preBakeConvexCollisionMesh: 0
+    preBakeTriangleCollisionMesh: 1
     importPhysicalCameras: 0
     importVisibility: 0
     importBlendShapes: 0
@@ -65,6 +67,8 @@ ModelImporter:
     generateMeshLods: 0
     meshLodGenerationFlags: 0
     maximumMeshLod: -1
+    importUVs: -1
+    importVertexColors: 1
     meshOptimizationFlags: -1
     indexFormat: 1
     secondaryUVAngleDistortion: 8
@@ -84,6 +88,7 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
+    calculateBlendshapeNormalsDeltaFromImportedNormals: 1
   referencedClips: []
   importAnimation: 0
   humanDescription:

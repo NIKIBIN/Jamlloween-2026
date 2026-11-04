@@ -32,7 +32,6 @@ public static class RoteiroSetup
     public const string GeneratorNoiseTrigger = "gen_noise";
     public const string ZatanEscapeTrigger = "zatan_escape";
     public const string CarouselNearTrigger = "carousel_near";
-    public const string MazeMidTrigger = "maze_mid";
 
     const string MissingFuseText = "Falta um fusível aqui.";
     const string HorseFirstText = "Antes do painel, preciso pôr a cabeça daquele cavalo de volta.";
@@ -112,13 +111,13 @@ public static class RoteiroSetup
                 intercepted: new[] { ("fusebox", MissingFuseText) },
                 onComplete: new[]
                 {
-                    Say("Falta fusível? Tem uma caixa de peças no fim do labirinto de sebes, do lado leste do parque. Vai lá e volta rápido."),
+                    Say("Falta fusível? Tem uma caixa de peças no meio do labirinto de sebes, do lado leste do parque. Vai lá e volta rápido."),
                     Task("fuse_find", TaskState.Current)
                 }),
-            // 12-13: fusivel no fim do labirinto. Na metade, o trigger maze_mid comeca a perseguicao (relay/trigger na cena).
+            // 12-13: fusivel numa clareira no meio do labirinto. Pegar o fusivel conclui a etapa; a R14 comeca a perseguicao
+            // (relay: EnsureChaseFrom) e abre de vez o portao leste (StepLockedMachine da Porta_2).
             Step("R13_Labirinto", "Achar o fusível no labirinto", new[] { "FuseTaken" }, active: new[] { "fuse_pickup" },
-                onStart: new[] { Trigger(MazeMidTrigger, true) },
-                onComplete: new[] { Trigger(MazeMidTrigger, false), Task("hide_maze", TaskState.Current) },
+                onComplete: new[] { Task("hide_maze", TaskState.Current) },
                 blocked: new[] { ("fusebox", MissingFuseText) }),
             // 14: foge para o trailer pela outra entrada (portao leste). O ZatanSafeRoom faz a desistencia.
             Step("R14_FugaTrailer2", "Fugir para o trailer pelo portão leste", new[] { ZatanGaveUpEvent },
