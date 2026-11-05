@@ -1,7 +1,7 @@
 using HeyHeyThere.PSXCarnivalKit;
 using UnityEngine;
 
-namespace Jamlloween.Zatan.TestScene
+namespace Jamlloween.Zatan.KitPlayer
 {
     /// <summary>Adapter from the PSX kit player to what Zatan reads.</summary>
     public sealed class LevelWalkerZatanTarget : ZatanTarget

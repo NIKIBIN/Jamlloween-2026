@@ -940,7 +940,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8277278552344114819}
-  - component: {fileID: 7389161641861075879}
   m_Layer: 0
   m_Name: FerrisWheelRide
   m_TagString: Untagged
@@ -966,51 +965,6 @@ Transform:
   - {fileID: 2215759242249585561}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7389161641861075879
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3434087208185354411}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c75668ca7877f43bb8e0a3404b69b806, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.FerrisWheel.FerrisWheelRide
-  hub: {fileID: 469911937369975483}
-  cars:
-  - {fileID: 8363088513639140338}
-  - {fileID: 1771241356126726533}
-  - {fileID: 1269875365047694040}
-  - {fileID: 6249697827768666180}
-  - {fileID: 5545772264713783420}
-  - {fileID: 6074919434114705266}
-  - {fileID: 7381000530820409486}
-  - {fileID: 8523407787055816285}
-  lights:
-  - {fileID: 830316490533354595}
-  seat: {fileID: 8373790648610277281}
-  playerCar: 6
-  repairMinigame: {fileID: 2515021034281543168}
-  repairExtraTurns: 1
-  degreesPerSecond: 20
-  easeSeconds: 2.5
-  onStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  onRepaired:
-    m_PersistentCalls:
-      m_Calls: []
-  onWaiting:
-    m_PersistentCalls:
-      m_Calls: []
-  onBoarded:
-    m_PersistentCalls:
-      m_Calls: []
-  onReachedTop:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &3534513172037806358
 GameObject:
   m_ObjectHideFlags: 0
@@ -1111,7 +1065,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8893185431230574661}
   - component: {fileID: 2895147239930066572}
-  - component: {fileID: 8373790648610277281}
   m_Layer: 0
   m_Name: PlayerSeat
   m_TagString: Untagged
@@ -1157,27 +1110,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.3, y: 0.8, z: 1.8}
   m_Center: {x: 0, y: -0.95, z: 0}
---- !u!114 &8373790648610277281
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3625852892881425534}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c52b9bff36112873e8b0c13ef2f1e1fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.FerrisWheel.FerrisWheelSeat
-  prompt: Entrar no carrinho
-  anchor: {fileID: 1320180313493323428}
-  seatedEyeHeight: 1
-  door: {fileID: 7470138920774733578}
-  doorOpenAngle: 105
-  doorSeconds: 0.6
-  mouseSensitivity: 2
-  pitchLimit: 80
-  boardSeconds: 0.8
 --- !u!1 &3819034435607397468
 GameObject:
   m_ObjectHideFlags: 0
@@ -1621,7 +1553,8 @@ Transform:
   m_LocalPosition: {x: 0, y: -1.18, z: -0.45}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1572404480735973247}
   m_Father: {fileID: 8893185431230574661}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5511382982478818638
@@ -2512,6 +2445,37 @@ MonoBehaviour:
   lamp: {fileID: 4559750374664112983}
   lampOff: {fileID: 2100000, guid: 7a22aa7c334c31096a0d2d40c7e4748f, type: 2}
   lampOn: {fileID: 2100000, guid: 7037260148004da849a1bbcd10e07221, type: 2}
+--- !u!1 &8164862118087237885
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1572404480735973247}
+  m_Layer: 0
+  m_Name: Assento_Olho
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1572404480735973247
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8164862118087237885}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1320180313493323428}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8500025573649333032
 GameObject:
   m_ObjectHideFlags: 0
@@ -2906,58 +2870,13 @@ PrefabInstance:
       addedObject: {fileID: 8893185431230574661}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4cad6240a1b64a3678a22257ce771381, type: 3}
---- !u!4 &469911937369975483 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3329400846515383525, guid: 4cad6240a1b64a3678a22257ce771381, type: 3}
-  m_PrefabInstance: {fileID: 2932157838241826398}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &830316490533354595 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 2536932273558370877, guid: 4cad6240a1b64a3678a22257ce771381, type: 3}
-  m_PrefabInstance: {fileID: 2932157838241826398}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1269875365047694040 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4120405455730635910, guid: 4cad6240a1b64a3678a22257ce771381, type: 3}
-  m_PrefabInstance: {fileID: 2932157838241826398}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1771241356126726533 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3469364517914423259, guid: 4cad6240a1b64a3678a22257ce771381, type: 3}
-  m_PrefabInstance: {fileID: 2932157838241826398}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4887071164608238633 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7738102595953054327, guid: 4cad6240a1b64a3678a22257ce771381, type: 3}
   m_PrefabInstance: {fileID: 2932157838241826398}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &5545772264713783420 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7225907375468875298, guid: 4cad6240a1b64a3678a22257ce771381, type: 3}
-  m_PrefabInstance: {fileID: 2932157838241826398}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &6074919434114705266 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 9007037683310928172, guid: 4cad6240a1b64a3678a22257ce771381, type: 3}
-  m_PrefabInstance: {fileID: 2932157838241826398}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &6249697827768666180 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 9082209085354839578, guid: 4cad6240a1b64a3678a22257ce771381, type: 3}
-  m_PrefabInstance: {fileID: 2932157838241826398}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7381000530820409486 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5683413969361776336, guid: 4cad6240a1b64a3678a22257ce771381, type: 3}
-  m_PrefabInstance: {fileID: 2932157838241826398}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &8363088513639140338 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6682979787001318828, guid: 4cad6240a1b64a3678a22257ce771381, type: 3}
-  m_PrefabInstance: {fileID: 2932157838241826398}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &8523407787055816285 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6843259482136025091, guid: 4cad6240a1b64a3678a22257ce771381, type: 3}
   m_PrefabInstance: {fileID: 2932157838241826398}
   m_PrefabAsset: {fileID: 0}

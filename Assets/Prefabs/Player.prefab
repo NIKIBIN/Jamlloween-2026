@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 6090226406398175336}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.2, y: -0.2, z: 0}
+  m_LocalPosition: {x: 0.1, y: -0.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -121,9 +121,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3082811795476166219, guid: 2dad8984086b8ab4aa32a0ff2a6b736a, type: 3}
+      propertyPath: m_Radius
+      value: 0.125
+      objectReference: {fileID: 0}
     - target: {fileID: 5248121475412422875, guid: 2dad8984086b8ab4aa32a0ff2a6b736a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5248121475412422875, guid: 2dad8984086b8ab4aa32a0ff2a6b736a, type: 3}
       propertyPath: m_LocalScale.y
@@ -131,7 +135,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5248121475412422875, guid: 2dad8984086b8ab4aa32a0ff2a6b736a, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5248121475412422875, guid: 2dad8984086b8ab4aa32a0ff2a6b736a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -209,6 +213,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7695253163602034370, guid: 2dad8984086b8ab4aa32a0ff2a6b736a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6602584622411659179}
+    - targetCorrespondingSourceObject: {fileID: 7695253163602034370, guid: 2dad8984086b8ab4aa32a0ff2a6b736a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1554426313006793711}
     - targetCorrespondingSourceObject: {fileID: 1735116025299061957, guid: 2dad8984086b8ab4aa32a0ff2a6b736a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7014646922178629740}
@@ -335,15 +342,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GasCanCarrier
   walker: {fileID: 0}
   view: {fileID: 0}
-  speedMultiplier: 0.8
-  canRun: 0
+  speedMultiplier: 1
+  canRun: 1
   dropKey: 21
   dropGap: 0.03
-  heldPosition: {x: 0.3, y: -0.42, z: 0.55}
+  heldPosition: {x: 0.32, y: -0.55, z: 0.62}
   heldEuler: {x: 0, y: -25, z: 0}
   sloshClips: []
-  sloshVolume: 0.6
+  sloshVolume: 0.2
   stepDistance: 0.85
+--- !u!114 &1554426313006793711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6622665817036680443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b46ae3b35e3a954c8422816c2893a6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Jamlloween.Zatan.TestScene::Jamlloween.Zatan.TestScene.LevelWalkerHiding
+  config: {fileID: 11400000, guid: bbecdf47a7f59e640a8a1858f3de3f87, type: 2}
+  target: {fileID: 4334205417118365314}
+  walker: {fileID: 5458071688553591506}
+  body: {fileID: 2011754973340722290}
+  view: {fileID: 8984272034394626692}
+  flashlight: {fileID: 6718609611007356504}
+  disableWhileHidden:
+  - {fileID: 8111190390151605606}
+  reach: 2.2
+  peekRange: {x: 55, y: 20}
+  gapCover: 0.34
 --- !u!4 &8984272034394626692 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5588372659537021117, guid: 2dad8984086b8ab4aa32a0ff2a6b736a, type: 3}

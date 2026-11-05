@@ -1,3 +1,4 @@
+using Jamlloween.Zatan.KitPlayer;
 using HeyHeyThere.PSXCarnivalKit;
 using UnityEngine;
 using UnityEngine.InputSystem;

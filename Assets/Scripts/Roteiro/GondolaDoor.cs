@@ -5,9 +5,9 @@ using UnityEngine;
 namespace Jamlloween.Roteiro
 {
     /// <summary>
-    /// The door of the Ferris wheel gondola. Closed until the story opens it (Open, wired in the relay); then E
-    /// boards the gondola and starts the ride. Lives on the same object as its StepInteraction.
-    /// The door itself is a PLACEHOLDER box on a hinge: the kit's gondola has no door.
+    /// The door of the player's Ferris wheel car. Closed until the story opens it (Open, wired in the relay); it swings
+    /// open once the car is down at the bottom (at once if it already is). Then E boards the car and starts the ride.
+    /// Lives on the same object as its StepInteraction, with a collider over the car.
     /// </summary>
     [RequireComponent(typeof(StepInteraction))]
     public sealed class GondolaDoor : MonoBehaviour, IInteractable, IStepForceCompletable
@@ -20,10 +20,12 @@ namespace Jamlloween.Roteiro
         [SerializeField] float openSeconds = 0.8f;
         [SerializeField] AudioSource source;
         [SerializeField] AudioClip openClip;
+        [Tooltip("Said when the door swings open (the car may come down some seconds after the story asks).")]
+        [SerializeField] RadioLine openLine = new RadioLine { speaker = "", text = "A porta daquela gôndola abriu..." };
 
         StepInteraction gate;
         Quaternion closed;
-        bool open;
+        bool open, wanted;
 
         public string Prompt => open && !ride.Riding ? prompt : string.Empty;
 
@@ -37,13 +39,22 @@ namespace Jamlloween.Roteiro
             closed = hinge.localRotation;
         }
 
-        /// <summary>Swings the door open with a creak. The story calls this when Zatan closes in.</summary>
+        /// <summary>Swings the door open with a creak, when the car is down. The story calls this when Zatan closes in.</summary>
         public void Open()
         {
-            if (open) return;
+            if (open || wanted) return;
+            wanted = true;
+            StartCoroutine(OpenWhenDown());
+        }
+
+        IEnumerator OpenWhenDown()
+        {
+            while (!ride.CarDown) yield return null;
             open = true;
             source.PlayOneShot(openClip);
-            StartCoroutine(Swing());
+            var radio = ProgressionDirector.Instance != null ? ProgressionDirector.Instance.Radio : null;
+            if (radio != null) radio.Enqueue(openLine);
+            yield return Swing();
         }
 
         IEnumerator Swing()
@@ -59,8 +70,9 @@ namespace Jamlloween.Roteiro
 
         public void Interact(PlayerInteractor interactor)
         {
-            if (!open || ride.Riding) return;
+            if (!open || ride.Riding || !ride.CarDown) return;
             if (!gate.TryUse()) return;
+            StartCoroutine(Close());
             ride.Board();
             gate.NotifyCompleted();
         }
@@ -68,12 +80,23 @@ namespace Jamlloween.Roteiro
         /// <summary>Debug jump: the door is open and the player is on the ride.</summary>
         public void ForceComplete()
         {
-            if (!open)
-            {
-                open = true;
-                hinge.localRotation = closed * Quaternion.Euler(0f, openAngle, 0f);
-            }
+            StopAllCoroutines();
+            open = wanted = true;
+            if (!ride.CarDown && !ride.Riding) ride.ForceCarDown();
+            hinge.localRotation = closed;
             ride.Board();
+        }
+
+        /// <summary>Shuts the door behind the player.</summary>
+        IEnumerator Close()
+        {
+            Quaternion from = hinge.localRotation;
+            for (float t = 0f; t < 1f; t += Time.deltaTime / openSeconds)
+            {
+                hinge.localRotation = Quaternion.Slerp(from, closed, Mathf.SmoothStep(0f, 1f, t));
+                yield return null;
+            }
+            hinge.localRotation = closed;
         }
     }
 }

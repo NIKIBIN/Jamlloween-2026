@@ -1,0 +1,6 @@
+{
+    "name": "Jamlloween.Zatan.KitPlayer",
+    "rootNamespace": "Jamlloween.Zatan.KitPlayer",
+    "references": ["Jamlloween.Zatan", "HeyHeyThere.PSXCarnivalKit", "Unity.InputSystem", "Jamlloween.Flashlight"],
+    "autoReferenced": false
+}

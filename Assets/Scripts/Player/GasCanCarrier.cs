@@ -2,8 +2,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// Fica no jogador (junto do LevelWalker). Carregando o galao ele anda mais devagar, nao corre e o galao balanca a cada
-/// passo. A lanterna nao e afetada. Largar: a tecla configurada (padrao G). O galao fica no chao e pode ser pego de novo.
+/// Fica no jogador (junto do LevelWalker). Carregando o galao, o galao balanca a cada passo. Por padrao o jogador anda e
+/// corre na velocidade normal (o mapa e grande); speedMultiplier e canRun deixam o galao pesar, se precisar. A lanterna nao e afetada. Largar: a tecla configurada (padrao G). O galao fica no chao e pode ser pego de novo.
 /// Dentro de um minigame o jogador tem os scripts desligados (inclusive este): nada acontece ate ele sair.
 /// </summary>
 public class GasCanCarrier : MonoBehaviour
@@ -13,9 +13,10 @@ public class GasCanCarrier : MonoBehaviour
     [SerializeField] Transform view;
 
     [Header("Movimento carregando")]
-    [Tooltip("Fracao da velocidade normal de andar.")]
-    [SerializeField, Range(0.1f, 1f)] float speedMultiplier = 0.8f;
-    [SerializeField] bool canRun;
+    [Tooltip("Fracao da velocidade normal de andar (e de correr, com canRun). 1 = sem lentidao.")]
+    [SerializeField, Range(0.1f, 1f)] float speedMultiplier = 1f;
+    [Tooltip("Desligado: carregando o galao o jogador so anda.")]
+    [SerializeField] bool canRun = true;
 
     [Header("Soltar")]
     [SerializeField] Key dropKey = Key.G;
@@ -23,13 +24,13 @@ public class GasCanCarrier : MonoBehaviour
     [SerializeField] float dropGap = 0.03f;
 
     [Header("Na mao")]
-    [SerializeField] Vector3 heldPosition = new Vector3(0.3f, -0.42f, 0.55f);
+    [SerializeField] Vector3 heldPosition = new Vector3(0.32f, -0.55f, 0.62f);
     [SerializeField] Vector3 heldEuler = new Vector3(0f, -25f, 0f);
 
     [Header("Som de gasolina balancando")]
     [Tooltip("Vazio = som gerado em codigo.")]
     [SerializeField] AudioClip[] sloshClips;
-    [SerializeField, Range(0f, 1f)] float sloshVolume = 0.6f;
+    [SerializeField, Range(0f, 1f)] float sloshVolume = 0.2f;
     [Tooltip("Metros andados entre um balanco e o proximo.")]
     [SerializeField] float stepDistance = 0.85f;
 
