@@ -256,6 +256,7 @@ public class ZatanRepairMinigame : Minigame
 
         AnimateMachine();
         PulseSocket();
+        PulseTape();
 
         // O gas chia e sai em jato enquanto vaza; enfraquece conforme a fita cobre a junta.
         float leak = activeLock >= 0 ? (locks[activeLock].joint != null ? locks[activeLock].joint.Coverage : 1f) : 0f;
@@ -308,6 +309,25 @@ public class ZatanRepairMinigame : Minigame
                 if (running && !ps.isPlaying) ps.Play();
                 else if (!running && ps.isPlaying) ps.Stop();
             }
+    }
+
+    // Com um vazamento aberto a manivela trava e a unica saida e a fita: ela pisca ate o jogador pega-la.
+    // Sem isso o painel parecia travado (o vazamento so mostra um jato de gas fino).
+    bool tapePulsing;
+    void PulseTape()
+    {
+        if (tape == null) return;
+        bool want = activeLock >= 0 && drag != Drag.Tape && hovered != tape;
+        if (want)
+        {
+            tapePulsing = true;
+            tape.SetHighlight(Mathf.Sin(Time.time * 7f) > 0f, hoverColor);
+        }
+        else if (tapePulsing)
+        {
+            tapePulsing = false;
+            if (hovered != tape) tape.SetHighlight(false, hoverColor);
+        }
     }
 
     void PulseSocket()

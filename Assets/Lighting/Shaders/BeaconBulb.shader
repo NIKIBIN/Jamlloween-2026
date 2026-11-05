@@ -1,7 +1,8 @@
 // A lit bulb in the PSX look: the texture times the baked vertex shading, glowing. It ignores the darkness of the night and
 // the radial fog, and fades only with the thin beacon fog (WorldBeacons.hlsl), so the Ferris wheel and the little lamps read
-// from far away. StepBeacon sets _BulbLevel (the glow now; 0: a dead bulb, dark glass under the normal fog) and _BulbBroken
-// (only some segments of bulbs take part, like a short circuit). Segments are slices of the angle around the ring axis.
+// from far away. StepBeacon sets _BulbLevel (the glow now; 0: a dead bulb, dark glass under the normal fog), _BulbBroken
+// (segments drift slowly between _BulbMin and full) and _BulbVariation (working: a few segments dip a little).
+// Segments are slices of the angle around the ring axis.
 Shader "Jamlloween/Beacon Bulb"
 {
     Properties
@@ -12,6 +13,9 @@ Shader "Jamlloween/Beacon Bulb"
         _SnapRows ("Vertex Snap (rows on screen, 0 = off)", Float) = 240
         _BulbLevel ("Level (set by StepBeacon)", Range(0, 1)) = 1
         _BulbBroken ("Broken (set by StepBeacon)", Range(0, 1)) = 0
+        _BulbVariation ("Working variation (set by StepBeacon)", Range(0, 0.5)) = 0.12
+        _BulbSpeed ("Variation speed (set by StepBeacon)", Float) = 0.5
+        _BulbMin ("Broken minimum (set by StepBeacon)", Range(0, 1)) = 0.3
         _Segments ("Broken Segments around the ring", Float) = 24
         _SegmentAxis ("Ring Axis (0 X, 1 Y, 2 Z; set by StepBeacon)", Float) = 1
         _SegmentCenter ("Ring Centre, object space (set by StepBeacon)", Vector) = (0, 0, 0, 0)
@@ -35,7 +39,7 @@ Shader "Jamlloween/Beacon Bulb"
             CBUFFER_START(UnityPerMaterial)
             float4 _MainTex_ST;
             fixed4 _Color;
-            float _Glow, _SnapRows, _BulbLevel, _BulbBroken, _Segments, _DeadBrightness, _SegmentAxis;
+            float _Glow, _SnapRows, _BulbLevel, _BulbBroken, _Segments, _DeadBrightness, _SegmentAxis, _BulbVariation, _BulbSpeed, _BulbMin;
             float4 _SegmentCenter;
             CBUFFER_END
 
@@ -44,16 +48,18 @@ Shader "Jamlloween/Beacon Bulb"
 
             float Hash(float n) { return frac(sin(n * 12.9898 + 1.7) * 43758.5453); }
 
-            // Share of the glow for a bulb. StepBeacon sends the flicker in _BulbLevel; broken, about 40% of the segments
-            // stay dead, and the rest take part with their own strength and an odd dropout, so the ring never lights evenly.
+            // Share of the glow for a bulb. StepBeacon sends the overall level in _BulbLevel. Each segment has its own slow wave
+            // (its own phase and pace), so the ring never lights evenly but nothing blinks.
+            // Broken: every segment drifts between _BulbMin and full. Working: about a third of the segments dip a little
+            // (_BulbVariation), the rest stay steady.
             float BulbOn(float segment)
             {
-                if (_BulbBroken < 0.5) return 1.0;
-                float h = Hash(segment);
-                if (h < 0.4) return 0.0;
-                float tick = floor(_Time.y * 15.0);
-                if (Hash(tick + segment * 7.31) < 0.2) return 0.0;
-                return lerp(0.5, 1.0, Hash(segment * 3.17 + 0.5));
+                float phase = Hash(segment) * 6.2831853;
+                float pace = lerp(0.6, 1.4, Hash(segment * 3.17 + 0.5));
+                float wave = 0.5 + 0.5 * sin(_Time.y * _BulbSpeed * pace * 6.2831853 + phase);
+                if (_BulbBroken > 0.5) return lerp(_BulbMin, 1.0, smoothstep(0.0, 1.0, wave));
+                if (Hash(segment * 7.31 + 2.0) > 0.35) return 1.0;
+                return 1.0 - _BulbVariation * wave;
             }
 
             v2f vert (appdata v)
