@@ -15,7 +15,7 @@ namespace Jamlloween.Progression
     [DefaultExecutionOrder(100)]   // after the director changes step
     public sealed class StepBeacon : MonoBehaviour
     {
-        public enum Pattern { Steady, Blink, Flicker }
+        public enum Pattern { Steady, Blink, Flicker, Sputter }
 
         const int Max = 48;   // = WORLD_BEACON_MAX em WorldBeacons.hlsl
         static readonly List<StepBeacon> all = new List<StepBeacon>();
@@ -26,6 +26,12 @@ namespace Jamlloween.Progression
         static readonly int FogId = Shader.PropertyToID("_BeaconFogDensity");
         static readonly int PosId = Shader.PropertyToID("_BeaconPosRange48");
         static readonly int ColorId = Shader.PropertyToID("_BeaconColor48");
+        const int AmbientMax = 8;   // = WORLD_AMBIENT_MAX em WorldBeacons.hlsl
+        static readonly Vector4[] ambientPos = new Vector4[AmbientMax];
+        static readonly Vector4[] ambientColors = new Vector4[AmbientMax];
+        static readonly int AmbientCountId = Shader.PropertyToID("_AmbientLightCount");
+        static readonly int AmbientPosId = Shader.PropertyToID("_AmbientLightPosRange");
+        static readonly int AmbientColorId = Shader.PropertyToID("_AmbientLightColor");
         static readonly int BulbLevelId = Shader.PropertyToID("_BulbLevel");
         static readonly int BulbBrokenId = Shader.PropertyToID("_BulbBroken");
         static readonly int BulbVariationId = Shader.PropertyToID("_BulbVariation");
@@ -59,6 +65,8 @@ namespace Jamlloween.Progression
         [SerializeField] int flickerSeed;
 
         [Header("Light")]
+        [Tooltip("Decor light (a booth, a lamp post): it does not take a story slot. The ambient lights nearest to the camera share 8 slots of their own and fade out at the edge.")]
+        [SerializeField] bool ambient;
         [SerializeField] Color color = new Color(1f, 0.8f, 0.45f);
         [SerializeField, Min(0f)] float intensity = 2f;
         [Tooltip("Metres the light reaches around the beacon.")]
@@ -71,6 +79,8 @@ namespace Jamlloween.Progression
         [Tooltip("Share of the cycle that is on (Blink).")]
         [SerializeField, Range(0.05f, 0.95f)] float blinkOn = 0.5f;
 
+        [Tooltip("Shortest and longest seconds between two dropouts (Sputter).")]
+        [SerializeField] Vector2 sputterGap = new Vector2(1.2f, 3.5f);
         [Header("Shown while lit")]
         [Tooltip("Bulbs or a lamp, on while the beacon is lit (and blinking with it).")]
         [SerializeField] Renderer[] renderers = new Renderer[0];
@@ -103,12 +113,29 @@ namespace Jamlloween.Progression
         /// <summary>Funcionando: oscilação pequena, de 1 até 1 - <see cref="workingVariation"/>.</summary>
         float WorkingWave(float t) => 1f - workingVariation * Mathf.PerlinNoise(t * workingSpeed, seed + 13.7f);
 
+        /// <summary>
+        /// A tired circuit: on most of the time, with a soft hum. Dropouts come at irregular gaps, last 0.1 to 0.45 s and
+        /// stutter on and off. About one gap in four has no dropout. Not the broken mode: see <see cref="BrokenWave"/>. 0..1.
+        /// </summary>
+        float Sputter(float t)
+        {
+            float hum = Mathf.Lerp(0.8f, 1f, Mathf.PerlinNoise(t * 3f, seed));
+            int index = Mathf.FloorToInt(t / sputterGap.y);
+            float offset = Hash(seed + index) * (sputterGap.y - sputterGap.x);
+            float local = t - index * sputterGap.y - offset;
+            if (local < 0f || Hash(seed * 1.37f + index) < 0.25f) return hum;
+            float drop = Mathf.Lerp(0.1f, 0.45f, Hash(seed * 2.11f + index));
+            if (local > drop) return hum;
+            int tick = Mathf.FloorToInt(local * 18f);
+            return Hash(seed * 3.7f + index * 31f + tick) < 0.6f ? Mathf.Lerp(0f, 0.15f, Hash(seed + tick)) : hum * 0.7f;
+        }
+
         void OnEnable() => all.Add(this);
 
         void OnDisable()
         {
             all.Remove(this);
-            if (all.Count == 0) Shader.SetGlobalFloat(CountId, 0f);
+            if (all.Count == 0) { Shader.SetGlobalFloat(CountId, 0f); Shader.SetGlobalFloat(AmbientCountId, 0f); }
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -148,6 +175,7 @@ namespace Jamlloween.Progression
                     float n = Mathf.PerlinNoise(t * 9f, seed);
                     level = n > 0.32f ? Mathf.Lerp(0.55f, 1f, n) : 0f;
                     break;
+                case Pattern.Sputter: level = Sputter(t); break;
                 default: level = 1f; break;
             }
             if (!Broken) level *= WorkingWave(t);
@@ -195,7 +223,7 @@ namespace Jamlloween.Progression
             int n = 0;
             foreach (var b in all)
             {
-                if (b.level <= 0f || n >= Max) continue;
+                if (b.ambient || b.level <= 0f || n >= Max) continue;
                 if (b.emitFrom.Length == 0)
                 {
                     Push(ref n, b.transform.position, b.range, b.color * (b.intensity * b.level));
@@ -212,6 +240,42 @@ namespace Jamlloween.Progression
             Shader.SetGlobalFloat(FogId, fogDensity);
             Shader.SetGlobalVectorArray(PosId, posRange);
             Shader.SetGlobalVectorArray(ColorId, colors);
+            PushAmbient();
+        }
+
+        // The ambient lights: the nearest to the camera take the slots. Each one fades out before the first one left out
+        // (or before ambientFadeEnd), so a light never pops in or out at full strength.
+        static readonly List<(float dist, StepBeacon b)> near = new List<(float, StepBeacon)>();
+        const float AmbientFadeEnd = 40f, AmbientBlend = 8f;
+
+        static void PushAmbient()
+        {
+            near.Clear();
+            var cam = Camera.main;
+            Vector3 eye = cam != null ? cam.transform.position : Vector3.zero;
+            foreach (var b in all)
+                if (b.ambient && b.level > 0f)
+                {
+                    float d = Vector3.Distance(eye, b.transform.position);
+                    if (d < AmbientFadeEnd) near.Add((d, b));
+                }
+            near.Sort((x, y) => x.dist.CompareTo(y.dist));
+            float cut = near.Count > AmbientMax ? near[AmbientMax].dist : AmbientFadeEnd;
+            int n = 0;
+            for (int i = 0; i < near.Count && n < AmbientMax; i++)
+            {
+                var (d, b) = near[i];
+                float w = Mathf.Clamp01((cut - d) / AmbientBlend);
+                if (w <= 0f) continue;
+                Vector3 p = b.transform.position;
+                ambientPos[n] = new Vector4(p.x, p.y, p.z, b.range);
+                Color c = b.color * (b.intensity * b.level * w);
+                ambientColors[n] = new Vector4(c.r, c.g, c.b, 0f);
+                n++;
+            }
+            Shader.SetGlobalFloat(AmbientCountId, n);
+            Shader.SetGlobalVectorArray(AmbientPosId, ambientPos);
+            Shader.SetGlobalVectorArray(AmbientColorId, ambientColors);
         }
 
         void OnDrawGizmosSelected()
