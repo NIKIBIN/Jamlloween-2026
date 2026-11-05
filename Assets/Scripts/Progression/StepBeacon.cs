@@ -8,7 +8,7 @@ namespace Jamlloween.Progression
     /// It is lit from the step <see cref="from"/> until the step <see cref="until"/> starts (empty: to the end), so a
     /// debug jump shows the right lights. Lit, it lights the scenery around it (WorldBeacons.hlsl: computed in the
     /// shaders, seen through the fog from far away) and shows its <see cref="renderers"/> (bulbs, a little lamp).
-    /// At most 8 beacons are lit at once; plan the step ranges so they do not overlap more.
+    /// At most 32 beacons are lit at once; plan the step ranges so they do not overlap more.
     /// With a <see cref="powerGroup"/>, the beacon is dark while that LightGroup is off (a blackout), in any step.
     /// Before <see cref="brokenUntil"/>, the beacon is broken: a weak flicker, and only some bulbs flicker on.
     /// </summary>
@@ -17,7 +17,7 @@ namespace Jamlloween.Progression
     {
         public enum Pattern { Steady, Blink, Flicker }
 
-        const int Max = 8;
+        const int Max = 32;   // = WORLD_BEACON_MAX em WorldBeacons.hlsl
         static readonly List<StepBeacon> all = new List<StepBeacon>();
         static readonly Vector4[] posRange = new Vector4[Max];
         static readonly Vector4[] colors = new Vector4[Max];

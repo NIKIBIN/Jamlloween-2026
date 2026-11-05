@@ -115,7 +115,7 @@ Usado pela fase da cabeça (`CarouselHeadMinigame`) e pela fase do mecanismo (`C
 | Clique de encaixe | Cabeça do cavalo travando, tampa, correia, tensor e alavanca | One-shot | Peça de metal encaixando | — | Placeholder |
 | Rangido | Ao tirar o objeto preso nas engrenagens | One-shot | Metal raspando em metal, alto | `creakClip` | Placeholder |
 | Zumbido do motor | Motor ligado | Loop | Motor elétrico velho | — | Placeholder |
-| Música do carrossel | Carrossel consertado girando | Loop | Valsa de órgão de carrossel, desafinada e lenta | `musicClip` | Placeholder |
+| Música do carrossel | Carrossel consertado girando | Loop | Valsa de órgão de carrossel, desafinada e lenta | `Zatan-carousel_temp` (com `CreepyMusicGlitch`: tom oscilando, quedas e falhas) | Em uso (temporário) |
 | Cabeça girando | Girando a cabeça do cavalo no pescoço | Loop | Madeira e metal raspando | — | Faltando |
 | Tensor girando | Esticando a correia | Loop | Catraca de tensor | — | Faltando |
 | Carrossel girando | Plataforma em movimento | Loop | Estrutura de madeira rangendo e rodas no trilho | — | Faltando |
@@ -146,7 +146,7 @@ Ainda não existe código para o galão nem para ligar o gerador (`PF_generator_
 | Colocar gasolina | Despejando o galão no gerador | Loop | Líquido caindo num tanque de metal, borbulhando | — | Faltando (sem gatilho) |
 | Puxão de corda | Cada puxada na corda de partida | One-shot (2 a 3 variações) | Corda de partida sendo puxada com força | — | Faltando (sem gatilho) |
 | Gerador falhando | Puxada que não pega | One-shot (2 variações) | Motor engasgando e morrendo | — | Faltando (sem gatilho) |
-| Gerador ligado | Depois que pega | One-shot + loop | Partida pegando, depois motor a gasolina em marcha lenta | — | Faltando (sem gatilho) |
+| Gerador ligado | Depois que pega | One-shot + loop | Partida pegando, depois motor a gasolina em marcha lenta | SFX_Roteiro_Generator_Running_Loop_PH (loop; sem a partida) | Placeholder |
 
 ### Esconderijos (lixeiras, `ZatanHidingSpot`)
 
@@ -185,10 +185,14 @@ Sons dos eventos do roteiro ([ROTEIRO](ROTEIRO.md)). Todos são placeholders ger
 | Tensão no alto | Passo 19–20: depois que a roda para | Loop (2D) | Drone grave com batimento e vento | `SFX_Roteiro_Tension_Loop_PH` | Placeholder |
 | Rangido atrás | Passo 20: dica para o jogador olhar para trás | One-shot (3D) | Metal rangendo bem atrás da cabeça | `SFX_Roteiro_Gondola_Creak_PH` | Placeholder |
 | Música dos créditos | Passo 21 | Loop (2D) | Caixa de música do parque, desafinada | `MUS_Roteiro_Credits_PH` | Placeholder |
+| Ambientação geral | Sempre fora do trailer; abafada dentro da tenda do circo | Loop (2D) | Paisagem sonora noturna do parque | `DEMO_SOUNDSCAPE_Zatan` (`_Sistema/Ambientacao`, `AmbienceZones`) | Em uso (demo) |
+| Música do trailer | Sempre, no rádio da segunda mesa do trailer | Loop (3D, até 6 m) | Música de rádio velho, com chiado | `safe_room_demo` + `SFX_Roteiro_RadioStatic_Loop_PH` (filtros de baixa qualidade) | Em uso (demo) |
 
 ## Modelo e animação de Zatan
 
 | Asset | Arquivo | Status |
 |---|---|---|
-| Zatan V00 | `Assets/Zatan/Model/Zatan_V00.fbx`, com material `Assets/Zatan/Materials/M_ZatanModel.mat` | Em uso na `Level_Design`; falta uma boca articulada |
-| Animações de Zatan | `Assets/Zatan/Animation/Zatan_Idle.anim`, `Zatan_Walk.anim`, `Zatan_Run.anim` e `Zatan.controller` | Placeholder procedural (andar rígido e mecânico); substituir por animação feita à mão |
+| Zatan com rig | `Assets/Zatan/Run.fbx` (esqueleto Mixamo, 3,3 m), materiais `M_ZatanModel.mat` e `M_ZatanRoupa.mat` | Em uso na `Level_Design` (`_Zatan/Zatan/ModelRig`); sem osso de mandíbula: a mordida não abre a boca |
+| Corrida de Zatan | `Zatan_Rig_Run.anim`, tirada do FBX (no lugar, tronco e cabeça endireitados) | Em uso; animação real do Mixamo |
+| Idle, Walk, Stare, Stalk, Bang, Catch | `Assets/Zatan/Animation/Rig/Zatan_Rig_*.anim` e `Zatan_Rig.controller`, gerados pelo menu `Jamlloween/Zatan/Gerar animações do rig` | Placeholder gerado por código a partir da pose da corrida; substituir por animações feitas à mão (Walk e Bang são os mais visíveis) |
+| Zatan V00 (antigo) | `Assets/Zatan/Model/Zatan_V00.fbx` e as animações procedurais `Assets/Zatan/Animation/Zatan_*.anim` | Fora da `Level_Design` (backup em `Assets/Zatan/Prefabs/Zatan_Backup_AntesDoRig.prefab`); ainda pode ser usado em outras cenas |

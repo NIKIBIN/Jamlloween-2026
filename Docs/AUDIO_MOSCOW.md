@@ -34,7 +34,7 @@ Status vem do ledger: **Placeholder** (já toca, é temporário) ou **Faltando**
 | 12 | Cabeça virada (jump scare do painel) | O minigame do painel termina num jump scare, que hoje é mudo. | Painel de Zatan: Cabeça virada | Faltando |
 | 13 | Puxão de corda | A ação central de ligar o gerador; sem som, a puxada não tem peso. | Gerador: Puxão de corda | Faltando (sem gatilho) |
 | 14 | Gerador falhando | Diz ao jogador que precisa tentar de novo, e o barulho atrai tensão. | Gerador: Gerador falhando | Faltando (sem gatilho) |
-| 15 | Gerador ligado | A recompensa do conserto, e o loop vira um ponto de referência no mapa. | Gerador: Gerador ligado | Faltando (sem gatilho) |
+| 15 | Gerador ligado | A recompensa do conserto, e o loop vira um ponto de referência no mapa. | Gerador: Gerador ligado | Placeholder (loop do motor; falta a partida) |
 | 16 | Lixeira tombando | É o aviso de que o esconderijo falhou e de que Zatan está em cima do jogador. | Esconderijos: Lixeira tombando | Placeholder |
 
 Os itens 13 a 15 dependem do minigame do gerador, que ainda não existe no código.

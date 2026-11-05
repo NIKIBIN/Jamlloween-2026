@@ -47,7 +47,17 @@ namespace Jamlloween.Zatan
         [SerializeField] float leaveDistance = 22f;
         [SerializeField] float leaveTimeout = 10f;
 
+        [Header("Leaving the room")]
+        [Tooltip("The player counts as out only this far past the room's box (m): standing in the doorway is still inside.")]
+        [SerializeField, Min(0f)] float breakOutMargin = 0.75f;
+        [Tooltip("...and only after being out this long (s). Stops one step at the door from restarting the chase.")]
+        [SerializeField, Min(0f)] float breakOutGrace = 1f;
+
         [SerializeField] UnityEvent onZatanGaveUp = new UnityEvent();
+        [Tooltip("Each bang on the door (e.g. shake the door).")]
+        [SerializeField] UnityEvent onBang = new UnityEvent();
+        [Tooltip("The player stepped into the room (e.g. close the door behind them).")]
+        [SerializeField] UnityEvent onPlayerEntered = new UnityEvent();
 
         /// <summary>He went away and vanished: the player is safe again.</summary>
         public event Action ZatanGaveUp = delegate { };
@@ -56,18 +66,28 @@ namespace Jamlloween.Zatan
         public UnityEvent OnZatanGaveUp => onZatanGaveUp;
 
         Coroutine routine;
+        float outsideTime;
 
         /// <summary>He is at the door or prowling around the room.</summary>
         public bool Busy => routine != null;
 
-        public bool PlayerInside
+        /// <summary>The Inspector bang event, for editor tools that wire it.</summary>
+        public UnityEvent OnBang => onBang;
+        /// <summary>The Inspector player-entered event, for editor tools that wire it.</summary>
+        public UnityEvent OnPlayerEntered => onPlayerEntered;
+
+        bool wasInside;
+
+        public bool PlayerInside => PlayerWithin(0f);
+
+        /// <summary>The player really left: out past the margin for longer than the grace time.</summary>
+        bool PlayerLeft => outsideTime >= breakOutGrace;
+
+        bool PlayerWithin(float margin)
         {
-            get
-            {
-                Vector3 local = room.transform.InverseTransformPoint(target.Position + Vector3.up * 0.5f) - room.center;
-                Vector3 half = room.size * 0.5f;
-                return Mathf.Abs(local.x) <= half.x && Mathf.Abs(local.y) <= half.y && Mathf.Abs(local.z) <= half.z;
-            }
+            Vector3 local = room.transform.InverseTransformPoint(target.Position + Vector3.up * 0.5f) - room.center;
+            Vector3 half = room.size * 0.5f + Vector3.one * margin;
+            return Mathf.Abs(local.x) <= half.x && Mathf.Abs(local.y) <= half.y && Mathf.Abs(local.z) <= half.z;
         }
 
         void Awake()
@@ -100,7 +120,11 @@ namespace Jamlloween.Zatan
 
         void Update()
         {
-            if (routine != null || !PlayerInside) return;
+            outsideTime = PlayerWithin(breakOutMargin) ? 0f : outsideTime + Time.deltaTime;
+            bool inside = PlayerInside;
+            if (inside && !wasInside) onPlayerEntered.Invoke();
+            wasInside = inside;
+            if (routine != null || !inside) return;
             if (brain.State == ZatanBehaviourState.Chase || brain.State == ZatanBehaviourState.Spotted || brain.State == ZatanBehaviourState.Search)
                 routine = StartCoroutine(GiveUp());
         }
@@ -118,6 +142,7 @@ namespace Jamlloween.Zatan
             {
                 if (BrokeOut()) yield break;
                 doorSource.PlayOneShot(bangClips[UnityEngine.Random.Range(0, bangClips.Length)], bangVolume);
+                onBang.Invoke();
                 float wait = UnityEngine.Random.Range(bangInterval.x, bangInterval.y);
                 for (float t = 0f; t < wait; t += Time.deltaTime) { brain.ScriptedFace(door.position); yield return null; }
             }
@@ -135,9 +160,9 @@ namespace Jamlloween.Zatan
 
             Vector3 away = Vector3.ProjectOnPlane(brain.transform.position - center, Vector3.up).normalized;
             if (away.sqrMagnitude < 0.01f) away = -door.forward;
+            // Leaving is final: once he walks off, the player stepping out no longer brings him back.
             brain.ScriptedMoveTo(brain.PointNear(center + away * leaveDistance, 4f), walkSpeed);
-            yield return Walk(leaveTimeout);
-            if (BrokeOut()) yield break;
+            yield return Walk(leaveTimeout, watchPlayer: false);
 
             routine = null;
             director.Sleep();
@@ -165,15 +190,15 @@ namespace Jamlloween.Zatan
             return Mathf.Abs(local.x) <= half.x && Mathf.Abs(local.z) <= half.z;
         }
 
-        /// <summary>Waits until he gets there, gets stuck, the time runs out or the player comes out.</summary>
-        IEnumerator Walk(float timeout)
+        /// <summary>Waits until he gets there, gets stuck, the time runs out or (with watchPlayer) the player really leaves.</summary>
+        IEnumerator Walk(float timeout, bool watchPlayer = true)
         {
             const float StuckSeconds = 3f;
             const float StuckDistance = 0.3f;
             yield return null;   // the path needs a frame
             Vector3 lastPos = brain.transform.position;
             float stuck = 0f;
-            for (float t = 0f; t < timeout && !brain.ReachedDestination && PlayerInside; t += Time.deltaTime)
+            for (float t = 0f; t < timeout && !brain.ReachedDestination && !(watchPlayer && PlayerLeft); t += Time.deltaTime)
             {
                 stuck += Time.deltaTime;
                 if ((brain.transform.position - lastPos).sqrMagnitude > StuckDistance * StuckDistance) { lastPos = brain.transform.position; stuck = 0f; }
@@ -185,9 +210,11 @@ namespace Jamlloween.Zatan
         /// <summary>The player came out while he was still around: the chase goes on.</summary>
         bool BrokeOut()
         {
-            if (PlayerInside) return false;
+            if (!PlayerLeft) return false;
             routine = null;
-            brain.ResumeChase(target.Position);
+            // A story chase stays relentless: otherwise he could lose the player and patrol forever, and the step
+            // that waits for him to give up at the trailer would never end.
+            brain.ResumeChase(target.Position, relentless: director.ChaseActive);
             return true;
         }
     }

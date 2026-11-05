@@ -222,7 +222,13 @@ namespace HeyHeyThere.PSXCarnivalKit
             }
             noteLeft -= Time.unscaledDeltaTime;
             if (noteLeft > 0f)
-                GUI.Label(new Rect(Screen.width / 2f - 150f, Screen.height * 0.8f, 300f, 24f), note, new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter });
+            {
+                // Quebra em linhas e cresce com o texto (antes era uma caixa fixa de 300x24).
+                var noteStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.UpperCenter, wordWrap = true };
+                float noteWidth = Mathf.Min(600f, Screen.width * 0.8f);
+                float noteHeight = Mathf.Max(24f, noteStyle.CalcHeight(new GUIContent(note), noteWidth));
+                GUI.Label(new Rect((Screen.width - noteWidth) / 2f, Screen.height * 0.8f, noteWidth, noteHeight), note, noteStyle);
+            }
             var carried = items.GroupBy(it => it).Select(g => g.Count() > 1 ? $"{g.Key} x{g.Count()}" : g.Key).ToList();
             GUI.Label(new Rect(Screen.width - 220f, Screen.height - 30f - 20f * carried.Count, 200f, 20f * carried.Count + 10f),
                       string.Join("\n", carried).Replace('_', ' '));

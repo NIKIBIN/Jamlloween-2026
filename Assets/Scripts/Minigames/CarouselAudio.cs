@@ -24,6 +24,8 @@ public class CarouselAudio : MonoBehaviour
     [Header("Musica distorcida")]
     [Tooltip("Quanto o tom oscila para baixo e para cima (0 = afinado).")]
     [SerializeField, Range(0f, 0.3f)] float musicPitchWobble = 0.1f;
+    [Tooltip("Opcional: fonte própria da música (num filho, com filtros e falhas). Quem controla o tom é ela; sem isto a música usa uma fonte criada aqui.")]
+    [SerializeField] AudioSource musicSource;
 
     AudioSource sfx, hum, music;
     AudioClip click, creak, strain, snap, humLoop, musicLoop;
@@ -33,7 +35,7 @@ public class CarouselAudio : MonoBehaviour
     {
         sfx = NewSource(false);
         hum = NewSource(true);
-        music = NewSource(true);
+        music = musicSource != null ? musicSource : NewSource(true);
         click = MakeClick();
         creak = creakClip != null ? creakClip : MakeCreak();
         strain = MakeStrain();
@@ -57,7 +59,7 @@ public class CarouselAudio : MonoBehaviour
 
     void Update()
     {
-        if (!musicOn) return;
+        if (!musicOn || musicSource != null) return;   // a fonte própria cuida do tom
         float t = Time.time;
         music.pitch = 1f - musicPitchWobble * 0.5f + musicPitchWobble * (0.6f * Mathf.Sin(t * 1.3f) + 0.4f * Mathf.Sin(t * 4.1f + 1f));
     }

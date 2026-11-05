@@ -18,6 +18,8 @@ namespace Jamlloween.Zatan
         [SerializeField] ZatanTension tension;
         [SerializeField] ZatanTarget target;
         [SerializeField] ZatanCatchSequence catchSequence;
+        [Tooltip("Plays the stare and stalk poses of the rigged model.")]
+        [SerializeField] ZatanAnimation animationDriver;
 
         [Tooltip("Where the player comes back after a catch. Story events can move it with SetCheckpoint.")]
         [SerializeField] Transform checkpoint;
@@ -53,6 +55,8 @@ namespace Jamlloween.Zatan
 
         /// <summary>The Inspector event, for editor tools that wire it.</summary>
         public UnityEvent OnFinaleFinished => onFinaleFinished;
+        /// <summary>The Inspector respawn event, for editor tools that wire it.</summary>
+        public UnityEvent OnPlayerRespawned => onPlayerRespawned;
 
         Transform chaseSpawn;
         Coroutine rechase, stalk, stare;
@@ -68,6 +72,7 @@ namespace Jamlloween.Zatan
             if (tension == null) throw new MissingReferenceException(nameof(tension));
             if (target == null) throw new MissingReferenceException(nameof(target));
             if (catchSequence == null) throw new MissingReferenceException(nameof(catchSequence));
+            if (animationDriver == null) throw new MissingReferenceException(nameof(animationDriver));
             if (checkpoint == null) throw new MissingReferenceException(nameof(checkpoint));
             if (playerView == null) throw new MissingReferenceException(nameof(playerView));
         }
@@ -121,6 +126,7 @@ namespace Jamlloween.Zatan
             tension.SetValue(chaseTension);
             brain.Respawn(spawn.position);
             brain.BeginScripted(calmEyes: true);
+            animationDriver.SetStare(true);
             stare = StartCoroutine(Stare());
         }
 
@@ -139,6 +145,7 @@ namespace Jamlloween.Zatan
                 yield return null;
             }
             stare = null;
+            animationDriver.SetStare(false);
             brain.SpotThenChase(stareAlertSeconds);
         }
 
@@ -175,6 +182,7 @@ namespace Jamlloween.Zatan
             tension.SetValue(stalkTension);
             brain.Respawn(spawn.position);
             brain.BeginScripted();
+            animationDriver.SetStalk(true);
             stalk = StartCoroutine(Stalk());
         }
 
@@ -238,6 +246,8 @@ namespace Jamlloween.Zatan
             rechase = null;
             stalk = null;
             stare = null;
+            animationDriver.SetStare(false);
+            animationDriver.SetStalk(false);
         }
     }
 }

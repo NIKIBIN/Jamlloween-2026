@@ -77,7 +77,12 @@ namespace Jamlloween.Progression
             if (playing == null || string.IsNullOrEmpty(playing.text)) return;
             float w = Screen.width, h = Screen.height;
             string text = string.IsNullOrEmpty(playing.speaker) ? playing.text : $"<b>{playing.speaker}:</b> {playing.text}";
-            var r = new Rect(w * 0.15f, h * 0.80f, w * 0.7f, 70 * UIStyle.Scale);
+            // A caixa cresce para cima com o texto: a base fica fixa e falas longas não vazam do fundo.
+            float width = w * 0.7f;
+            float minHeight = 70 * UIStyle.Scale;
+            float height = Mathf.Max(minHeight, UIStyle.Center.CalcHeight(new GUIContent(text), width) + 8 * UIStyle.Scale);
+            float bottom = h * 0.80f + minHeight;
+            var r = new Rect(w * 0.15f, bottom - height, width, height);
             UIStyle.Fill(new Rect(r.x - 10, r.y - 4, r.width + 20, r.height + 8), new Color(0f, 0f, 0f, 0.55f));
             UIStyle.OsdText(r, text, UIStyle.Center);
         }

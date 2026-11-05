@@ -101,9 +101,20 @@ Depois de uma captura, o jogador e Zatan voltam às posições iniciais quando o
 
 ## Animação
 
-`ZatanAnimation`, no objeto `Zatan`, passa a velocidade real do agente ao Animator de `Model`: parado ou encarando o jogador toca `Zatan_Idle`, na patrulha `Zatan_Walk` e na perseguição `Zatan_Run`, num blend tree em `Speed`. Os clipes pisam sem deslizar em `animWalkSpeed` (2,45 m/s) e `animRunSpeed` (4,2 m/s), no `ZatanConfig`; fora desses valores o parâmetro `Cadence` acelera ou freia o passo. Na captura o Animator desliga e o corpo volta à pose de repouso, para o jump scare controlar cabeça e boca; ele religa no reaparecimento. Os clipes não mexem na `Boca` e mantêm a cabeça nivelada, para os feixes não balançarem. São placeholders procedurais.
+Na `Level_Design` Zatan usa o modelo com rig `Assets/Zatan/Run.fbx` (`_Zatan/Zatan/ModelRig`, esqueleto Mixamo) e o controller `Assets/Zatan/Animation/Rig/Zatan_Rig.controller`. `ZatanAnimation`, com **Rigged** ligado, passa a velocidade do agente ao blend tree `Locomotion`: Idle, Walk (anda sem escorregar a 2,34 m/s) e Run (7,42 m/s). Fora desses valores, `Cadence` acelera ou freia o passo. Ele também liga os estados:
 
-A versão anterior, sem animação, está em `Assets/Zatan/Prefabs/Zatan_V00_SemAnimacao.prefab`. Para voltar a ela, apague o `Zatan` da cena, arraste o prefab para `_Zatan` e religue no Inspector o `target` da percepção, da tensão, do cérebro e da captura, o jogador em `beamIgnored` e os minigames no `onFinished` da captura.
+- **Stare**: parado, rígido, cabeça inclinada. Quando ele avista o jogador e no primeiro encontro (`ZatanDirector` chama `SetStare`).
+- **Stalk**: caminhada curvada, com as garras à frente, no passo 17 (`SetStalk`).
+- **Bang**: uma pancada na porta a cada batida do `ZatanSafeRoom` (`onBang` → `PlayBang`), junto com o som.
+- **Catch**: braços abertos sobre o jogador na captura e no ataque final. O Animator não desliga mais na captura: o jump scare posiciona Zatan pela boca na pose atual.
+
+Olhos, feixes e boca ficam em `HeadAnchor`, que segue o osso da cabeça (`ZatanHeadFollow`): posição inteira, giro lateral inteiro e só 40% da inclinação, para a corrida não apontar os feixes para o chão. Não há osso de mandíbula, então a boca não abre na mordida.
+
+A corrida vem do FBX, deixada no lugar e com tronco e cabeça endireitados (no Mixamo ele corre olhando de lado). Idle, Walk, Stare, Stalk, Bang e Catch são gerados por código pelo menu **Jamlloween > Zatan > Gerar animações do rig** (`Assets/Editor/ZatanRigAnimations.cs`), a partir da pose média da corrida. Rodar o menu de novo recria os clipes sem quebrar a cena. São placeholders: para trocar por animações feitas à mão, use o mesmo nome de arquivo ou troque o clipe no controller. Os passos (`ZatanFootsteps`) usam 1,5 m de passada andando e 2,7 m correndo.
+
+O Zatan de peças rígidas, com animação procedural e `Zatan.controller`, está em `Assets/Zatan/Prefabs/Zatan_Backup_AntesDoRig.prefab`. Com **Rigged** desligado, `ZatanAnimation` continua funcionando como antes.
+
+A versão ainda mais antiga, sem animação, está em `Assets/Zatan/Prefabs/Zatan_V00_SemAnimacao.prefab`. Para voltar a ela, apague o `Zatan` da cena, arraste o prefab para `_Zatan` e religue no Inspector o `target` da percepção, da tensão, do cérebro e da captura, o jogador em `beamIgnored` e os minigames no `onFinished` da captura.
 
 ## Esconder nas lixeiras
 
@@ -117,7 +128,7 @@ Na `Level_Design` há 10 lixeiras escondíveis (`Assets/Zatan/Hiding/PF_TrashCan
 
 ## Limites atuais
 
-- Na `Level_Design`, Zatan usa o modelo `Assets/Zatan/Model/Zatan_V00.fbx` (3,3 m, peças rígidas), com a animação procedural acima. Na `Zatan_Test` ele ainda é a cápsula. Os sons continuam sintetizados. Lista de sons em [ASSET_LEDGER.md](ASSET_LEDGER.md).
+- Na `Level_Design`, Zatan usa o modelo com rig `Assets/Zatan/Run.fbx` (3,3 m), com as animações acima. Na `Zatan_Test` ele ainda é a cápsula. Os sons continuam sintetizados. Lista de sons em [ASSET_LEDGER.md](ASSET_LEDGER.md).
 - As tendas têm só uma zona interior, `Zatan_IndoorZone_BigTop`, com caixa aproximada.
 - Portas fechadas ainda não são tratadas. Esconderijos só existem na `Level_Design`.
 - O sistema não usa os scripts dos Spikes 1 e 2.

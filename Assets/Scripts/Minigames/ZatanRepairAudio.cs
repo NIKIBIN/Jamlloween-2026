@@ -170,6 +170,13 @@ public class ZatanRepairAudio : MonoBehaviour
         SetTape(0f);
     }
 
+    /// <summary>Silencio total: para os loops e corta qualquer som avulso que ainda esteja tocando (queda de energia).</summary>
+    public void Silence()
+    {
+        StopAll();
+        sfx.Stop();
+    }
+
     /// <summary>O compressor solta o ar de uma vez. Devolve a duracao em segundos.</summary>
     public float Sigh()
     {

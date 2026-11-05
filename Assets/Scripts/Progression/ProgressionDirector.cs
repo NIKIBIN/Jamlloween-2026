@@ -337,7 +337,11 @@ namespace Jamlloween.Progression
             if (blockedLeft > 0f && !string.IsNullOrEmpty(blockedText))
             {
                 float a = Mathf.Clamp01(blockedLeft / 0.4f);
-                UIStyle.OsdText(new Rect(0, h * 0.70f, w, 40 * UIStyle.Scale), blockedText, UIStyle.Prompt, a);
+                // Margem nas laterais e altura pelo texto: frases longas quebram em linhas, sem vazar.
+                float width = w * 0.8f;
+                float height = Mathf.Max(40 * UIStyle.Scale, UIStyle.Prompt.CalcHeight(new GUIContent(blockedText), width));
+                // Base fixa em 72% da tela e crescendo para cima: não encosta na legenda do rádio logo abaixo.
+                UIStyle.OsdText(new Rect((w - width) * 0.5f, h * 0.72f - height, width, height), blockedText, UIStyle.Prompt, a);
             }
 
 #if DEBUG

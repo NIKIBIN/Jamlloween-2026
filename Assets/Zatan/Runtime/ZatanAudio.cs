@@ -32,6 +32,8 @@ namespace Jamlloween.Zatan
         [SerializeField] float loopFadeSpeed = 2.5f;
         [SerializeField] float voiceIntervalMin = 15f;
         [SerializeField] float voiceIntervalMax = 35f;
+        [Tooltip("Toca a caixa de música quando ele aparece (volta ao mundo). Desligado: ele aparece em silêncio.")]
+        [SerializeField] bool playReappearSound = true;
 
         public AudioClip LastOneShot { get; private set; }
 
@@ -98,7 +100,7 @@ namespace Jamlloween.Zatan
                 case ZatanBehaviourState.Caught: PlayOneShot(caughtSting, 1f); break;
                 case ZatanBehaviourState.Vanished: PlayOneShot(vanishCards, noise); break;
                 case ZatanBehaviourState.Patrol:
-                    if (previous == ZatanBehaviourState.Vanished) PlayOneShot(reappearMusicBox, noise);
+                    if (playReappearSound && previous == ZatanBehaviourState.Vanished) PlayOneShot(reappearMusicBox, noise);
                     break;
             }
             previous = next;

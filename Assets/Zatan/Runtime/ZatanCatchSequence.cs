@@ -216,6 +216,9 @@ namespace Jamlloween.Zatan
         void PlaceZatan(Vector3 viewPosition, float distance, float faceRaise, Vector3 offset, Quaternion twist)
         {
             Quaternion rotation = faceCamera * twist;
+            // Where the mouth is now, not at Awake: the rigged model's grab pose moves the head forward. For the old
+            // model (animator stopped, rest pose) this is the same point as the one read at Awake.
+            mouthLocal = transform.InverseTransformPoint(mouth.position);
             Vector3 anchor = mouthLocal + Vector3.up * faceRaise;
             transform.SetPositionAndRotation(viewPosition + toZatan * distance + offset - rotation * anchor, rotation);
         }

@@ -17,6 +17,8 @@ namespace Jamlloween.Progression
         [Tooltip("Tecla de reserva. Também liga/desliga. Serve para saber se o Tab chega ao jogo no seu ambiente.")]
         [SerializeField] Key altKey = Key.C;
         [SerializeField] float raiseSeconds = 0.25f;
+        [Tooltip("A câmera do jogador. Vazio = Camera.main (falha se houver duas câmeras com a tag MainCamera).")]
+        [SerializeField] Camera viewCamera;
 
         [Header("Posição (por ângulo em relação à vista, só com o yaw)")]
         [Tooltip("Fração da prancheta visível no canto da tela olhando reto para a frente. O resto aparece ao olhar para baixo.")]
@@ -105,7 +107,7 @@ namespace Jamlloween.Progression
             raise = Mathf.MoveTowards(raise, open && playingMinigames == 0 ? 1f : 0f, Time.deltaTime / Mathf.Max(raiseSeconds, 0.01f));
 
             if (raise <= 0f) { reportedOpen = false; if (model.gameObject.activeSelf) model.gameObject.SetActive(false); return; }
-            if (cam == null) cam = Camera.main;
+            if (cam == null) cam = viewCamera != null ? viewCamera : Camera.main;
             if (cam == null) { Debug.LogWarning("[Clipboard] sem Camera.main (tag MainCamera) para posicionar a prancheta.", this); return; }
             if (!model.gameObject.activeSelf) model.gameObject.SetActive(true);
 

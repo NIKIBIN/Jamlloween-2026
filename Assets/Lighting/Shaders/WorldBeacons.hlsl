@@ -1,11 +1,11 @@
 #ifndef WORLD_BEACONS_INCLUDED
 #define WORLD_BEACONS_INCLUDED
 
-// Story lights that guide the player (StepBeacon): small point lights on the carousel, the generator, the Ferris wheel.
+// Story lights that guide the player and the park lamp posts (StepBeacon, up to 32): small point lights on the carousel, the generator, the Ferris wheel.
 // Most of the scene is unlit, so real lights can't show on it: the light is computed here, like Zatan's eyes, and added
 // after the radial fog. It fades with its own, much thinner fog, so a beacon reads from far away but not across the map.
 // All zero when no beacon is lit: nothing changes. Works in CG and URP HLSL passes.
-#define WORLD_BEACON_MAX 8
+#define WORLD_BEACON_MAX 32
 float _BeaconCount;
 float _BeaconFogDensity;               // exponential fog of the beacon light, per metre from the camera
 float4 _BeaconPosRange[WORLD_BEACON_MAX];  // xyz: position, w: range
@@ -27,7 +27,7 @@ float3 WorldBeacons(float3 albedo, float3 positionWS)
     if (_BeaconCount < 0.5) return 0.0;
 
     float3 sum = 0.0;
-    [unroll] for (int i = 0; i < WORLD_BEACON_MAX; i++)
+    [loop] for (int i = 0; i < WORLD_BEACON_MAX; i++)
     {
         if (i >= (int)_BeaconCount) break;
         float3 toLight = _BeaconPosRange[i].xyz - positionWS;

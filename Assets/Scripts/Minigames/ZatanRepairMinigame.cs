@@ -163,7 +163,7 @@ public class ZatanRepairMinigame : Minigame
 
     // --- estado do conserto (persiste ao sair) ---
     Vector3 pistonRest;
-    bool coverOff, hoseConnected, compressorOn, switchVisualOn, crankOnAxle, zeroReached, finished;
+    bool coverOff, hoseConnected, compressorOn, switchVisualOn, crankOnAxle, zeroReached, finished, poweredDown;
     float headAngle, crankVisual;
     int activeLock = -1;
 
@@ -274,7 +274,15 @@ public class ZatanRepairMinigame : Minigame
     }
 
     // Depois do zero o motor segue no ritmo de funcionamento (finished) ou para, conforme machineRunsAfterFinish.
-    bool MotorRunning => compressorOn && (!zeroReached || finished);
+    bool MotorRunning => compressorOn && !poweredDown && (!zeroReached || finished);
+
+    /// <summary>A energia do parque caiu: motor, luzes e todos os sons do painel param e ficam parados.</summary>
+    public void PowerDown()
+    {
+        poweredDown = true;
+        SetLamps(false);
+        if (repairAudio != null) repairAudio.Silence();
+    }
     float MotorSpeed01 => finished ? finishedSpeed01 : headAngle / TotalAngle;
 
     /// <summary>Pistao, manometro e vapor seguem a respiracao do compressor e aceleram com o angulo.</summary>
@@ -632,6 +640,7 @@ public class ZatanRepairMinigame : Minigame
     void SetLamps(bool on, float chance = 1f)
     {
         if (lamps == null) return;
+        if (poweredDown) on = false;   // sem energia nada acende
         for (int i = 0; i < lamps.Length; i++)
         {
             if (lamps[i] == null) continue;
@@ -751,7 +760,7 @@ public class ZatanRepairMinigame : Minigame
             repairAudio.Click();
             repairAudio.Clunk(0.6f);
         }
-        if (machineRunsAfterFinish) finished = true;
+        if (machineRunsAfterFinish && !poweredDown) finished = true;
         else
         {
             compressorOn = false;

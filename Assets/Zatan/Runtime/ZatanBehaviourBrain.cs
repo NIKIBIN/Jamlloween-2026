@@ -273,10 +273,11 @@ namespace Jamlloween.Zatan
             SetState(ZatanBehaviourState.TipReaction);
         }
 
-        /// <summary>Back to the chase, knowing where the player is.</summary>
-        public void ResumeChase(Vector3 playerPosition)
+        /// <summary>Back to the chase, knowing where the player is. relentless (when given): a story chase he never gives up.</summary>
+        public void ResumeChase(Vector3 playerPosition, bool? relentless = null)
         {
             perception.NotePlayerAt(playerPosition);
+            if (relentless.HasValue) Relentless = relentless.Value;
             agent.isStopped = false;
             agent.updateRotation = true;
             repathTimer = 0f;
