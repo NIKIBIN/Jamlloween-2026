@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Circus
+namespace Jamlloween.Core
 {
     /// <summary>Shared IMGUI styles with a monospaced OS font.</summary>
     public static class UIStyle

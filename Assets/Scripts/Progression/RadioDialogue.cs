@@ -1,3 +1,4 @@
+using Jamlloween.Core;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -76,9 +77,9 @@ namespace Jamlloween.Progression
             if (playing == null || string.IsNullOrEmpty(playing.text)) return;
             float w = Screen.width, h = Screen.height;
             string text = string.IsNullOrEmpty(playing.speaker) ? playing.text : $"<b>{playing.speaker}:</b> {playing.text}";
-            var r = new Rect(w * 0.15f, h * 0.80f, w * 0.7f, 70 * Circus.UIStyle.Scale);
-            Circus.UIStyle.Fill(new Rect(r.x - 10, r.y - 4, r.width + 20, r.height + 8), new Color(0f, 0f, 0f, 0.55f));
-            Circus.UIStyle.OsdText(r, text, Circus.UIStyle.Center);
+            var r = new Rect(w * 0.15f, h * 0.80f, w * 0.7f, 70 * UIStyle.Scale);
+            UIStyle.Fill(new Rect(r.x - 10, r.y - 4, r.width + 20, r.height + 8), new Color(0f, 0f, 0f, 0.55f));
+            UIStyle.OsdText(r, text, UIStyle.Center);
         }
     }
 }

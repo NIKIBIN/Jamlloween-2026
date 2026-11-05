@@ -1,3 +1,4 @@
+using Jamlloween.Core;
 using HeyHeyThere.PSXCarnivalKit;
 using UnityEngine;
 using UnityEngine.Events;
@@ -89,7 +90,7 @@ public class CarouselRepair : MonoBehaviour
             if (noiseTimer <= 0f)
             {
                 noiseTimer = noiseInterval;
-                Circus.NoiseSystem.Emit(transform.position, spinNoiseRadius, Circus.NoiseSource.Carousel);
+                NoiseSystem.Emit(transform.position, spinNoiseRadius, NoiseSource.Carousel);
             }
         }
     }

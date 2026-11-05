@@ -1,3 +1,4 @@
+using Jamlloween.Core;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -446,7 +447,7 @@ public class GeneratorFuelMinigame : Minigame
             if (spillTimer <= 0f)
             {
                 spillTimer = spillNoiseInterval;
-                Circus.NoiseSystem.Emit(overflow ? tankMouth.position : streamEnd, spillNoiseRadius, Circus.NoiseSource.Machine);
+                NoiseSystem.Emit(overflow ? tankMouth.position : streamEnd, spillNoiseRadius, NoiseSource.Machine);
             }
         }
         else spillTimer = 0f;
@@ -583,7 +584,7 @@ public class GeneratorFuelMinigame : Minigame
     {
         busy = true;
         pulls++;
-        Circus.NoiseSystem.Emit(transform.position, pullNoiseRadius, Circus.NoiseSource.Machine);
+        NoiseSystem.Emit(transform.position, pullNoiseRadius, NoiseSource.Machine);
         sfx.PlayOneShot(cordClip != null ? cordClip : FuelAudio.CordPull(), volume);
         yield return RetractCord(1f, 0.15f);
 
