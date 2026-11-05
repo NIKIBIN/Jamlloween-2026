@@ -183,7 +183,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8569678365587413229, guid: 2dad8984086b8ab4aa32a0ff2a6b736a, type: 3}
       propertyPath: far clip plane
-      value: 40
+      value: 250
       objectReference: {fileID: 0}
     - target: {fileID: 8569678365587413229, guid: 2dad8984086b8ab4aa32a0ff2a6b736a, type: 3}
       propertyPath: m_BackGroundColor.b
@@ -253,7 +253,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0

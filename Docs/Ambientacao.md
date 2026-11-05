@@ -7,11 +7,17 @@ Um só componente controla a névoa, o brilho do cenário, a luz ambiente e o fu
 
 Cada visual é um asset `LightingProfile`, em `Assets/Lighting/Profiles/`:
 
-| Profile | Névoa (visível até) | Brilho | Uso |
+| Profile | Névoa exp (visível até) | Brilho | Uso |
 |---|---|---|---|
-| `LP_Noite` | 0,10 (~17 m) | 0,9 | Início da cena |
-| `LP_Apagao` | 0,42 (~4 m) | 0,35 | Fim do minigame do Zatan: a energia cai |
-| `LP_EnergiaRestaurada` | 0,165 (~10,5 m) | 0,65 | Fim do minigame do gerador: ponto intermediário |
+| `LP_Noite` | 0,16 (~19 m) | 0,42 | Início da cena: escuro, mas dá para ver o caminho com dificuldade |
+| `LP_Apagao` | 0,6 (~5 m) | 0,3 | Fim do minigame do Zatan: a energia cai |
+| `LP_EnergiaRestaurada` | 0,13 (~23 m) | 0,5 | Fim do minigame do gerador: um pouco mais claro que o início |
+
+A névoa fora do feixe é **exponencial**: ela começa a escurecer logo perto do jogador e some devagar. Assim, não há um círculo iluminado em volta do jogador com uma borda escura. Dentro do feixe da lanterna, a névoa é exp2, para o feixe mostrar bem o que está perto.
+
+A cor da névoa (`fogColor`, azul-acinzentado escuro) é um pouco mais clara que o céu (`skyColor`, o fundo da câmera do jogador). Assim, o que está longe aparece como silhueta contra o céu. O `WorldLighting` pinta só a câmera do jogador (campo `cameras`), porque a cena tem duas câmeras com a tag `MainCamera`.
+
+**Cor global:** o Volume `_Sistema/PostProcess_Global` usa o `Assets/Lighting/PP_Global.asset`. Ele baixa a saturação em 10 e baixa mais os vermelhos (para ~70%), para as tendas terem um tom normal de noite.
 
 O Inspector do profile atualiza a cena na hora, em Edit Mode e em Play Mode. O Lighting Settings da cena segue o profile inicial: não edite a névoa ali.
 
@@ -29,7 +35,7 @@ Névoa radial de verdade, calculada pela distância real até a câmera em `Asse
 
 ## Noite
 - Directional Light: intensidade `0,08`.
-- Far clip da câmera do jogador: `40`.
+- Far clip da câmera do jogador: `250` (o mapa inteiro). A névoa esconde o que está longe, e as lâmpadas dos beacons aparecem de longe sem "poppar".
 
 O chão, os objetos que usavam o Lit padrão e o corpo de Zatan usam `Jamlloween/Flashlight Fog Surface`, com a mesma névoa e sem luz direcional, recebendo só a lanterna e os olhos de Zatan. O brilho do chão é ajustado em `M_FogSurface_Default`.
 
@@ -38,7 +44,7 @@ Tecla **F**. `PlayerFlashlight` fica em `Player/Main Camera/Flashlight`, e os pa
 
 | Parâmetro | Valor | Efeito |
 |---|---|---|
-| `coneFogDensity` | 0,102 | Névoa dentro do feixe (~17 m) |
+| `coneFogDensity` | 0,07 | Névoa dentro do feixe (~25 m) |
 | `coneBrightness` | 0,8 | Brilho do cenário dentro do feixe |
 | `transitionSeconds` | 0,2 | Duração da transição |
 | `intensity` | 2,5 | Intensidade da luz |
@@ -47,3 +53,19 @@ Tecla **F**. `PlayerFlashlight` fica em `Player/Main Camera/Flashlight`, e os pa
 A névoa só recua dentro do feixe, e fora dele tudo continua como com a lanterna desligada. O alcance da luz é o mesmo do feixe. O feixe nunca deixa o cenário mais escuro que o profile: se o profile for mais claro que a lanterna, o shader usa o valor do profile.
 
 Outros sistemas podem usar `IsOn` e o evento `Toggled`. A lanterna não altera a percepção nem a tensão de Zatan.
+
+## Luzes do carrossel e da roda-gigante (`StepBeacon`)
+As duas atrações acendem desde o início do jogo e usam a energia do `LightGroup` `park` (`powerGroup`). No apagão, elas apagam, e as lâmpadas ficam como vidro apagado.
+
+| Atração | Quebrada até (`brokenUntil`) | Depois do conserto |
+|---|---|---|
+| Carrossel | `R16_FalaRodaGigante` (fusível no R15) | Todas as lâmpadas acesas e firmes |
+| Roda-gigante | `R18_Encurralado` (motor no R17) | O padrão próprio do beacon (`Flicker`) |
+
+**Quebrada:** a luz fica apagada quase sempre (acesa ~5–10% do tempo). Ela acende em surtos curtos e irregulares, com engasgos, e não chega ao brilho máximo:
+- `brokenLevel` (0,3): a força da luz no chão no pico de um surto.
+- `brokenBulbLevel` (0,4): o brilho das lâmpadas no pico de um surto.
+- `brokenGap` (1 a 2,5 s): o intervalo entre os surtos.
+- Cerca de 40% dos segmentos de lâmpadas ficam sempre mortos.
+
+Os beacons com o mesmo `flickerSeed` piscam juntos: os três do carrossel usam 1, e a roda-gigante usa 2. Assim, as lâmpadas e a luz no chão piscam ao mesmo tempo.

@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa9cbe8ce23335ce39ce98947200ac46, type: 3}
   m_Name: LP_Noite
   m_EditorClassIdentifier: Jamlloween.Lighting::Jamlloween.Lighting.LightingProfile
-  fogColor: {r: 0.01, g: 0.01, b: 0.014, a: 1}
-  fogDensity: 0.346
-  brightness: 0.9
+  fogColor: {r: 0.03, g: 0.034, b: 0.048, a: 1}
+  skyColor: {r: 0.008, g: 0.009, b: 0.014, a: 1}
+  fogDensity: 0.16
+  brightness: 0.42
   ambientColor: {r: 0.03, g: 0.03, b: 0.045, a: 1}

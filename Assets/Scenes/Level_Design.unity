@@ -15,9 +15,9 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
   m_Fog: 1
-  m_FogColor: {r: 0.01, g: 0.01, b: 0.014, a: 1}
-  m_FogMode: 3
-  m_FogDensity: 0.346
+  m_FogColor: {r: 0.03, g: 0.034, b: 0.048, a: 1}
+  m_FogMode: 2
+  m_FogDensity: 0.16
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.03, g: 0.03, b: 0.045, a: 1}
@@ -5697,6 +5697,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 983311572}
     m_Modifications:
+    - target: {fileID: 5174343029570718420, guid: 081660043db628608a106ae72e58c158, type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 0.009
+      objectReference: {fileID: 0}
+    - target: {fileID: 5174343029570718420, guid: 081660043db628608a106ae72e58c158, type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 0.008
+      objectReference: {fileID: 0}
     - target: {fileID: 6602584622411659179, guid: 081660043db628608a106ae72e58c158, type: 3}
       propertyPath: view
       value: 
@@ -6266,6 +6274,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
   from: {fileID: 11400000, guid: 3263e47999928f944a5783b386a6cac6, type: 2}
   until: {fileID: 11400000, guid: da3fd16df0e499d4ca57cf4477fa3870, type: 2}
+  powerGroup: 
+  brokenUntil: {fileID: 0}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenGap: {x: 1, y: 2.5}
+  flickerSeed: 0
   color: {r: 1, g: 0.55, b: 0.1, a: 1}
   intensity: 4
   range: 6
@@ -6274,6 +6288,7 @@ MonoBehaviour:
   blinkOn: 0.5
   renderers:
   - {fileID: 140422782}
+  bulbsStayVisible: 0
   fogDensity: 0.012
 --- !u!23 &140422782
 MeshRenderer:
@@ -18179,6 +18194,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: WorldLighting
       objectReference: {fileID: 0}
+    - target: {fileID: 5469158915157654808, guid: 1899b5e6db078a6f3841cee1e19710d5, type: 3}
+      propertyPath: cameras.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5469158915157654808, guid: 1899b5e6db078a6f3841cee1e19710d5, type: 3}
+      propertyPath: cameras.Array.data[0]
+      value: 
+      objectReference: {fileID: 801695034}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -24754,16 +24777,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
-  from: {fileID: 11400000, guid: b3fc0804a2e239745b0e32386f4ceaba, type: 2}
+  from: {fileID: 0}
   until: {fileID: 11400000, guid: 9e0338b6ca931b244a9ec7a578e525bf, type: 2}
+  powerGroup: 
+  brokenUntil: {fileID: 0}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenGap: {x: 1, y: 2.5}
+  flickerSeed: 0
   color: {r: 1, g: 0.15, b: 0.08, a: 1}
-  intensity: 4
-  range: 6
+  intensity: 1.2
+  range: 4
   pattern: 1
   blinkPeriod: 1
   blinkOn: 0.5
   renderers:
   - {fileID: 565210386}
+  bulbsStayVisible: 0
   fogDensity: 0.012
 --- !u!23 &565210386
 MeshRenderer:
@@ -30219,6 +30249,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_carousel
       objectReference: {fileID: 0}
+    - target: {fileID: 9192559227688989529, guid: 835dea72c4878d30acd609771630fdcf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8f6f85ba43607b06f96b80d6046496bf, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -30227,6 +30261,11 @@ PrefabInstance:
       addedObject: {fileID: 91615227}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 835dea72c4878d30acd609771630fdcf, type: 3}
+--- !u!23 &692589002 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 9192559227688989529, guid: 835dea72c4878d30acd609771630fdcf, type: 3}
+  m_PrefabInstance: {fileID: 692589001}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &692782511
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -35338,7 +35377,7 @@ Transform:
   m_GameObject: {fileID: 788823062}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -60.15, y: 5.0099998, z: -6.067115}
+  m_LocalPosition: {x: -60.15, y: 3.2, z: -6.067115}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -35356,15 +35395,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
-  from: {fileID: 11400000, guid: b317c5e43bc92cd43a65f8b514c56cbf, type: 2}
+  from: {fileID: 0}
   until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 11400000, guid: 3263e47999928f944a5783b386a6cac6, type: 2}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenGap: {x: 1, y: 2.5}
+  flickerSeed: 1
   color: {r: 1, g: 0.75, b: 0.42, a: 1}
   intensity: 2.5
-  range: 10
+  range: 8
   pattern: 0
   blinkPeriod: 1
   blinkOn: 0.5
   renderers: []
+  bulbsStayVisible: 1
   fogDensity: 0.012
 --- !u!1001 &789016762
 PrefabInstance:
@@ -35807,6 +35853,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 652566664}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!20 &801695034 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 5174343029570718420, guid: 081660043db628608a106ae72e58c158, type: 3}
+  m_PrefabInstance: {fileID: 127641597}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &801791726
 GameObject:
   m_ObjectHideFlags: 0
@@ -38156,6 +38207,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6496577888799684537, guid: 92c962cfe7ba2452fadec2465c378fcb, type: 3}
   m_PrefabInstance: {fileID: 853797014}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &854808210
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 854808211}
+  - component: {fileID: 854808212}
+  m_Layer: 0
+  m_Name: PostProcess_Global
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &854808211
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 854808210}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 930126432}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &854808212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 854808210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: f711a43305abaa7d0ba8c6bf66e5c2a3, type: 2}
 --- !u!1 &855721489 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6435061985089669232, guid: 09d6ab8335046afed91449dd8ac781bb, type: 3}
@@ -42058,6 +42158,7 @@ Transform:
   - {fileID: 1905791000}
   - {fileID: 330585546}
   - {fileID: 1248093026}
+  - {fileID: 854808211}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &930411035 stripped
@@ -44195,7 +44296,7 @@ Transform:
   m_GameObject: {fileID: 982437860}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -53.4, y: 5.0099998, z: -2.17}
+  m_LocalPosition: {x: -53.4, y: 3.2, z: -2.17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -44213,15 +44314,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
-  from: {fileID: 11400000, guid: b317c5e43bc92cd43a65f8b514c56cbf, type: 2}
+  from: {fileID: 0}
   until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 11400000, guid: 3263e47999928f944a5783b386a6cac6, type: 2}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenGap: {x: 1, y: 2.5}
+  flickerSeed: 1
   color: {r: 1, g: 0.75, b: 0.42, a: 1}
   intensity: 2.5
-  range: 10
+  range: 8
   pattern: 0
   blinkPeriod: 1
   blinkOn: 0.5
-  renderers: []
+  renderers:
+  - {fileID: 692589002}
+  bulbsStayVisible: 1
   fogDensity: 0.012
 --- !u!1 &983311571
 GameObject:
@@ -53369,7 +53478,7 @@ Transform:
   m_GameObject: {fileID: 1197378562}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -60.15, y: 5.0099998, z: 1.7271142}
+  m_LocalPosition: {x: -60.15, y: 3.2, z: 1.7271142}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -53387,15 +53496,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
-  from: {fileID: 11400000, guid: b317c5e43bc92cd43a65f8b514c56cbf, type: 2}
+  from: {fileID: 0}
   until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 11400000, guid: 3263e47999928f944a5783b386a6cac6, type: 2}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenGap: {x: 1, y: 2.5}
+  flickerSeed: 1
   color: {r: 1, g: 0.75, b: 0.42, a: 1}
   intensity: 2.5
-  range: 10
+  range: 8
   pattern: 0
   blinkPeriod: 1
   blinkOn: 0.5
   renderers: []
+  bulbsStayVisible: 1
   fogDensity: 0.012
 --- !u!1 &1200347820 stripped
 GameObject:
@@ -98153,8 +98269,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
-  from: {fileID: 11400000, guid: 3263e47999928f944a5783b386a6cac6, type: 2}
+  from: {fileID: 0}
   until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 11400000, guid: da3fd16df0e499d4ca57cf4477fa3870, type: 2}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenGap: {x: 1, y: 2.5}
+  flickerSeed: 2
   color: {r: 1, g: 0.75, b: 0.42, a: 1}
   intensity: 3.5
   range: 15
@@ -98163,6 +98285,7 @@ MonoBehaviour:
   blinkOn: 0.5
   renderers:
   - {fileID: 1295670494}
+  bulbsStayVisible: 1
   fogDensity: 0.012
 --- !u!4 &2106411396
 Transform:

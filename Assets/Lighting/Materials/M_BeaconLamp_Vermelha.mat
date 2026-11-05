@@ -29,9 +29,15 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Glow: 2.5
+    - _BulbBroken: 0
+    - _BulbLevel: 1
+    - _DeadBrightness: 0.12
+    - _Glow: 1.4
+    - _SegmentAxis: 1
+    - _Segments: 24
     - _SnapRows: 240
     m_Colors:
     - _Color: {r: 1, g: 0.12, b: 0.08, a: 1}
+    - _SegmentCenter: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

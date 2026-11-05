@@ -2,7 +2,8 @@ using UnityEngine;
 
 namespace Jamlloween.Flashlight
 {
-    /// <summary>Flashlight tunables. Distances are where exp2 fog leaves 5% of the scene visible.</summary>
+    /// <summary>Flashlight tunables. The fog inside the beam is exp2 (the fog outside it, in the LightingProfile, is exp).
+    /// Distances are where the exp2 fog leaves 5% of the scene visible.</summary>
     [CreateAssetMenu(menuName = "Jamlloween/Flashlight Config", fileName = "FlashlightConfig")]
     public class FlashlightConfig : ScriptableObject
     {

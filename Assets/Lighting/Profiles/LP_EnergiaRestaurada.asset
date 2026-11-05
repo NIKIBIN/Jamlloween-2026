@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa9cbe8ce23335ce39ce98947200ac46, type: 3}
   m_Name: LP_EnergiaRestaurada
   m_EditorClassIdentifier: Jamlloween.Lighting::Jamlloween.Lighting.LightingProfile
-  fogColor: {r: 0.01, g: 0.01, b: 0.016, a: 1}
-  fogDensity: 0.3
-  brightness: 0.8
+  fogColor: {r: 0.03, g: 0.034, b: 0.048, a: 1}
+  skyColor: {r: 0.008, g: 0.009, b: 0.014, a: 1}
+  fogDensity: 0.13
+  brightness: 0.5
   ambientColor: {r: 0.03, g: 0.03, b: 0.045, a: 1}

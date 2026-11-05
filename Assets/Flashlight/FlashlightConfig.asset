@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FlashlightConfig
   m_EditorClassIdentifier: Jamlloween.Flashlight::Jamlloween.Flashlight.FlashlightConfig
   baseFogDensity: 0.346
-  coneFogDensity: 0.102
+  coneFogDensity: 0.07
   transitionSeconds: 0.2
   baseBrightness: 0.45
   coneBrightness: 0.8
