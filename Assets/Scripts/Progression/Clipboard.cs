@@ -46,6 +46,11 @@ namespace Jamlloween.Progression
         float raise;
         int playingMinigames;
         bool open, wasDown;
+
+        /// <summary>The clipboard is up in front of the player.</summary>
+        public bool IsOpen => open;
+        /// <summary>The key that opens it (shown in the HUD hint).</summary>
+        public Key OpenKey => key;
         bool warnedNoKeyboard, reportedOpen;
         int shownVersion = -1;
 

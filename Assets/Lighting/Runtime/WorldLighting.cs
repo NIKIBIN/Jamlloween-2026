@@ -22,22 +22,23 @@ namespace Jamlloween.Lighting
 
         [Tooltip("Profile at the start of the scene, and the one shown in the Scene View.")]
         [SerializeField] LightingProfile initialProfile;
-        [Tooltip("Cameras that clear to the fog colour. Empty: Camera.main.")]
+        [Tooltip("Cameras that clear to the sky colour (the player camera). Empty: Camera.main, which is unsafe with two MainCamera tags.")]
         [SerializeField] Camera[] cameras;
 
         struct State
         {
-            public Color fogColor, ambientColor;
+            public Color fogColor, skyColor, ambientColor;
             public float fogDensity, brightness;
 
             public static State From(LightingProfile p) => new State
             {
-                fogColor = p.fogColor, ambientColor = p.ambientColor, fogDensity = p.fogDensity, brightness = p.brightness,
+                fogColor = p.fogColor, skyColor = p.skyColor, ambientColor = p.ambientColor, fogDensity = p.fogDensity, brightness = p.brightness,
             };
 
             public static State Lerp(State a, State b, float t) => new State
             {
                 fogColor = Color.Lerp(a.fogColor, b.fogColor, t),
+                skyColor = Color.Lerp(a.skyColor, b.skyColor, t),
                 ambientColor = Color.Lerp(a.ambientColor, b.ambientColor, t),
                 fogDensity = Mathf.Lerp(a.fogDensity, b.fogDensity, t),
                 brightness = Mathf.Lerp(a.brightness, b.brightness, t),
@@ -124,7 +125,7 @@ namespace Jamlloween.Lighting
             Shader.SetGlobalFloat(BaseBrightnessId, s.brightness);
             // Write only on change: in edit mode every write marks the scene as modified.
             if (!RenderSettings.fog) RenderSettings.fog = true;
-            if (RenderSettings.fogMode != FogMode.ExponentialSquared) RenderSettings.fogMode = FogMode.ExponentialSquared;
+            if (RenderSettings.fogMode != FogMode.Exponential) RenderSettings.fogMode = FogMode.Exponential;
             if (RenderSettings.fogColor != s.fogColor) RenderSettings.fogColor = s.fogColor;
             if (!Mathf.Approximately(RenderSettings.fogDensity, s.fogDensity)) RenderSettings.fogDensity = s.fogDensity;
             if (RenderSettings.ambientMode != AmbientMode.Flat) RenderSettings.ambientMode = AmbientMode.Flat;
@@ -132,11 +133,11 @@ namespace Jamlloween.Lighting
 
             if (cameras != null && cameras.Length > 0)
             {
-                foreach (var c in cameras) if (c && c.backgroundColor != s.fogColor) c.backgroundColor = s.fogColor;
+                foreach (var c in cameras) if (c && c.backgroundColor != s.skyColor) c.backgroundColor = s.skyColor;
             }
             else if (Application.isPlaying && Camera.main)
             {
-                Camera.main.backgroundColor = s.fogColor;
+                Camera.main.backgroundColor = s.skyColor;
             }
         }
     }

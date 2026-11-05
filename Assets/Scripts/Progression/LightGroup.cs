@@ -56,6 +56,19 @@ namespace Jamlloween.Progression
             onChanged?.Invoke(on);
         }
 
+        /// <summary>True se algum grupo com este id está ligado, ou se nenhum grupo com este id existe.</summary>
+        public static bool IsGroupOn(string id)
+        {
+            bool found = false;
+            foreach (var g in all)
+            {
+                if (g.groupId != id) continue;
+                if (g.IsOn) return true;
+                found = true;
+            }
+            return !found;
+        }
+
         /// <summary>Liga/desliga todos os grupos com este id. False se nenhum existe.</summary>
         public static bool Set(string id, bool on)
         {

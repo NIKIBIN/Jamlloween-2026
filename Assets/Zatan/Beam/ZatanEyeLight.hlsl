@@ -50,8 +50,7 @@ float3 ZatanEyeLight(float3 albedo, float3 positionWS)
     if (dot(normalWS, toCamera) < 0.0) normalWS = -normalWS;
     float facing = saturate(dot(normalWS, lightDir));
 
-    float depth = _RadialFogBaseDensity * length(toCamera);
-    float seen = lerp(exp(-depth * depth), 1.0, _ZatanEyeFogCut);
+    float seen = lerp(exp(-_RadialFogBaseDensity * length(toCamera)), 1.0, _ZatanEyeFogCut);   // the base fog: exp
 
     // The minimum keeps the pool readable on the night floor, whose own colour is almost black.
     float3 lit = 1.0 - exp(-max(albedo, _ZatanEyeMinAlbedo) * _ZatanEyeColor.rgb * cone * reach * blocked * facing);

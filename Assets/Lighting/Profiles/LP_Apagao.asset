@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa9cbe8ce23335ce39ce98947200ac46, type: 3}
   m_Name: LP_Apagao
   m_EditorClassIdentifier: Jamlloween.Lighting::Jamlloween.Lighting.LightingProfile
-  fogColor: {r: 0.005, g: 0.005, b: 0.008, a: 1}
-  fogDensity: 0.42
-  brightness: 0.35
-  ambientColor: {r: 0.02, g: 0.02, b: 0.03, a: 1}
+  fogColor: {r: 0.004, g: 0.004, b: 0.006, a: 1}
+  skyColor: {r: 0.002, g: 0.002, b: 0.003, a: 1}
+  fogDensity: 0.6
+  brightness: 0.3
+  ambientColor: {r: 0.012, g: 0.012, b: 0.018, a: 1}

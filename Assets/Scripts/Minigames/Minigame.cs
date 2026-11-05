@@ -50,15 +50,16 @@ public abstract class Minigame : MonoBehaviour, IInteractable, IStepForceComplet
     /// <summary>
     /// Opt-in gate for a whole scene: when set and it returns a text, no minigame can be entered and that text is
     /// shown as the prompt (ex.: "Precisa da lanterna"). Null or an empty text lets the player in.
+    /// It gets the minigame the player tries to enter, so a gate can let some minigames through.
     /// </summary>
-    public static System.Func<string> EntryBlocker;
+    public static System.Func<Minigame, string> EntryBlocker;
     /// <summary>Any minigame started / any minigame left. Lets scene-wide systems (the flashlight) follow the player in and out.</summary>
     public static event System.Action<Minigame> AnyStarted, AnyExited;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void ResetStatics() { EntryBlocker = null; AnyStarted = null; AnyExited = null; }
 
-    static string BlockedBy => EntryBlocker?.Invoke();
+    string BlockedBy => EntryBlocker?.Invoke(this);
 
     public State CurrentState { get; private set; }
     public bool IsCompleted { get; protected set; }

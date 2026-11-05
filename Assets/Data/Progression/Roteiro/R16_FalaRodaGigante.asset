@@ -22,7 +22,7 @@ MonoBehaviour:
   - kind: 0
     line:
       speaker: "PATR\xC3O"
-      text: "T\xF4 ouvindo a musiquinha do carrossel daqui. Falta s\xF3 a roda-gigante. Conserta o painel dela e pode ir embora."
+      text: "T\xF4 ouvindo a musiquinha do carrossel daqui. Falta s\xF3 a roda-gigante. Conserta o motor dela e pode ir embora."
       audio: {fileID: 0}
       volume: 1
     targetId: 

@@ -3,7 +3,7 @@ using Jamlloween.Flashlight;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Jamlloween.Zatan.TestScene
+namespace Jamlloween.Zatan.KitPlayer
 {
     /// <summary>
     /// The PSX kit player hiding in trash cans: E on a standing can gets in, E again gets out. Inside, the camera

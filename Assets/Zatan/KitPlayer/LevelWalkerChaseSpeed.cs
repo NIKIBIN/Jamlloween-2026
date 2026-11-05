@@ -2,7 +2,7 @@ using System;
 using HeyHeyThere.PSXCarnivalKit;
 using UnityEngine;
 
-namespace Jamlloween.Zatan.TestScene
+namespace Jamlloween.Zatan.KitPlayer
 {
     /// <summary>
     /// Troca a velocidade de corrida do jogador (LevelWalker.run) conforme o Zatan: corrida calma fora de

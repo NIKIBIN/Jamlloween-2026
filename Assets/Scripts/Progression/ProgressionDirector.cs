@@ -64,6 +64,10 @@ namespace Jamlloween.Progression
         public int TasksVersion { get; private set; }
         public TaskState GetTaskState(int index) => index >= 0 && index < taskStates.Length ? taskStates[index] : TaskState.Hidden;
         public int CurrentIndex => current;
+        /// <summary>Position of a step in the roteiro, or -1.</summary>
+        public int IndexOf(ProgressionStep step) => steps.IndexOf(step);
+        /// <summary>The radio that plays the lines (for story objects that speak on their own, like the gondola door).</summary>
+        public RadioDialogue Radio => radio;
         public ProgressionStep Current => current >= 0 && current < steps.Count ? steps[current] : null;
         /// <summary>True depois que a última etapa foi concluída.</summary>
         public bool Finished => finished;
