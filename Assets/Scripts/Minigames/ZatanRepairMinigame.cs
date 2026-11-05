@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 /// <summary>
-/// Conserto do Zatan: o painel nas costas do animatronico (pneumatico, anos 80). Termina num jumpscare.
+/// Conserto do Zatan: o painel nas costas do animatronico (pneumatico, anos 80).
 ///  1. Abrir o painel: arrastar a tampa para fora (encaixe por pressao: precisa de um puxao firme).
 ///  2. Limpar: pegar a estopa e esfregar (arrastar em vai-e-vem) sobre o mostrador e a engrenagem.
 ///  3. Reconectar o ar: arrastar a mangueira ate a valvula (encaixa com snap).
@@ -14,11 +15,10 @@ using UnityEngine.InputSystem;
 ///     virada para OFF e ON a vontade: ela muda so visualmente e o compressor continua funcionando.
 ///  5. Girar: arrastar a manivela ate o eixo (snap), depois segurar e arrastar em circulo (sentido horario).
 ///     Fica mais pesado perto do fim, e a respiracao e os cliques aceleram.
-///  6. Travas de piche: em angulos configuraveis, uma junta vaza e a manivela trava ate a junta ser esfregada.
-///  7. Zero: a engrenagem trava com um clique, o compressor suspira e tudo fica em silencio.
-///  8. Jumpscare: apos o silencio a camera sai do foco e mostra a cabeca ja virada 180 graus, parada.
-///     Depois da pausa, dispara os eventos finais para outros sistemas (ex.: comecar a perseguicao).
-/// Do passo 7 em diante o jogador nao consegue sair; a saida e pelo proprio jumpscare.
+///  6. Vazamentos de gas: em angulos configuraveis, uma junta vaza gas (chiado e jato branco) e a manivela trava
+///     ate o jogador vedar a junta: arrastar o rolo de fita em vai-e-vem sobre ela.
+///  7. Zero: a engrenagem trava com um clique, o motor segue funcionando e o minigame termina logo.
+/// Sem susto aqui: o susto vem depois, no mapa, fora do minigame.
 ///
 /// Sem HUD: tudo vem do proprio painel. Posicoes no espaco local deste transform, que olha para +Z
 /// (a frente do painel fica em -Z). O progresso fica nos campos do componente, entao sair no meio nao reseta nada.
@@ -26,26 +26,26 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class ZatanRepairMinigame : Minigame
 {
-    enum Drag { None, Cover, Rag, Hose, CrankCarry, CrankTurn }
+    enum Drag { None, Cover, Rag, Hose, CrankCarry, CrankTurn, Tape }
 
     [System.Serializable]
-    public class TarLock
+    public class GasLeak
     {
         [Tooltip("Angulo da cabeca (graus, 0 a 180) em que a manivela trava.")]
         [Range(1f, 179f)] public float angle = 60f;
-        [Tooltip("Distancia (m) de estopa necessaria para limpar este vazamento. Maior = mais esfregadas.")]
+        [Tooltip("Distancia (m) do rolo de fita necessaria para vedar este vazamento. Maior = mais passadas.")]
         public float scrubDistance = 0.3f;
-        [Tooltip("A junta que vaza. Comeca limpa e escondida; o piche aparece quando a manivela trava.")]
+        [Tooltip("A junta que vaza (ZatanScrubArea com seal ligado). A fita aparece nela conforme o jogador passa o rolo.")]
         public ZatanScrubArea joint;
-        [Tooltip("Opcional. Fumaca que sai da junta enquanto ela vaza.")]
-        public ParticleSystem smoke;
+        [Tooltip("Jato de gas que sai da junta enquanto ela vaza. Enfraquece conforme a fita cobre a junta.")]
+        [FormerlySerializedAs("smoke")] public ParticleSystem gas;
         [HideInInspector] public bool done;
     }
 
     const float TotalAngle = 180f;
     const float GearRatio = 2f;           // a engrenagem gira o dobro da cabeca
     const float CoverLiftZ = -0.2f;      // altura (z) em que a tampa flutua enquanto e carregada
-    const float RagZ = -0.11f, HoseZ = -0.09f, CrankZ = -0.1f;
+    const float RagZ = -0.11f, HoseZ = -0.09f, CrankZ = -0.1f, TapeZ = -0.11f;
     const float RagRadius = 0.025f;
 
     [Header("Tampa")]
@@ -65,6 +65,13 @@ public class ZatanRepairMinigame : Minigame
     [SerializeField] float dialScrubDistance = 0.7f;
     [Tooltip("Distancia (m) de estopa necessaria para limpar a engrenagem do pescoco.")]
     [SerializeField] float gearScrubDistance = 0.7f;
+
+    [Header("Fita (vazamentos de gas)")]
+    [SerializeField] ZatanRepairPart tape;
+    [Tooltip("Onde o rolo de fita fica preso na lateral do painel.")]
+    [SerializeField] Transform tapeHome;
+    [Tooltip("Vazao maxima (particulas por segundo) do jato de gas de um vazamento aberto.")]
+    [SerializeField] float gasMaxRate = 40f;
 
     [Header("Ar")]
     [SerializeField] ZatanRepairPart hose;
@@ -123,49 +130,36 @@ public class ZatanRepairMinigame : Minigame
     [Tooltip("Piso do multiplicador, para o fim do giro sempre ser alcancavel.")]
     [SerializeField, Range(0.01f, 0.5f)] float minWeight = 0.05f;
 
-    [Header("Travas de piche")]
-    [Tooltip("Em ordem crescente de angulo. A ultima parte do giro (depois da ultima trava) nao trava.")]
-    [SerializeField] TarLock[] locks =
+    [Header("Vazamentos de gas (travas)")]
+    [Tooltip("Em ordem crescente de angulo. A ultima parte do giro (depois do ultimo vazamento) nao trava.")]
+    [SerializeField] GasLeak[] locks =
     {
-        new TarLock { angle = 60f, scrubDistance = 0.25f },
-        new TarLock { angle = 120f, scrubDistance = 0.9f },
+        new GasLeak { angle = 60f, scrubDistance = 0.25f },
+        new GasLeak { angle = 120f, scrubDistance = 0.9f },
     };
 
-    [Header("Zero e jumpscare")]
+    [Header("Cabeca e fim")]
     [Tooltip("Pivo da cabeca do Zatan. Vazio = procura um filho chamado 'Head' no Zatan da cena.")]
     [SerializeField] Transform headPivot;
     [Tooltip("Eixo local da cabeca em torno do qual ela gira.")]
     [SerializeField] Vector3 headTurnAxis = Vector3.up;
     [Tooltip("1 ou -1: sentido em que a cabeca gira.")]
     [SerializeField] float headTurnSign = 1f;
-    [Tooltip("Eixo local da cabeca que aponta para o rosto.")]
-    [SerializeField] Vector3 headFaceAxis = Vector3.forward;
-    [Tooltip("Opcional. Onde a camera fica no jumpscare. Vazio = a jumpscareDistance do rosto, olhando para ele.")]
-    [SerializeField] Transform jumpscareView;
-    [SerializeField] float jumpscareDistance = 0.45f;
-    [Tooltip("Silencio (s) entre o suspiro terminar e a camera sair do foco.")]
-    [SerializeField] float silenceBeforeJumpscare = 1.5f;
-    [Tooltip("Tempo (s) que a camera leva ate o rosto.")]
-    [SerializeField] float jumpscareCameraTime = 0.3f;
-    [Tooltip("Tempo (s) que a cabeca fica parada olhando antes de qualquer outra coisa acontecer.")]
-    [SerializeField] float headStareSeconds = 1.5f;
-    [Tooltip("Depois do jumpscare o motor volta a funcionar (compressor, pistao, manometro, vapor e luzes) e segue assim.")]
+    [Tooltip("Pausa (s) entre a engrenagem travar no zero e devolver o controle ao jogador.")]
+    [SerializeField, Range(0f, 2f)] float finishDelay = 0.8f;
+    [Tooltip("Depois do zero o motor segue funcionando (compressor, pistao, manometro, vapor e luzes).")]
     [SerializeField] bool machineRunsAfterFinish = true;
-    [Tooltip("Ritmo do motor depois do jumpscare, de 0 (devagar, como no comeco do giro) a 1 (como no fim do giro).")]
+    [Tooltip("Ritmo do motor depois do zero, de 0 (devagar, como no comeco do giro) a 1 (como no fim do giro).")]
     [SerializeField, Range(0f, 1f)] float finishedSpeed01 = 0.3f;
-    [Tooltip("Volume do compressor depois do jumpscare, como fracao do volume normal.")]
+    [Tooltip("Volume do compressor depois do zero, como fracao do volume normal.")]
     [SerializeField, Range(0f, 1f)] float finishedVolume = 0.5f;
 
     [SerializeField] ZatanRepairAudio repairAudio;
     [SerializeField] Color hoverColor = new Color(1f, 0.85f, 0.2f);
 
     [Header("Eventos")]
-    [Tooltip("A engrenagem travou no zero. A saida do jogador passa a ser forcada.")]
+    [Tooltip("A engrenagem travou no zero. Logo depois o minigame termina (onCompleted).")]
     public UnityEvent onZeroReached;
-    [Tooltip("A camera sai do foco rumo ao rosto do Zatan (ex.: acender os olhos).")]
-    public UnityEvent onJumpscare;
-    [Tooltip("Fim do jumpscare, depois da cabeca ficar parada. Ligue aqui a perseguicao.")]
-    public UnityEvent onJumpscareFinished;
 
     // --- estado do conserto (persiste ao sair) ---
     Vector3 pistonRest;
@@ -178,13 +172,12 @@ public class ZatanRepairMinigame : Minigame
     ZatanRepairPart hovered;
     Vector3 grabOffset, dragStart;
     float prevMouseAngle, effortLevel, scrubLevel, switchAngle = 180f;
-    Coroutine coverGlide, ragGlide, hoseGlide, crankGlide;
+    Coroutine coverGlide, ragGlide, hoseGlide, crankGlide, tapeGlide;
     readonly List<ZatanScrubArea> areas = new List<ZatanScrubArea>();
 
     // --- cabeca ---
     Quaternion headRestLocal;
     bool headResolved;
-    Transform autoView;
 
     public ZatanRepairPart Hovered => hovered;
     public bool PanelOpen => coverOff;
@@ -199,8 +192,6 @@ public class ZatanRepairMinigame : Minigame
     void OnValidate()
     {
         degreesPerTurn = Mathf.Max(1f, degreesPerTurn);
-        silenceBeforeJumpscare = Mathf.Max(0f, silenceBeforeJumpscare);
-        headStareSeconds = Mathf.Max(0f, headStareSeconds);
     }
 
     protected override void Awake()
@@ -217,6 +208,7 @@ public class ZatanRepairMinigame : Minigame
                 l.joint.RequiredDistance = l.scrubDistance;
                 areas.Add(l.joint);
             }
+            foreach (var l in locks) if (l.gas != null) l.gas.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
         if (pistonRod != null) pistonRest = pistonRod.localPosition;
         SetLamps(false);
@@ -240,6 +232,7 @@ public class ZatanRepairMinigame : Minigame
             case ZatanRepairPart.Kind.Hose: return coverOff && DialClean && GearClean && !hoseConnected;
             case ZatanRepairPart.Kind.Switch: return hoseConnected;
             case ZatanRepairPart.Kind.Crank: return compressorOn;
+            case ZatanRepairPart.Kind.Tape: return activeLock >= 0;   // so com um vazamento aberto
         }
         return false;
     }
@@ -264,16 +257,23 @@ public class ZatanRepairMinigame : Minigame
         AnimateMachine();
         PulseSocket();
 
+        // O gas chia e sai em jato enquanto vaza; enfraquece conforme a fita cobre a junta.
+        float leak = activeLock >= 0 ? (locks[activeLock].joint != null ? locks[activeLock].joint.Coverage : 1f) : 0f;
+        if (activeLock >= 0 && locks[activeLock].gas != null)
+        {
+            var em = locks[activeLock].gas.emission;
+            em.rateOverTime = gasMaxRate * Mathf.Lerp(0.15f, 1f, leak);
+        }
+
         if (repairAudio == null) return;
         repairAudio.SetCompressor(MotorRunning, MotorSpeed01, finished ? finishedVolume : 1f);
         repairAudio.SetEffort(drag == Drag.CrankTurn ? effortLevel : 0f, headAngle / TotalAngle);
-        bool working = drag == Drag.CrankTurn || drag == Drag.Rag;
-        float leak = activeLock >= 0 && locks[activeLock].joint != null ? locks[activeLock].joint.Coverage : 0f;
-        repairAudio.SetLeak(working ? leak : 0f);
+        repairAudio.SetLeak(leak);
         repairAudio.SetScrub(drag == Drag.Rag ? scrubLevel : 0f);
+        repairAudio.SetTape(drag == Drag.Tape ? scrubLevel : 0f);
     }
 
-    // O motor para no zero (silencio do jumpscare) e, se configurado, volta ao maximo quando o minigame termina.
+    // Depois do zero o motor segue no ritmo de funcionamento (finished) ou para, conforme machineRunsAfterFinish.
     bool MotorRunning => compressorOn && (!zeroReached || finished);
     float MotorSpeed01 => finished ? finishedSpeed01 : headAngle / TotalAngle;
 
@@ -328,6 +328,7 @@ public class ZatanRepairMinigame : Minigame
                 case Drag.Hose: SetHover(hose); UpdateHose(ray, held); break;
                 case Drag.CrankCarry: SetHover(crank); UpdateCrankCarry(ray, held); break;
                 case Drag.CrankTurn: SetHover(crank); UpdateCrankTurn(viewCamera, mp, held); break;
+                case Drag.Tape: SetHover(tape); UpdateTape(ray, held); break;
             }
             return;
         }
@@ -349,6 +350,7 @@ public class ZatanRepairMinigame : Minigame
             case Drag.Hose: ReleaseHose(instant: true); break;
             case Drag.CrankCarry: ReleaseCrank(instant: true); break;
             case Drag.CrankTurn: EndCrankTurn(); break;
+            case Drag.Tape: ReleaseTape(instant: true); break;
         }
     }
 
@@ -387,6 +389,13 @@ public class ZatanRepairMinigame : Minigame
                 drag = Drag.Rag;
                 scrubLevel = 0f;
                 GrabOffset(rag.transform, ray, RagZ);
+                break;
+
+            case ZatanRepairPart.Kind.Tape:
+                StopGlide(ref tapeGlide);
+                drag = Drag.Tape;
+                scrubLevel = 0f;
+                GrabOffset(tape.transform, ray, TapeZ);
                 break;
 
             case ZatanRepairPart.Kind.Hose:
@@ -473,16 +482,17 @@ public class ZatanRepairMinigame : Minigame
             rag.transform.localPosition = next;
             Vector3 d = next - prev;
             d.z = 0f;
-            ScrubAt(next, d.magnitude);
+            ScrubAt(next, d.magnitude, sealTool: false);
         }
         if (!held) ReleaseRag(instant: false);
     }
 
-    /// <summary>A estopa percorreu dist sobre a posicao pos (local do painel). Esfrega a area que estiver embaixo.</summary>
-    void ScrubAt(Vector3 pos, float dist)
+    /// <summary>A ferramenta percorreu dist sobre a posicao pos (local do painel). A estopa limpa o piche; a fita veda o gas.</summary>
+    void ScrubAt(Vector3 pos, float dist, bool sealTool)
     {
         foreach (var area in areas)
         {
+            if (area.Seal != sealTool) continue;
             if (!area.Active || area.IsClean || !area.Contains(pos, RagRadius)) continue;
             scrubLevel = Mathf.Clamp01(dist / Mathf.Max(Time.deltaTime, 0.0001f) / 0.5f);
             if (area.Scrub(dist)) OnAreaCleaned(area);
@@ -496,7 +506,7 @@ public class ZatanRepairMinigame : Minigame
         if (activeLock >= 0 && locks[activeLock].joint == area)
         {
             locks[activeLock].done = true;
-            if (locks[activeLock].smoke != null) locks[activeLock].smoke.Stop();
+            if (locks[activeLock].gas != null) locks[activeLock].gas.Stop(true, ParticleSystemStopBehavior.StopEmitting);
             activeLock = -1;
         }
     }
@@ -506,6 +516,36 @@ public class ZatanRepairMinigame : Minigame
         drag = Drag.None;
         scrubLevel = 0f;
         Glide(ref ragGlide, rag.transform, ragHome.localPosition, ragHome.localRotation, instant ? 0f : 0.2f, null);
+    }
+
+    // =================================================================
+    // Passo 6: vedar o vazamento de gas com a fita
+    // =================================================================
+
+    void UpdateTape(Ray ray, bool held)
+    {
+        scrubLevel = 0f;
+        if (LocalPoint(ray, TapeZ, out var p))
+        {
+            Vector3 want = p + grabOffset;
+            want.z = TapeZ;
+            want.x = Mathf.Clamp(want.x, -0.6f, 0.6f);
+            want.y = Mathf.Clamp(want.y, -0.4f, 0.4f);
+            Vector3 prev = tape.transform.localPosition;
+            Vector3 next = Vector3.Lerp(prev, want, 1f - Mathf.Exp(-30f * Time.deltaTime));
+            tape.transform.localPosition = next;
+            Vector3 d = next - prev;
+            d.z = 0f;
+            ScrubAt(next, d.magnitude, sealTool: true);
+        }
+        if (!held) ReleaseTape(instant: false);
+    }
+
+    void ReleaseTape(bool instant)
+    {
+        drag = Drag.None;
+        scrubLevel = 0f;
+        Glide(ref tapeGlide, tape.transform, tapeHome.localPosition, tapeHome.localRotation, instant ? 0f : 0.2f, null);
     }
 
     // =================================================================
@@ -681,7 +721,8 @@ public class ZatanRepairMinigame : Minigame
         activeLock = i;
         var l = locks[i];
         if (l.joint != null) l.joint.Activate(animate: true);
-        if (l.smoke != null) l.smoke.Play();
+        if (l.gas != null) l.gas.Play();
+        if (repairAudio != null) repairAudio.Click();
     }
 
     void ApplyAngle()
@@ -693,73 +734,31 @@ public class ZatanRepairMinigame : Minigame
     }
 
     // =================================================================
-    // Passos 7 e 8: zero e jumpscare
+    // Passo 7: zero
     // =================================================================
 
     void Zero()
     {
-        zeroReached = true;   // a partir daqui o jogador nao sai mais
+        zeroReached = true;
         EndCrankTurn();
         SetHover(null);
         Debug.Log("[ZatanRepair] zero alcancado", this);
         onZeroReached?.Invoke();
-        StartCoroutine(Finale());
-    }
 
-    IEnumerator Finale()
-    {
-        // A engrenagem trava com um clique, o compressor suspira e tudo fica em silencio.
+        // A engrenagem trava com um clique e o motor segue no ritmo de funcionamento. O jogador sai logo depois.
         if (repairAudio != null)
         {
-            repairAudio.StopAll();
             repairAudio.Click();
+            repairAudio.Clunk(0.6f);
         }
-        SetLamps(false);
-        float sighLength = repairAudio != null ? repairAudio.Sigh() : 0f;
-        yield return new WaitForSeconds(sighLength + silenceBeforeJumpscare);
-
-        // A camera sai do foco rumo ao rosto, que ja esta virado 180 graus.
-        onJumpscare?.Invoke();
-        var view = JumpscareView();
-        if (view != null) GlideView(view, jumpscareCameraTime);
-        else Debug.LogWarning("[ZatanRepair] sem cabeca para o jumpscare: configure headPivot ou jumpscareView", this);
-        yield return new WaitForSeconds(jumpscareCameraTime + headStareSeconds);
-
-        // O motor volta antes dos eventos: um assinante que falhe nao pode deixa-lo parado.
-        if (machineRunsAfterFinish)
+        if (machineRunsAfterFinish) finished = true;
+        else
         {
-            finished = true;
-            SetLamps(true);
-            if (repairAudio != null) repairAudio.Clunk(0.5f);
+            compressorOn = false;
+            SetLamps(false);
+            if (repairAudio != null) repairAudio.StopAll();
         }
-
-        // So agora, com a cabeca parada ha tempo, os outros sistemas ficam sabendo.
-        try
-        {
-            onJumpscareFinished?.Invoke();
-        }
-        catch (System.Exception e) { Debug.LogException(e, this); }
-        Complete(0.05f);
-    }
-
-    Transform JumpscareView()
-    {
-        if (jumpscareView != null) return jumpscareView;
-        var head = ResolveHead();
-        if (head == null) return null;
-        if (autoView == null)
-        {
-            autoView = new GameObject("ZatanJumpscareView").transform;
-            autoView.hideFlags = HideFlags.HideInHierarchy;
-        }
-        Vector3 face = head.TransformDirection(headFaceAxis).normalized;
-        autoView.SetPositionAndRotation(head.position + face * jumpscareDistance, Quaternion.LookRotation(-face, Vector3.up));
-        return autoView;
-    }
-
-    void OnDestroy()
-    {
-        if (autoView != null) Destroy(autoView.gameObject);
+        Complete(finishDelay);
     }
 
     /// <summary>A cabeca do Zatan: o campo headPivot ou o filho "Head" do Zatan da cena. Guarda a rotacao de repouso na primeira vez.</summary>

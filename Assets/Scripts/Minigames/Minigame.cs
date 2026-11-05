@@ -159,9 +159,12 @@ public abstract class Minigame : MonoBehaviour, IInteractable, IStepForceComplet
         if (IsCompleted) return;
         IsCompleted = true;
         Debug.Log($"[Minigame] {name} concluido", this);
-        onCompleted?.Invoke();
-        if (StepGate != null) StepGate.NotifyCompleted();
+        // A saida comeca antes dos avisos: um assinante que falhe (ex.: Zatan sem NavMesh) nao pode prender o jogador aqui.
         StartCoroutine(ExitAfter(exitDelay >= 0f ? exitDelay : exitDelayAfterComplete));
+        try { onCompleted?.Invoke(); }
+        catch (System.Exception e) { Debug.LogException(e, this); }
+        try { if (StepGate != null) StepGate.NotifyCompleted(); }
+        catch (System.Exception e) { Debug.LogException(e, this); }
     }
 
     /// <summary>Chamado a cada frame enquanto o minigame esta em andamento.</summary>

@@ -12,10 +12,11 @@ namespace Jamlloween.Roteiro
     /// the kit's Machine and Animation, plus the motor and the player's car). This script turns the hub itself and the
     /// cars hang upright.
     ///
-    /// Flow: Off (no power) -> the motor minigame repairs it -> the wheel turns and brings the player's car down to the
-    /// bottom -> the gondola door opens when the story asks (GondolaDoor) -> E boards: the player is locked in the car
-    /// with a narrow look range -> the wheel turns the car up to the top and stops -> a tension loop, the look range opens
-    /// up -> after a short wait, looking back over the shoulder fires OnLookedBack (wired to Zatan's finale attack).
+    /// Flow: Off (no power) -> the motor minigame repairs it -> the wheel turns slowly a few cars and stops with the
+    /// player's car at the bottom -> the gondola door opens when the story asks (GondolaDoor) -> E boards: the player is
+    /// locked in the car with a narrow look range -> the wheel turns the car slowly up to the top and the power fails
+    /// there (its lights go out, the story blacks out the park) -> a tension loop, the look range opens up -> after a
+    /// short wait, looking back over the shoulder fires OnLookedBack (wired to Zatan's finale attack).
     /// </summary>
     [DefaultExecutionOrder(1000)]   // after the player
     public sealed class FerrisWheelRide : MonoBehaviour
@@ -45,14 +46,14 @@ namespace Jamlloween.Roteiro
         [Header("Repair")]
         [Tooltip("Minigame that repairs the motor. Completing it brings the player's car down.")]
         [SerializeField] Minigame repairMinigame;
-        [Tooltip("Full turns before the player's car stops at the bottom, so the repair is seen.")]
-        [SerializeField] int repairExtraTurns = 1;
+        [Tooltip("Cars that pass the bottom after the repair before the player's car stops there. The wheel starts this many cars back.")]
+        [SerializeField, Min(1)] int repairCars = 2;
         [Tooltip("Seconds from the repair to the car stopped at the bottom. The speed follows from it.")]
-        [SerializeField] float repairSpinSeconds = 10f;
+        [SerializeField] float repairSpinSeconds = 6f;
 
         [Header("Turn")]
         [Tooltip("Top speed, degrees per second, of the ride up to the top.")]
-        [SerializeField] float degreesPerSecond = 20f;
+        [SerializeField] float degreesPerSecond = 12f;
         [Tooltip("Seconds to reach the top speed and to stop.")]
         [SerializeField] float easeSeconds = 2.5f;
 
@@ -93,6 +94,7 @@ namespace Jamlloween.Roteiro
         [Tooltip("The player's car stopped at the bottom, ready to board.")]
         [SerializeField] UnityEvent onCarDown = new UnityEvent();
         [SerializeField] UnityEvent onBoarded = new UnityEvent();
+        [Tooltip("The wheel stopped at the top: the power failed. Its own lights go out here; the park blackout comes from the story (WheelStopped).")]
         [SerializeField] UnityEvent onStopped = new UnityEvent();
         [SerializeField] UnityEvent onLookedBack = new UnityEvent();
 
@@ -150,9 +152,12 @@ namespace Jamlloween.Roteiro
 
         void Start()
         {
-            ApplyAngle(0f);
+            // The wheel waits repairCars cars back, so after the repair it turns slowly that far and stops with the player's car at the bottom.
+            ApplyAngle(BottomAngle(playerCar) - repairCars * CarStep);
             SetLights(false);
         }
+
+        float CarStep => 360f / cars.Length;
 
         void OnDestroy()
         {
@@ -168,7 +173,7 @@ namespace Jamlloween.Roteiro
             SetLights(true);
             PlayRideLoop();
             onRepaired.Invoke();
-            SpinTo(BottomAngle(playerCar), repairExtraTurns, repairSpinSeconds, () =>
+            SpinTo(BottomAngle(playerCar), 0, repairSpinSeconds, () =>
             {
                 rideSource.Stop();
                 rideSource.PlayOneShot(stopClip);
@@ -227,6 +232,7 @@ namespace Jamlloween.Roteiro
         {
             rideSource.Stop();
             rideSource.PlayOneShot(stopClip);
+            SetLights(false);   // the power fails at the top: that is why the wheel stops
             tensionSource.clip = tensionLoop;
             tensionSource.loop = true;
             tensionSource.Play();

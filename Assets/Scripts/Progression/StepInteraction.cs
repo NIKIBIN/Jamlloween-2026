@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using HeyHeyThere.PSXCarnivalKit;
 using UnityEngine;
@@ -29,10 +30,13 @@ namespace Jamlloween.Progression
         [SerializeField, TextArea(1, 2)] string blockedText;
         [Tooltip("Para itens pegos por outro sistema (Pickup do kit): fora da etapa os colliders ficam desligados.")]
         [SerializeField] bool disableCollidersWhenInactive;
+        [Tooltip("Para Pickups: a conclusão (e o que a etapa seguinte dispara, ex.: uma perseguição) só sai depois que o jogador fecha a tela de inspeção do item com E.")]
+        [SerializeField] bool waitForInspectClose;
         [Tooltip("Chamado quando o debug pula esta etapa.")]
         public UnityEvent onForceCompleted;
 
         readonly List<Collider> disabled = new List<Collider>();
+        bool forcing;
 
         public string InteractionId => interactionId;
         public string CompletionEvent => completionEvent;
@@ -40,7 +44,7 @@ namespace Jamlloween.Progression
         void Awake()
         {
             var pickup = GetComponent<Pickup>();
-            if (pickup != null) pickup.onPicked.AddListener(_ => NotifyCompleted());
+            if (pickup != null) pickup.onPicked.AddListener(_ => OnPicked());
         }
 
         void OnEnable()
@@ -75,6 +79,23 @@ namespace Jamlloween.Progression
 
         public void NotifyCompleted() => ProgressionDirector.RaiseEvent(completionEvent);
 
+        void OnPicked()
+        {
+            var director = ProgressionDirector.Instance;
+            if (!waitForInspectClose || forcing || director == null) { NotifyCompleted(); return; }
+            // O Pickup se desliga ao ser pego: a espera roda no diretor, que fica sempre ativo.
+            director.StartCoroutine(NotifyAfterInspect());
+        }
+
+        /// <summary>O kit abre a inspeção logo depois do onPicked: espera um frame e então até ela fechar.</summary>
+        IEnumerator NotifyAfterInspect()
+        {
+            yield return null;
+            var inspect = FindAnyObjectByType<Inspect>();
+            while (inspect != null && inspect.Showing) yield return null;
+            NotifyCompleted();
+        }
+
         public void ForceComplete()
         {
             foreach (var c in GetComponents<IStepForceCompletable>()) c.ForceComplete();
@@ -82,7 +103,9 @@ namespace Jamlloween.Progression
             if (pickup != null && gameObject.activeSelf)
             {
                 var walker = FindFirstObjectByType<LevelWalker>();
-                pickup.Use(walker != null ? walker.items : null);   // o jogador passa a ter o item
+                forcing = true;   // o pulo do debug conclui na hora, sem esperar inspeção
+                try { pickup.Use(walker != null ? walker.items : null); }   // o jogador passa a ter o item
+                finally { forcing = false; }
             }
             onForceCompleted?.Invoke();
         }

@@ -22,7 +22,7 @@ MonoBehaviour:
   - kind: 0
     line:
       speaker: 
-      text: Parou... por que parou?
+      text: Parou... A energia caiu de novo?!
       audio: {fileID: 0}
       volume: 1
     targetId: 

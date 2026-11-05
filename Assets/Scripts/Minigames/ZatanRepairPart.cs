@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>Peca clicavel do conserto do Zatan. Guarda o tipo e cuida do realce ao passar o mouse.</summary>
 public class ZatanRepairPart : MonoBehaviour
 {
-    public enum Kind { Cover, Rag, Hose, Switch, Crank }
+    public enum Kind { Cover, Rag, Hose, Switch, Crank, Tape }
 
     public Kind kind;
 

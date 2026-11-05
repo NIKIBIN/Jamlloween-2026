@@ -15,10 +15,10 @@ Os minigames da `RepairMinigames` foram copiados (não movidos) para a `Zatan_Te
      - Fora da boca, a gasolina cai no chão, com respingo, som e `NoiseSystem`.
      - Despejando mais rápido do que o bocal engole, a espuma sobe; na borda, transborda, também com barulho.
   3. Com o tanque cheio, o galão volta para a lateral. Clicar na tampa fecha o bocal.
-  4. Puxar a corda para a direita até o fim, sem limite de tempo. A 1ª puxada tosse, solta fumaça e pisca a lâmpada; a 2ª liga, com a lâmpada acesa.
+  4. Puxar a corda para a direita até o fim, sem limite de tempo. A 1ª e a 2ª puxadas tossem e soltam fumaça (a 2ª também pisca a lâmpada); a 3ª liga, com a lâmpada acesa.
   O medidor tem vazio à esquerda e cheio à direita. O galão só é exigido enquanto o tanque não está cheio. Montado por `Jamlloween > Build Generator Fuel Minigame`; rodar de novo refaz só as peças.
 - **Roda-gigante (final, provisório):** prefab `Prefabs/FerrisWheelRide.prefab`, com a base e o anel do kit, o motor e o carrinho do jogador. Montado por `Jamlloween > Ferris Wheel > Build Prefab`. `Place In Open Scene` troca a roda solta do kit pela do prefab, na mesma posição. Numa cena nova, basta arrastar o prefab.
-  - **Estados (`FerrisWheelRide`):** `Off` (parada e apagada) → conserto do motor → `Running` (dá uma volta e para com o carrinho do jogador embaixo) → `Waiting` (porta aberta, "[E] Entrar no carrinho") → embarque → `Running` (sobe até o topo) → `Off`.
+  - **Estados (`FerrisWheelRide`):** `Off` (parada e apagada) → conserto do motor → `Running` (gira devagar 2 carrinhos, `repairCars`, em 6 s e para com o carrinho do jogador embaixo) → `Waiting` (porta aberta, "[E] Entrar no carrinho") → embarque → `Running` (sobe até o topo a 12°/s, cerca de 17 s) → `Off` (a energia cai: as luzes da roda apagam e a etapa R19 apaga o parque).
   - **Motor (`FerrisWheelMotorMinigame`):** provisório, só um interruptor. Clicar conclui. O minigame de verdade troca só o `Tick`.
   - **Carrinho (`FerrisWheelSeat`, no `ferris_wheel_ring_car_7`):** ao embarcar, o movimento do jogador desliga e não volta. O mouse continua olhando em volta, e a porta fecha.
   - **Eventos para a progressão:** `onRepaired`, `onWaiting`, `onBoarded`, `onReachedTop` e `onStateChanged`. A queda de energia no topo e o susto ainda não estão ligados.

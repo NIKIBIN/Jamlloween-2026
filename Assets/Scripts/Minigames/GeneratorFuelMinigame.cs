@@ -12,7 +12,7 @@ using UnityEngine.InputSystem;
 ///     enche; fora dela a gasolina cai no chao (respingo, som e barulho no NoiseSystem). O bocal engole numa vazao
 ///     fixa: despejando mais rapido que isso a espuma sobe na boca e, na borda, transborda (tambem faz barulho).
 ///  3. Fechar o bocal: clicar na tampa. O galao volta para a lateral.
-///  4. Dar partida: puxar a corda ate o fim. A 1a puxada engasga e solta fumaca, a 2a liga (configuravel).
+///  4. Dar partida: puxar a corda ate o fim. As 2 primeiras puxadas engasgam e soltam fumaca, a 3a liga (configuravel).
 /// Sem HUD: so a peca do passo atual reage ao mouse. O progresso fica nos campos, entao sair no meio nao reseta nada.
 /// </summary>
 public class GeneratorFuelMinigame : Minigame
@@ -85,7 +85,8 @@ public class GeneratorFuelMinigame : Minigame
     [SerializeField] Transform cordLine;
     [Tooltip("Corpo do gerador. Treme quando o motor engasga ou funciona.")]
     [SerializeField] Transform engineBody;
-    [SerializeField] int pullsToStart = 2;
+    [Tooltip("Puxadas ate o motor pegar. As anteriores engasgam; a ultima antes de pegar pisca a lampada.")]
+    [SerializeField] int pullsToStart = 3;
     [SerializeField] float shakeAmount = 0.01f;
 
     [Header("Retorno")]

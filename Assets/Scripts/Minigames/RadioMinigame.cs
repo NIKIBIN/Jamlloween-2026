@@ -11,10 +11,10 @@ using UnityEngine.InputSystem;
 ///  1. Clicar no radio para vira-lo e ver as costas.
 ///  2. Arrastar a tampa traseira para fora (encaixe por pressao: precisa de um puxao firme).
 ///  3. Arrastar as pilhas ate o compartimento (encaixam direto). Elas vem do inventario do jogador.
-///  4. Arrastar a tampa de volta ate encaixar. O radio liga sozinho e toca estatica.
-///  5. Clicar no radio para vira-lo para a frente.
-///  6. Girar o dial (arrastar em circulo). A estatica diminui perto da frequencia do bilhete.
-///     Ao acertar, o patrao fala e o minigame termina. O jogador leva o radio: ele sai da mesa ao devolver o controle.
+///  4. Arrastar a tampa de volta ate encaixar. O radio liga, toca estatica e vira sozinho para a frente.
+///  5. Girar o dial (arrastar em circulo). A estatica diminui perto da frequencia do bilhete.
+///     Ao acertar, o patrao fala e o minigame termina logo (a fala continua com o jogador ja andando).
+///     O jogador leva o radio: ele sai da mesa ao devolver o controle.
 /// Sem HUD: tudo vem do proprio objeto (LED, estatica, bilhete, escala do dial).
 /// O progresso fica nos campos do componente, entao sair no meio nao reseta nada.
 /// </summary>
@@ -59,6 +59,8 @@ public class RadioMinigame : Minigame
     [SerializeField] float staticFalloff = 4f;
     [Tooltip("Tempo (s) dentro da tolerancia para a sintonia travar, evita acertar sem querer ao passar direto.")]
     [SerializeField] float lockSeconds = 0.3f;
+    [Tooltip("Pausa (s) entre acertar a sintonia e devolver o controle. A fala do patrao continua tocando depois.")]
+    [SerializeField, Range(0f, 1f)] float exitDelayAfterTune = 0.7f;
 
     [Header("Pilhas")]
     [Tooltip("Item do inventario do jogador que representa as pilhas.")]
@@ -142,7 +144,7 @@ public class RadioMinigame : Minigame
         if (connected || flipping) return false;
         switch (p.kind)
         {
-            case RadioPart.Kind.Body: return faceFront ? !Powered : Powered;   // 1 e 5: vira para ver as costas / voltar para a frente
+            case RadioPart.Kind.Body: return faceFront && !Powered;   // 1: vira para ver as costas (a volta para a frente e automatica)
             case RadioPart.Kind.Cover: return !faceFront;
             case RadioPart.Kind.Batteries: return !faceFront && coverOff && !batteriesIn;
             case RadioPart.Kind.Dial: return faceFront && Powered;
@@ -327,7 +329,12 @@ public class RadioMinigame : Minigame
         {
             coverOff = false;
             cover.transform.SetParent(radio, true);
-            Glide(ref coverGlide, cover.transform, coverAnchor.localPosition, coverAnchor.localRotation, time, radioAudio.Click);
+            Glide(ref coverGlide, cover.transform, coverAnchor.localPosition, coverAnchor.localRotation, time, () =>
+            {
+                radioAudio.Click();
+                // Tampa fechada com as pilhas: o radio liga e vira sozinho para a frente, pronto para o dial.
+                if (Powered && !faceFront && !flipping) StartCoroutine(Flip(true));
+            });
         }
         else Glide(ref coverGlide, cover.transform, coverRest.localPosition, coverRest.localRotation, time, null);
     }
@@ -368,13 +375,15 @@ public class RadioMinigame : Minigame
         connected = true;
         EndDrag();
         SetHover(null);
-        float length = radioAudio.PlayBoss();
-        Complete(length + 0.8f);
+        radioAudio.PlayBoss();
+        Complete(exitDelayAfterTune);
     }
 
     /// <summary>Consertado, o jogador leva o radio com ele: o radio e as pecas soltas saem da mesa.</summary>
     void TakeRadio()
     {
+        // O som fica na mesa: a fala do patrao continua tocando depois que o radio some.
+        if (radioAudio != null && radioAudio.transform.IsChildOf(radio)) radioAudio.transform.SetParent(transform, true);
         if (radio != null) radio.gameObject.SetActive(false);
         if (loose != null) loose.gameObject.SetActive(false);
     }

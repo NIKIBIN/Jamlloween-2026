@@ -6274,7 +6274,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
   from: {fileID: 11400000, guid: 3263e47999928f944a5783b386a6cac6, type: 2}
   until: {fileID: 11400000, guid: da3fd16df0e499d4ca57cf4477fa3870, type: 2}
-  powerGroup: 
+  powerGroup: park
   brokenUntil: {fileID: 0}
   brokenLevel: 0.3
   brokenBulbLevel: 0.4
@@ -12181,6 +12181,7 @@ MonoBehaviour:
   completionEvent: FuseTaken
   blockedText: 
   disableCollidersWhenInactive: 1
+  waitForInspectClose: 1
   onForceCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -12417,7 +12418,7 @@ Transform:
   m_GameObject: {fileID: 263353919}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.5596302, z: -0, w: 0.82874244}
-  m_LocalPosition: {x: -66, y: 0.044999957, z: 57.5}
+  m_LocalPosition: {x: -49, y: 0.08, z: 57.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -23936,10 +23937,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 727179113}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 209.525, y: -14.525}
+  m_SizeDelta: {x: 419.05, y: 29.05}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &548591613 stripped
 GameObject:
@@ -31999,7 +32000,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 32, y: 28}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 419.05, y: 29.05}
   m_Pivot: {x: 0, y: 0}
 --- !u!1001 &727868732
 PrefabInstance:
@@ -51235,7 +51236,19 @@ MonoBehaviour:
   startOn: 1
   onChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 934644322}
+        m_TargetAssemblyTypeName: CarouselRepair, Assembly-CSharp
+        m_MethodName: SetPower
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   profileOn: {fileID: 11400000, guid: 3a8135c88cadbf7a4a941d8baf1c6b30, type: 2}
   profileOff: {fileID: 11400000, guid: bd07fb9d714f2aed9b1a45480d50d5ad, type: 2}
   fadeOnSeconds: 2
@@ -78918,9 +78931,9 @@ MonoBehaviour:
   seat: {fileID: 1295670493}
   attackPoint: {fileID: 1904012345}
   repairMinigame: {fileID: 1295670488}
-  repairExtraTurns: 1
-  repairSpinSeconds: 10
-  degreesPerSecond: 20
+  repairCars: 2
+  repairSpinSeconds: 6
+  degreesPerSecond: 12
   easeSeconds: 2.5
   rideYawLimit: 50
   stoppedYawLimit: 175
