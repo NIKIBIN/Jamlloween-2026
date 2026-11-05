@@ -119,11 +119,13 @@ public static class RoteiroSetup
             // 17-18: depois do conserto da roda, Zatan se aproxima do jogador encurralado (relay: StalkFrom); a porta de uma gondola abre (relay: GondolaDoor.Open).
             Step("R18_Encurralado", "Encurralado: entrar na gôndola", new[] { GondolaBoardedEvent }, active: new[] { "gondola_door" },
                 onStart: new[] { Think("Ele tá vindo... não tem saída!") }),
-            // 19: a roda gira e para no alto (FerrisWheelRide); o som de tensao comeca.
-            Step("R19_RodaGigante", "A roda-gigante gira", new[] { WheelStoppedEvent }),
+            // 19: a roda gira e para no alto (FerrisWheelRide) porque a energia cai: apagao no parque inteiro
+            // (LightGroup park: luzes, carrossel e musica). O som de tensao comeca.
+            Step("R19_RodaGigante", "A roda-gigante gira", new[] { WheelStoppedEvent },
+                onComplete: new[] { Lights("park", false), Snd(Placeholder + "SFX_Roteiro_PowerDown_PH.wav") }),
             // 20: olhar para tras: Zatan ataca de fora da gondola (FerrisWheelRide -> ZatanDirector.FinalAttackFrom).
             Step("R20_OlharParaTras", "Zatan ataca na gôndola", new[] { FinalAttackDoneEvent },
-                onStart: new[] { Think("Parou... por que parou?") }),
+                onStart: new[] { Think("Parou... A energia caiu de novo?!") }),
             // 21: creditos (relay: CreditsScreen.Show). Ultima etapa: nunca conclui.
             Step("R21_Creditos", "Créditos", new string[0]),
         };

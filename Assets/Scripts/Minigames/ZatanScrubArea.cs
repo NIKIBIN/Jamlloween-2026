@@ -1,19 +1,24 @@
 using UnityEngine;
 
 /// <summary>
-/// Primitivo de esfregar: uma camada de piche (decal) cuja opacidade cai conforme a distancia que a estopa
-/// percorre sobre a area com o botao do mouse pressionado. Nao ha pintura por pixel: a camada inteira
-/// clareia junto e some quando a distancia necessaria e atingida. Vai-e-vem conta como distancia.
+/// Primitivo de esfregar. Dois usos:
+///  - Limpar (seal desligado): uma camada de piche (decal) cuja opacidade cai conforme a distancia que a estopa
+///    percorre sobre a area com o botao do mouse pressionado. A camada some quando a distancia e atingida.
+///  - Vedar (seal ligado): um vazamento de gas. O decal e a fita, que aparece conforme a distancia percorrida
+///    com o rolo de fita e fica no lugar depois de vedado.
+/// Nao ha pintura por pixel: a camada inteira muda junto. Vai-e-vem conta como distancia.
 ///
 /// Fica como filho direto do painel (a posicao local e o centro da area). Reutilizavel em qualquer
-/// minigame: quem controla a estopa chama Contains() e Scrub().
+/// minigame: quem controla a ferramenta chama Contains() e Scrub().
 /// </summary>
 public class ZatanScrubArea : MonoBehaviour
 {
     static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
 
-    [Tooltip("Camada de piche. Precisa de um material transparente com _BaseColor.")]
+    [Tooltip("Camada de piche (ou a fita, no modo vedar). Precisa de um material transparente com _BaseColor.")]
     [SerializeField] Renderer decal;
+    [Tooltip("Modo vedar: a area e um vazamento de gas e o decal e a fita, que aparece conforme o jogador passa o rolo.")]
+    [SerializeField] bool seal;
     [Tooltip("Opcional. Reflexo claro sobre o piche (da o aspecto brilhante). Acompanha a opacidade do piche.")]
     [SerializeField] Renderer shine;
     [Tooltip("Raio (m) da area em que a estopa esfrega, no plano do painel.")]
@@ -39,6 +44,8 @@ public class ZatanScrubArea : MonoBehaviour
     /// <summary>1 = piche inteiro, 0 = limpo. Util para atenuar o som do vazamento.</summary>
     public float Coverage => Active ? 1f - Progress : 0f;
     public float RequiredDistance { get => requiredDistance; set => requiredDistance = Mathf.Max(0.001f, value); }
+    /// <summary>True: vazamento de gas, fechado com fita. False: piche, limpo com a estopa.</summary>
+    public bool Seal => seal;
 
     void Awake()
     {
@@ -94,8 +101,12 @@ public class ZatanScrubArea : MonoBehaviour
         if (scrubbed >= requiredDistance)
         {
             IsClean = true;
-            if (decal != null) decal.enabled = false;
-            if (shine != null) shine.enabled = false;
+            if (seal) ApplyVisual();   // a fita fica no lugar, inteira
+            else
+            {
+                if (decal != null) decal.enabled = false;
+                if (shine != null) shine.enabled = false;
+            }
             return true;
         }
         ApplyVisual();
@@ -108,6 +119,18 @@ public class ZatanScrubArea : MonoBehaviour
         // Instancias de material proprias: MaterialPropertyBlock faz o decal sumir com o GPU Resident Drawer.
         if (decalMat == null) decalMat = decal.material;
         if (shine != null && shineMat == null) shineMat = shine.material;
+
+        if (seal)
+        {
+            // A fita aparece aos poucos e fica opaca no fim. Sem crescimento: o vazamento e o gas, nao a mancha.
+            float k = Progress;
+            var tape = baseColor;
+            tape.a = baseColor.a * Mathf.Lerp(0f, 1f, Mathf.SmoothStep(0f, 1f, k));
+            decalMat.SetColor(BaseColorId, tape);
+            decal.transform.localScale = new Vector3(decalScale.x, decalScale.y * Mathf.Lerp(0.35f, 1f, k), decalScale.z);
+            if (shineMat != null) shineMat.SetColor(BaseColorId, new Color(1f, 1f, 1f, 0.35f * k));
+            return;
+        }
 
         // O piche segura grosso ate perto de 35% e so depois clareia.
         float t = Mathf.Clamp01((Progress - 0.35f) / 0.65f);

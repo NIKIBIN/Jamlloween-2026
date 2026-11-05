@@ -21,26 +21,27 @@ public class ZatanRepairAudio : MonoBehaviour
     [SerializeField] AudioClip sighClip;
     [Tooltip("Rangido da manivela (toca em loop enquanto se gira).")]
     [SerializeField] AudioClip creakClip;
-    [Tooltip("Vazamento de piche (toca em loop enquanto a manivela esta travada).")]
+    [Tooltip("Vazamento de gas (chiado em loop enquanto uma junta vaza).")]
     [SerializeField] AudioClip leakClip;
 
     [Header("Volumes")]
-    [SerializeField] float maxDistance = 15f;
-    [SerializeField, Range(0f, 1f)] float breathVolume = 0.32f;
-    [SerializeField, Range(0f, 1f)] float solenoidVolume = 0.3f;
-    [SerializeField, Range(0f, 1f)] float humVolume = 0.12f;
-    [SerializeField, Range(0f, 1f)] float clunkVolume = 0.7f;
-    [SerializeField, Range(0f, 1f)] float sighVolume = 0.6f;
-    [SerializeField, Range(0f, 1f)] float effortVolume = 0.5f;
-    [SerializeField, Range(0f, 1f)] float leakVolume = 0.5f;
+    // Ambiente sutil: o painel soa como uma maquina velha ao fundo, nao como um trem. Suba com cuidado.
+    [SerializeField] float maxDistance = 10f;
+    [SerializeField, Range(0f, 1f)] float breathVolume = 0.14f;
+    [SerializeField, Range(0f, 1f)] float solenoidVolume = 0.1f;
+    [SerializeField, Range(0f, 1f)] float humVolume = 0.06f;
+    [SerializeField, Range(0f, 1f)] float clunkVolume = 0.5f;
+    [SerializeField, Range(0f, 1f)] float sighVolume = 0.4f;
+    [SerializeField, Range(0f, 1f)] float effortVolume = 0.28f;
+    [SerializeField, Range(0f, 1f)] float leakVolume = 0.2f;
 
     [Header("Ritmo")]
     [Tooltip("Intervalo (s) entre cliques de solenoide no comeco e no fim do giro.")]
     [SerializeField] Vector2 solenoidInterval = new Vector2(1.6f, 0.55f);
     [Tooltip("Velocidade da respiracao (pitch) no comeco e no fim do giro.")]
-    [SerializeField] Vector2 breathPitch = new Vector2(0.9f, 1.4f);
+    [SerializeField] Vector2 breathPitch = new Vector2(0.9f, 1.2f);
 
-    AudioSource sfx, breath, hum, effort, leak, scrub;
+    AudioSource sfx, breath, hum, effort, leak, scrub, tape;
     AudioClip click, clunk, sigh, solenoid;
     bool running;
     float speed01, solenoidTimer, solenoidScale = 1f;
@@ -53,6 +54,7 @@ public class ZatanRepairAudio : MonoBehaviour
         effort = NewSource(true);
         leak = NewSource(true);
         scrub = NewSource(true);
+        tape = NewSource(true);
 
         click = MakeClick();
         solenoid = solenoidClip != null ? solenoidClip : MakeSolenoid();
@@ -63,6 +65,7 @@ public class ZatanRepairAudio : MonoBehaviour
         effort.clip = creakClip != null ? creakClip : MakeCreakLoop();
         leak.clip = leakClip != null ? leakClip : MakeLeakLoop();
         scrub.clip = MakeScrubLoop();
+        tape.clip = scrub.clip;
     }
 
     AudioSource NewSource(bool loop)
@@ -136,11 +139,14 @@ public class ZatanRepairAudio : MonoBehaviour
         Loop(effort, level, effortVolume * Mathf.Lerp(0.6f, 1f, heavy01), Mathf.Lerp(1.1f, 0.7f, heavy01));
     }
 
-    /// <summary>Vazamento de piche. level 0 desliga.</summary>
+    /// <summary>Vazamento de gas. level 0 desliga.</summary>
     public void SetLeak(float level) => Loop(leak, level, leakVolume, 1f);
 
     /// <summary>Estopa raspando. level 0 desliga.</summary>
-    public void SetScrub(float level) => Loop(scrub, level, 0.45f, Mathf.Lerp(0.9f, 1.2f, Mathf.Clamp01(level)));
+    public void SetScrub(float level) => Loop(scrub, level, 0.25f, Mathf.Lerp(0.9f, 1.2f, Mathf.Clamp01(level)));
+
+    /// <summary>Fita sendo esticada sobre a junta (o mesmo loop do esfregar, mais agudo e chiado).</summary>
+    public void SetTape(float level) => Loop(tape, level, 0.25f, Mathf.Lerp(1.5f, 1.9f, Mathf.Clamp01(level)));
 
     static void Loop(AudioSource s, float level, float maxVolume, float pitch)
     {
@@ -161,6 +167,7 @@ public class ZatanRepairAudio : MonoBehaviour
         SetEffort(0f, 0f);
         SetLeak(0f);
         SetScrub(0f);
+        SetTape(0f);
     }
 
     /// <summary>O compressor solta o ar de uma vez. Devolve a duracao em segundos.</summary>
@@ -243,15 +250,19 @@ public class ZatanRepairAudio : MonoBehaviour
         });
     }
 
+    /// <summary>Chiado de gas escapando: ruido claro (pouco filtrado) com uma oscilacao leve de pressao.</summary>
     static AudioClip MakeLeakLoop()
     {
         var rnd = new System.Random(52);
-        float lp = 0f;
-        return Build("ZatanLeak", 1f, (i, t) =>
+        float lp = 0f, prev = 0f;
+        return Build("ZatanGasLeak", 1f, (i, t) =>
         {
-            lp = Mathf.Lerp(lp, Noise(rnd), 0.7f);
-            float bubble = 0.6f + 0.4f * Mathf.Sin(t * 2f * Mathf.PI * 9f);
-            return lp * bubble * 0.5f + Mathf.Sin(t * 2f * Mathf.PI * 70f) * 0.1f;
+            float n = Noise(rnd);
+            lp = Mathf.Lerp(lp, n, 0.85f);
+            float hi = lp - prev;   // realca os agudos: o chiado do gas
+            prev = lp;
+            float flutter = 0.8f + 0.2f * Mathf.Sin(t * 2f * Mathf.PI * 6f);
+            return (hi * 0.9f + lp * 0.25f) * flutter * 0.55f;
         });
     }
 

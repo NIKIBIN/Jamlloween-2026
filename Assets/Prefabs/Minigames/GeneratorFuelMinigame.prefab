@@ -643,7 +643,7 @@ MonoBehaviour:
   cordAnchor: {fileID: 4844526432347700688}
   cordLine: {fileID: 7440487033614162215}
   engineBody: {fileID: 0}
-  pullsToStart: 2
+  pullsToStart: 3
   shakeAmount: 0.01
   splash: {fileID: 6458525863120048068}
   exhaustSmoke: {fileID: 1408392705296925182}

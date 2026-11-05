@@ -51,7 +51,7 @@ public class CarouselRepair : MonoBehaviour
 
     float speed, noiseTimer;
     Transform player;
-    bool panelThrown;
+    bool panelThrown, powered = true;
     Machine.Kind panelKind;
 
     void Awake()
@@ -76,9 +76,10 @@ public class CarouselRepair : MonoBehaviour
 
         if (!Spinning)
         {
-            if (FuseBoxDone && Idle(fuseBox)) StartCarousel();
+            if (FuseBoxDone && Idle(fuseBox) && powered) StartCarousel();
             return;
         }
+        if (!powered) return;
 
         float target = rpm * 6f;   // graus por segundo
         speed = Mathf.MoveTowards(speed, target, target / Mathf.Max(spinUpSeconds, 0.1f) * Time.deltaTime);
@@ -98,7 +99,7 @@ public class CarouselRepair : MonoBehaviour
     // O cavalo vira depois que o rotor girou neste frame, entao nao treme.
     void LateUpdate()
     {
-        if (!Spinning || repairedHorse == null) return;
+        if (!Spinning || !powered || repairedHorse == null) return;
         if (player == null)
         {
             var cam = Camera.main;
@@ -131,6 +132,21 @@ public class CarouselRepair : MonoBehaviour
         Debug.Log("[CarouselRepair] carrossel consertado e girando", this);
         Started?.Invoke();
         onRepaired?.Invoke();
+    }
+
+    /// <summary>
+    /// Energia do parque (ligue no onChanged do LightGroup "park"). Sem energia o carrossel consertado para e a musica corta;
+    /// com a energia de volta ele volta a girar. Antes do conserto so guarda o estado.
+    /// </summary>
+    public void SetPower(bool on)
+    {
+        if (powered == on) return;
+        powered = on;
+        if (!Spinning) return;
+        if (carouselAudio != null) carouselAudio.SetMusic(on);
+        if (repairedGate != null) repairedGate.SetOn(on);
+        if (!on) speed = 0f;
+        Debug.Log("[CarouselRepair] energia " + (on ? "voltou" : "caiu"), this);
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

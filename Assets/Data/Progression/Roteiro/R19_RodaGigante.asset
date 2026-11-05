@@ -19,4 +19,26 @@ MonoBehaviour:
   completionEvents:
   - WheelStopped
   onStart: []
-  onComplete: []
+  onComplete:
+  - kind: 1
+    line:
+      speaker: "PATR\xC3O"
+      text: 
+      audio: {fileID: 0}
+      volume: 1
+    targetId: park
+    state: 0
+    taskState: 2
+    clip: {fileID: 0}
+    volume: 1
+  - kind: 2
+    line:
+      speaker: "PATR\xC3O"
+      text: 
+      audio: {fileID: 0}
+      volume: 1
+    targetId: 
+    state: 1
+    taskState: 2
+    clip: {fileID: 8300000, guid: 1e446a57745e416479d472f36a53b4c9, type: 3}
+    volume: 1
