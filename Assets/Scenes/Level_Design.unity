@@ -77352,6 +77352,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 127306091225024647, guid: ba21cbdad13c71d899c295bf5d96800e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1680999498}
+    - targetCorrespondingSourceObject: {fileID: 127306091225024647, guid: ba21cbdad13c71d899c295bf5d96800e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1680999500}
   m_SourcePrefab: {fileID: 100100000, guid: ba21cbdad13c71d899c295bf5d96800e, type: 3}
 --- !u!4 &1680999493 stripped
 Transform:
@@ -77387,6 +77390,20 @@ MonoBehaviour:
   lockedText: "Antes de sair, preciso consertar o r\xE1dio e pegar a lanterna."
   openOnUnlock: 0
   keepOpen: 0
+--- !u!114 &1680999500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770634654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70530e07782348cf89cb977653b4bf0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Roteiro.MachinePrompt
+  machine: {fileID: 1680999494}
+  prompt: Interagir
 --- !u!114 &1680999498
 MonoBehaviour:
   m_ObjectHideFlags: 0
