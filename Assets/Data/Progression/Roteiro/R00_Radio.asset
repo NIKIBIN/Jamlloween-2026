@@ -63,6 +63,7 @@ MonoBehaviour:
       text: 
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: flashlight
     state: 1
     taskState: 2

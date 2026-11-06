@@ -26,6 +26,7 @@ MonoBehaviour:
       text: 
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: ZatanReleased
     state: 1
     taskState: 2
@@ -37,6 +38,7 @@ MonoBehaviour:
       text: Que barulho foi esse?! Veio da cabine do Zatan...
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: 
     state: 1
     taskState: 2

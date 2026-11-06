@@ -27,6 +27,7 @@ MonoBehaviour:
       text: 
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: zatan_escape
     state: 1
     taskState: 2

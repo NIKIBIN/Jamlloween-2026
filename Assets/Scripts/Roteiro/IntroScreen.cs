@@ -20,18 +20,8 @@ namespace Jamlloween.Roteiro
         [SerializeField] PlayerInteractor interactor;
 
         [Header("Texto")]
-        [Tooltip("Cada bloco aparece sozinho na tela; cada linha (separada por Enter) entra em fade, uma de cada vez.")]
-        [SerializeField, TextArea(3, 8)] string[] blocks =
-        {
-            "Você é o técnico de manutenção do parque O Incrível Mundo de Zatan.\n" +
-            "O turno da noite é seu.\n" +
-            "Luzes, fusíveis, brinquedos que ninguém mais quer consertar.",
-
-            "Dizem que o parque fecha às dez.\n" +
-            "Dizem também que nem tudo lá dentro sabe disso.\n" +
-            "Faça o seu trabalho. Não demore.\n" +
-            "E se a cabine do adivinho estiver acesa, não pare para ouvir sua sorte.",
-        };
+        [Tooltip("Cada bloco aparece sozinho na tela; cada linha (separada por Enter) entra em fade, uma de cada vez. Vazio = sem texto: só a tela preta e o aviso de tecla.")]
+        [SerializeField, TextArea(3, 8)] string[] blocks = new string[0];
         [SerializeField] string prompt = "Pressione qualquer tecla para continuar";
 
         [Header("Tempos (segundos)")]
@@ -62,7 +52,6 @@ namespace Jamlloween.Roteiro
             if (director == null) throw new MissingReferenceException(nameof(director));
             if (walker == null) throw new MissingReferenceException(nameof(walker));
             if (interactor == null) throw new MissingReferenceException(nameof(interactor));
-            if (blocks.Length == 0) throw new MissingReferenceException(nameof(blocks));
 
             BuildTimeline();
             walker.enabled = false;
@@ -76,6 +65,7 @@ namespace Jamlloween.Roteiro
         {
             blockFadeStart = new float[blocks.Length];
             float t = startDelay;
+            promptTime = startDelay;   // sem texto: só a tela preta e o aviso de tecla
             for (int b = 0; b < blocks.Length; b++)
             {
                 string[] split = blocks[b].Split('\n');
@@ -123,6 +113,7 @@ namespace Jamlloween.Roteiro
         void SkipToPrompt()
         {
             int last = blocks.Length - 1;
+            if (last < 0) { clock = promptTime; return; }
             float lastStart = float.NegativeInfinity;
             foreach (Line l in lines) if (l.block == last) lastStart = Mathf.Max(lastStart, l.start);
             float now = lastStart + lineFadeIn;

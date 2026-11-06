@@ -20,6 +20,7 @@ public static class RoteiroSetup
     const string Roteiro = "Assets/Audio/Roteiro/";
 
     // Eventos de conclusao enviados pela cena.
+    public const string ClipboardTakenEvent = "ClipboardTaken"; // ClipboardMinigame na mesa do trailer
     public const string ZatanEscapedEvent = "ZatanEscaped";     // trigger da volta com a gasolina
     public const string ZatanGaveUpEvent = "ZatanGaveUp";       // ZatanSafeRoom: ele desistiu na porta do trailer
     public const string WheelFixedEvent = "WheelFixed";         // FerrisWheelMotorMinigame do motor da roda-gigante
@@ -53,12 +54,17 @@ public static class RoteiroSetup
 
         var steps = new List<ProgressionStep>
         {
-            // 1-2: no trailer. Radio primeiro, depois a lanterna.
+            // 1-2: no trailer. A prancheta (minigame: virar a ordem de servico) primeiro, depois o radio e a lanterna.
+            Step("R00_Prancheta", "Ler a ordem de serviço", new[] { ClipboardTakenEvent }, active: new[] { "clipboard" },
+                onComplete: new[] { Task("radio", TaskState.Current) },
+                blocked: new[] { ("radio", "Primeiro a ordem de serviço.") }),
             Step("R00_Radio", "Consertar o rádio", new[] { "RadioFixed" }, active: new[] { "radio" },
-                onStart: new[] { Think("Esse rádio velho... preciso consertar pra falar com o patrão.") },
+                onStart: new[] { Think("Esse rádio velho... preciso consertar pra falar com o patrão.", 3.5f) },
                 onComplete: new[]
                 {
-                    Say("Até que enfim. Escuta: o circo tá cobrando, tudo tem que funcionar até amanhã. Ninguém vai te buscar antes de terminar. Começa pela cabine da cartomante, na entrada do circo. E pega a lanterna, tá um breu aí fora."),
+                    // A primeira fala do patrao fica dividida em duas legendas (b90c2d9), cada uma com o seu tempo.
+                    Say("Até que enfim. Escuta: o circo tá cobrando, tudo tem que funcionar até amanhã. Ninguém vai te buscar antes de terminar.", 6.5f),
+                    Say("Começa pela cabine da cartomante, na entrada do circo. E pega a lanterna, tá um breu aí fora.", 5f),
                     Task("flashlight", TaskState.Current)
                 }),
             Step("R01_Lanterna", "Pegar a lanterna", new[] { "FlashlightTaken" }, active: new[] { "flashlight" },
@@ -152,7 +158,8 @@ public static class RoteiroSetup
 
     static List<ClipboardTask> Tasks() => new List<ClipboardTask>
     {
-        new ClipboardTask { id = "radio", text = "Consertar o rádio", initialState = TaskState.Current, doneEvent = "RadioFixed" },
+        new ClipboardTask { id = "clipboard", text = "Ler a ordem de serviço", initialState = TaskState.Current, doneEvent = ClipboardTakenEvent },
+        new ClipboardTask { id = "radio", text = "Consertar o rádio", initialState = TaskState.Future, doneEvent = "RadioFixed" },
         new ClipboardTask { id = "flashlight", text = "Pegar a lanterna", initialState = TaskState.Future, doneEvent = "FlashlightTaken" },
         new ClipboardTask { id = "zatan", text = "Consertar o Zatan", initialState = TaskState.Future, doneEvent = "ZatanFixed" },
         new ClipboardTask { id = "generator", text = "Abastecer e ligar o gerador", initialState = TaskState.Hidden, doneEvent = "GeneratorStarted" },
@@ -219,8 +226,9 @@ public static class RoteiroSetup
         return existing;
     }
 
-    static StepAction Say(string text) => new StepAction { kind = StepAction.Kind.RadioLine, line = new RadioLine { text = text } };
-    static StepAction Think(string text) => new StepAction { kind = StepAction.Kind.RadioLine, line = new RadioLine { speaker = "", text = text } };
+    /// <summary>Fala do patrao. seconds = 0: o tempo na tela sai do tamanho do texto.</summary>
+    static StepAction Say(string text, float seconds = 0f) => new StepAction { kind = StepAction.Kind.RadioLine, line = new RadioLine { text = text, seconds = seconds } };
+    static StepAction Think(string text, float seconds = 0f) => new StepAction { kind = StepAction.Kind.RadioLine, line = new RadioLine { speaker = "", text = text, seconds = seconds } };
     static StepAction Trigger(string id, bool on) => new StepAction { kind = StepAction.Kind.Trigger, targetId = id, state = on };
     static StepAction Lights(string id, bool on) => new StepAction { kind = StepAction.Kind.LightGroup, targetId = id, state = on };
     static StepAction Evt(string name) => new StepAction { kind = StepAction.Kind.Event, targetId = name };

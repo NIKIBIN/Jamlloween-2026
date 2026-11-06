@@ -10,6 +10,8 @@ namespace Jamlloween.Progression
     /// borda de cima) e o jogador olha para baixo para ler. Lista as tarefas que o diretor revelou: concluídas riscadas com [X],
     /// as atuais em destaque e as futuras esmaecidas. O modelo é feito de primitivas com o texto em TextMeshPro 3D.
     /// Ela acompanha a posição dos olhos e só o giro horizontal (yaw), então inclinar a cabeça para baixo a revela.
+    /// A folha é a ordem de serviço da noite: um cabeçalho (empresa, cliente, o chamado do Zatan), as tarefas e uma anotação
+    /// no pé. Com startOwned desligado, ela começa na mesa do trailer (ClipboardPickup) e a tecla só funciona depois de pegá-la.
     /// </summary>
     public class Clipboard : MonoBehaviour
     {
@@ -17,6 +19,8 @@ namespace Jamlloween.Progression
         [Tooltip("Tecla de reserva. Também liga/desliga. Serve para saber se o Tab chega ao jogo no seu ambiente.")]
         [SerializeField] Key altKey = Key.C;
         [SerializeField] float raiseSeconds = 0.25f;
+        [Tooltip("Off: a prancheta fica na mesa do trailer e a tecla não faz nada até o jogador pegá-la (Acquire).")]
+        [SerializeField] bool startOwned = true;
         [Tooltip("A câmera do jogador. Vazio = Camera.main (falha se houver duas câmeras com a tag MainCamera).")]
         [SerializeField] Camera viewCamera;
 
@@ -34,7 +38,11 @@ namespace Jamlloween.Progression
         [SerializeField] Material clipMaterial;
 
         [Header("Texto")]
+        [Tooltip("Cabeçalho da folha (a ordem de serviço), acima das tarefas. Aceita rich text do TMP. Vazio = sem cabeçalho.")]
+        [SerializeField, TextArea(4, 14)] string header = "";
         [SerializeField] string title = "TAREFAS";
+        [Tooltip("Anotação no pé da folha, em itálico. Vazio = sem anotação.")]
+        [SerializeField, TextArea(1, 4)] string footnote = "";
         [SerializeField] Color inkColor = new Color(0.13f, 0.11f, 0.09f);
         [SerializeField] Color currentColor = new Color(0.6f, 0.07f, 0.05f);
         [Tooltip("Opacidade (0 a 255, em hexa no TMP) dos objetivos futuros.")]
@@ -53,10 +61,27 @@ namespace Jamlloween.Progression
         public bool IsOpen => open;
         /// <summary>The key that opens it (shown in the HUD hint).</summary>
         public Key OpenKey => key;
+        /// <summary>O jogador já tem a prancheta (a tecla funciona).</summary>
+        public bool IsOwned { get; private set; }
+        /// <summary>Disparado quando o jogador pega a prancheta.</summary>
+        public event System.Action Acquired;
+
+        /// <summary>O jogador pega a prancheta. Com <paramref name="openNow"/>, ela já sobe para ele ler a ordem de serviço.</summary>
+        public void Acquire(bool openNow)
+        {
+            if (IsOwned) return;
+            IsOwned = true;
+            if (openNow) open = true;   // dentro de um minigame ela só sobe quando ele acabar (LateUpdate)
+            Acquired?.Invoke();
+        }
         bool warnedNoKeyboard, reportedOpen;
         int shownVersion = -1;
 
-        void Awake() => Build();
+        void Awake()
+        {
+            IsOwned = startOwned;
+            Build();
+        }
 
         void OnEnable()
         {
@@ -68,6 +93,15 @@ namespace Jamlloween.Progression
         {
             Minigame.AnyStarted -= OnMinigameStarted;
             Minigame.AnyExited -= OnMinigameExited;
+        }
+
+        /// <summary>Com a prancheta aberta, mostra como fechar, no mesmo lugar e estilo do "[ESC] SAIR" dos minigames.</summary>
+        void OnGUI()
+        {
+            if (!open || playingMinigames > 0 || raise <= 0f) return;
+            float h = Screen.height;
+            Jamlloween.Core.UIStyle.OsdText(new Rect(0f, h * 0.92f, Screen.width, 30f * Jamlloween.Core.UIStyle.Scale),
+                $"[{key.ToString().ToUpperInvariant()}] FECHAR", Jamlloween.Core.UIStyle.Prompt, 0.9f * raise);
         }
 
         void OnDestroy()
@@ -91,7 +125,9 @@ namespace Jamlloween.Progression
                 // Borda própria (solta -> aperta). Não depende de wasPressedThisFrame.
                 bool tab = k[key].isPressed, alt = k[altKey].isPressed;
                 bool down = tab || alt;
-                if (down && !wasDown)
+                if (down && !wasDown && !IsOwned)
+                    Debug.Log("[Clipboard] tecla ignorada: o jogador ainda não pegou a prancheta.", this);
+                else if (down && !wasDown)
                 {
                     string which = tab ? key.ToString() : altKey.ToString();
                     if (playingMinigames > 0)
@@ -163,6 +199,18 @@ namespace Jamlloween.Progression
             if (d == null || shownVersion == d.TasksVersion) return;
             shownVersion = d.TasksVersion;
 
+            var sb = new StringBuilder();
+            if (!string.IsNullOrEmpty(header)) sb.Append(header.TrimEnd()).Append("\n\n");
+            sb.Append(TaskListText());
+            if (!string.IsNullOrEmpty(footnote)) sb.Append("<indent=0>\n<i>").Append(footnote.TrimEnd()).Append("</i>");
+            text.text = sb.ToString();
+        }
+
+        /// <summary>O título e a lista de tarefas, como aparecem na folha (usado também pela prancheta na mesa).</summary>
+        public string TaskListText()
+        {
+            var d = ProgressionDirector.Instance;
+            if (d == null) return string.Empty;
             string faded = $"<alpha=#{futureAlpha:X2}>";
             var sb = new StringBuilder();
             sb.Append("<align=center><b>").Append(title).Append("</b></align>\n\n");
@@ -186,7 +234,7 @@ namespace Jamlloween.Progression
                 }
                 sb.Append('\n');
             }
-            text.text = sb.ToString();
+            return sb.ToString();
         }
 
         // ------------------------------------------------------------------ modelo

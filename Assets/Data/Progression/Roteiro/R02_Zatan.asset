@@ -26,6 +26,7 @@ MonoBehaviour:
       text: 
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: gen_noise
     state: 1
     taskState: 2
@@ -38,6 +39,7 @@ MonoBehaviour:
       text: 
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: gen_noise
     state: 0
     taskState: 2
@@ -49,6 +51,7 @@ MonoBehaviour:
       text: 
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: park
     state: 0
     taskState: 2
@@ -60,6 +63,7 @@ MonoBehaviour:
       text: 
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: PowerLost
     state: 1
     taskState: 2
@@ -71,6 +75,7 @@ MonoBehaviour:
       text: 
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: 
     state: 1
     taskState: 2

@@ -25,6 +25,7 @@ MonoBehaviour:
       text: Parou... A energia caiu de novo?!
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: 
     state: 1
     taskState: 2

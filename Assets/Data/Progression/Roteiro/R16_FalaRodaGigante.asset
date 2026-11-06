@@ -25,6 +25,7 @@ MonoBehaviour:
       text: "T\xF4 ouvindo a musiquinha do carrossel daqui. Falta s\xF3 a roda-gigante. Conserta o motor dela e pode ir embora."
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: 
     state: 1
     taskState: 2
@@ -37,6 +38,7 @@ MonoBehaviour:
       text: 
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: wheel
     state: 1
     taskState: 2

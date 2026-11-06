@@ -25,6 +25,7 @@ MonoBehaviour:
       text: "Saiu da caixa? Para de besteira, algu\xE9m deve ter tirado ele dali. Vai pro carrossel e termina logo."
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: 
     state: 1
     taskState: 2
@@ -37,6 +38,7 @@ MonoBehaviour:
       text: 
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: carousel
     state: 1
     taskState: 2

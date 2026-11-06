@@ -6,8 +6,8 @@ using UnityEngine;
 namespace Jamlloween.Progression
 {
     /// <summary>
-    /// The small HUD text in the bottom-left corner: "Pressione TAB para ver os objetivos", always there (hidden while the
-    /// clipboard is up or in a minigame). When the tasks change it says so for a few seconds, and it teaches the controls
+    /// The small HUD text in the bottom-left corner: "Pressione TAB para ver os objetivos", there once the player has the
+    /// clipboard (hidden while the clipboard is up or in a minigame). When the tasks change it says so for a few seconds, and it teaches the controls
     /// once, when they become useful: moving at the start, F when the flashlight is picked up, G when the gas can is.
     /// The texts are TextMeshPro labels on the HUD canvas (its CanvasScaler keeps them right at any screen size), stacked
     /// by a VerticalLayoutGroup that grows upward from the corner. A hidden label leaves no gap.
@@ -94,6 +94,8 @@ namespace Jamlloween.Progression
             else if (tips.Count > 0) { tipLabel.text = tips.Dequeue(); tipLeft = tipSeconds; }
 
             group.alpha = clipboard.IsOpen || minigames > 0 ? 0f : 1f;
+            // Sem a prancheta (ainda na mesa do trailer), a tecla não faz nada: o aviso só aparece depois de pegá-la.
+            if (objectivesLabel.gameObject.activeSelf != clipboard.IsOwned) objectivesLabel.gameObject.SetActive(clipboard.IsOwned);
             objectivesLabel.alpha = objectivesAlpha;
             Show(updatedLabel, updatedLeft > 0f, 0.6f + 0.4f * Mathf.Abs(Mathf.Sin(Time.time * 4f)));
             Show(tipLabel, tipLeft > 0f, Mathf.Clamp01(tipLeft));

@@ -17,7 +17,7 @@ O roteiro inteiro, do trailer até os créditos, foi testado no Play Mode em seq
   - `ZatanDirector` deixa Zatan fora do mundo, começa uma perseguição, faz ele se aproximar devagar ou atacar no final, e devolve o jogador ao checkpoint depois de uma captura.
   - `ZatanSafeRoom` cuida do trailer: com o jogador dentro, Zatan bate na porta, ronda e some.
   - Os eventos da progressão chegam até eles pelo `ProgressionEventRelay`, ligado no Inspector em `_Sistema/Progression`.
-- **Prancheta de tarefas:** Tab (ou C) sobe a prancheta; olhe para baixo para ler. Ela usa a câmera do jogador ligada no `Clipboard` (a câmera extra `_Sistema/Main Camera` ficou desligada, porque duas câmeras com a tag MainCamera faziam a prancheta aparecer fora da tela).
+- **Prancheta de tarefas:** Tab (ou C) sobe a prancheta; olhe para baixo para ler. No começo ela está na mesa do trailer (`startOwned` desligado no `Clipboard`). O cabeçalho (`header`) e a anotação do pé (`footnote`) da ordem de serviço ficam no Inspector do `Clipboard`. Ela usa a câmera do jogador ligada no `Clipboard` (a câmera extra `_Sistema/Main Camera` ficou desligada, porque duas câmeras com a tag MainCamera faziam a prancheta aparecer fora da tela).
 - **Objetos do roteiro:** ficam no grupo `_Roteiro` da Hierarchy: carrossel, labirinto, conserto e passeio na roda-gigante, créditos, pontos de spawn e checkpoints.
 - **Teste:** o `ZatanTestHarness` está desligado na Level_Design, então F10 e o painel de teste não funcionam nela.
 
@@ -25,7 +25,7 @@ O roteiro inteiro, do trailer até os créditos, foi testado no Play Mode em seq
 
 | # | Roteiro | Status | O que já tem | O que falta |
 |---|---|---|---|---|
-| 1 | Começa na safe zone, dentro do trailer | Pronto | Jogador nasce dentro do trailer (`_Roteiro/PlayerSpawn_Trailer`) | Abertura: fade de entrada e primeira fala |
+| 1 | Começa na safe zone, dentro do trailer (a sala de manutenção do circo) | Pronto | Sem tela de abertura (objeto `Intro` desligado, `waitForBegin` desligado). A primeira etapa (`R00_Prancheta`) é o minigame da prancheta (`ClipboardMinigame`) na mesa do canto: a folha de cima é a ordem de serviço do cliente; o jogador puxa a folha para baixo, para fora do clipe (a folha escorrega um pouco de tempos em tempos como dica), e embaixo aparece a lista de tarefas. Depois o jogador fica com a prancheta (Tab) e o rádio libera. Na sala (`Trailer_Interior/Decoracao`): cabeça do Zatan na bancada, chaves dos brinquedos ao lado da prancheta, luminária de trabalho, rádio de música na bancada, caixas de peças, cabos e o pôster provisório (`Poster_Zatan_Placeholder`) | Importar o pôster do Zatan; o `MachinePrompt` do `PF_caravan` mostra "[E] Interagir" em qualquer parede do trailer |
 | 2 | Minigame do rádio e pegar a lanterna | Pronto | Rádio e lanterna na mesa do trailer. Rádio primeiro, depois a lanterna | Sons finais do rádio |
 | 3 | Consertar Zatan na entrada do circo; evento sonoro no gerador | Placeholder | Painel de conserto na cabine da entrada. Sem cena de câmera no fim: a cabeça do Zatan vira 180° fora da vista e, quando o jogador se levanta, ele já está olhando para ele (`cameraJumpscare` desligado no `ZatanRepairMinigame`). Um gatilho no caminho toca um estouro no gerador | Som final; efeito visual no gerador (fumaça, luz piscando) |
 | 4 | Ao consertar Zatan, a energia cai | Placeholder | Luz direcional e 3 lâmpadas do parque desligam, com som de queda de energia. O painel do Zatan para de fazer som e apaga as luzes (`PowerDown` no evento `PowerLost`) | Som final; mais luzes do parque no `LightGroup_Park` |
