@@ -119,7 +119,9 @@ namespace Jamlloween.Zatan
             headBase = headApplied && head.localRotation == headAppliedRotation ? headBase : head.localRotation;
             headApplied = !Mathf.Approximately(headYaw, 0f) || !Mathf.Approximately(headPitch, 0f);
             if (!headApplied) return;
-            head.localRotation = headBase * Quaternion.Euler(headPitch, headYaw, 0f);
+            // Yaw and pitch around Zatan's own axes, not the bone's: rigs differ in how their head bone is oriented.
+            head.localRotation = headBase;
+            head.rotation = Quaternion.AngleAxis(headYaw, transform.up) * Quaternion.AngleAxis(headPitch, transform.right) * head.rotation;
             headAppliedRotation = head.localRotation;
         }
 

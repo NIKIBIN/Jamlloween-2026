@@ -7,18 +7,53 @@ using UnityEditor.Animations;
 using UnityEngine;
 
 /// <summary>
-/// Gera as animações do Zatan com rig (Assets/Zatan/Run.fbx, esqueleto Mixamo) e o Animator Controller delas.
-/// Run vem do FBX (sem o avanço do quadril, para o NavMeshAgent mover); Walk, Idle, Stare, Stalk, Bang e Catch
-/// são montados aqui a partir da pose média da corrida, mirando os ossos em direções no espaço do modelo.
-/// Menu: Jamlloween/Zatan/Gerar animações do rig. Pode rodar de novo: recria os clipes e o controller.
+/// Gera as animações do Zatan da perseguição e o Animator Controller delas.
+/// O movimento vem do esqueleto Mixamo (Assets/Zatan/Run.fbx): Run é a corrida do FBX (sem o avanço do quadril, para o
+/// NavMeshAgent mover); Walk, Idle, Stare, Stalk, Bang e Catch são montados a partir da pose média da corrida, mirando
+/// os ossos em direções no espaço do modelo. Cada pose é então retargetada para o modelo que o jogo usa
+/// (<see cref="TargetPath"/>, esqueleto HumanIK QuickRig): rotação no espaço do modelo relativa à pose de pé, mais um
+/// ajuste para cada osso apontar para o filho na mesma direção do Mixamo. Os clipes animam o esqueleto do alvo.
+/// Menu: Jamlloween/Zatan/Gerar animações do rig. Pode rodar de novo: recria os clipes e o controller (mesmos GUIDs).
 /// </summary>
 public sealed class ZatanRigAnimations
 {
     public const string ModelPath = "Assets/Zatan/Run.fbx";
+    public const string TargetPath = "Assets/Zatan/Temp/Zatan_Animado_Rig.fbx";
     public const string Folder = "Assets/Zatan/Animation/Rig";
     public const string ControllerPath = Folder + "/Zatan_Rig.controller";
 
     const string P = "mixamorig:";
+    const string TP = "QuickRigCharacter_";
+
+    /// <summary>Ossos retargetados, pais antes dos filhos, e o filho que dá a direção de cada um (vazio: só a rotação).</summary>
+    static readonly (string bone, string child)[] Map =
+    {
+        ("Hips", ""), ("Spine", "Spine1"), ("Spine1", "Spine2"), ("Spine2", "Neck"), ("Neck", "Head"), ("Head", ""),
+        ("LeftShoulder", "LeftArm"), ("LeftArm", "LeftForeArm"), ("LeftForeArm", "LeftHand"), ("LeftHand", "-"),
+        ("RightShoulder", "RightArm"), ("RightArm", "RightForeArm"), ("RightForeArm", "RightHand"), ("RightHand", "-"),
+        ("LeftUpLeg", "LeftLeg"), ("LeftLeg", "LeftFoot"), ("LeftFoot", "LeftToeBase"), ("LeftToeBase", "-"),
+        ("RightUpLeg", "RightLeg"), ("RightLeg", "RightFoot"), ("RightFoot", "RightToeBase"), ("RightToeBase", "-")
+    };
+    // "-": o osso segue o pai como no repouso do alvo (mãos e dedos dos pés sem animação própria).
+
+    GameObject tInst;
+    Transform tRoot, tHips;
+    Transform[] tBones;
+    string[] tPaths;
+    readonly Dictionary<string, Transform> tByName = new Dictionary<string, Transform>();
+    Quaternion[] tRestLocal;
+    Vector3 tRestHipsLocal, tRestHipsModel;
+    readonly Dictionary<string, Quaternion> tRestModel = new Dictionary<string, Quaternion>();
+    readonly Dictionary<string, Quaternion> mStandModel = new Dictionary<string, Quaternion>();
+    Vector3 mStandHips;
+    float ratio = 1f;
+    bool retargetReady;
+
+    struct TPose
+    {
+        public Quaternion[] rot;
+        public Vector3 hips;
+    }
 
     /// <summary>Velocidades (m/s) em que cada clipe anda sem os pés escorregarem. Medidas pelo próprio gerador.</summary>
     public static float WalkSpeed { get; private set; }
@@ -48,8 +83,13 @@ public sealed class ZatanRigAnimations
         var source = AssetDatabase.LoadAllAssetsAtPath(ModelPath).OfType<AnimationClip>().First(c => !c.name.StartsWith("__preview"));
         Directory.CreateDirectory(Folder);
 
+        var targetModel = AssetDatabase.LoadAssetAtPath<GameObject>(TargetPath);
+        if (targetModel == null) throw new InvalidOperationException($"Modelo alvo não encontrado: {TargetPath}");
+
         inst = (GameObject)UnityEngine.Object.Instantiate(model);
         inst.hideFlags = HideFlags.HideAndDontSave;
+        tInst = (GameObject)UnityEngine.Object.Instantiate(targetModel);
+        tInst.hideFlags = HideFlags.HideAndDontSave;
         try
         {
             root = inst.transform;
@@ -73,6 +113,10 @@ public sealed class ZatanRigAnimations
             var mean = Mean(straight.Take(n).ToArray());
             mean.hips.z = hipsZ;
 
+            // pose de pé (base de idle, stare, bang, catch) e referência do retarget
+            var stand = StandPose(mean);
+            InitRetarget(stand);
+
             float runLen = source.length;
             var runKeys = straight.Select((p, i) => (runLen * i / n, p)).ToList();
             var run = Save(MakeClip(runKeys, true), "Zatan_Rig_Run");
@@ -91,9 +135,6 @@ public sealed class ZatanRigAnimations
                 walkKeys.Add((p * walkLen, Ground(w)));
             }
             var walk = Save(MakeClip(walkKeys, true), "Zatan_Rig_Walk");
-
-            // --- pose de pé (base de idle, stare, bang, catch)
-            var stand = StandPose(mean);
 
             // Idle: respiração e um tique mecânico na cabeça
             const float idleLen = 3.2f;
@@ -170,18 +211,96 @@ public sealed class ZatanRigAnimations
             var stalk = Save(MakeClip(stalkKeys, true), "Zatan_Rig_Stalk");
 
             // --- velocidades sem escorregar: a corrida real do FBX calibra a medida dos clipes no lugar
-            float k = realRun / StrideSpeed(run);
-            RunSpeed = realRun;
+            // (a medida no lugar subestima; a razão entre a corrida real e a medida da corrida no Mixamo corrige as duas)
+            float k = realRun / MixamoStride(runPoses.Take(n).ToArray(), runLen);
+            RunSpeed = k * StrideSpeed(run);
             WalkSpeed = k * StrideSpeed(walk);
 
             BuildController(idle, walk, run, stareClip, stalk, bang, catchClip);
             AssetDatabase.SaveAssets();
-            Debug.Log($"[ZatanRig] clipes em {Folder}. Run={RunSpeed:0.00} m/s, Walk={WalkSpeed:0.00} m/s (k={k:0.00}).");
+            Debug.Log($"[ZatanRig] clipes em {Folder} para {TargetPath}. Run={RunSpeed:0.00} m/s, Walk={WalkSpeed:0.00} m/s (k={k:0.00}, escala {ratio:0.00}).");
         }
         finally
         {
             UnityEngine.Object.DestroyImmediate(inst);
+            UnityEngine.Object.DestroyImmediate(tInst);
         }
+    }
+
+    // ------------------------------------------------------------------ retarget Mixamo -> QuickRig
+
+    Transform T(string name) => tByName.TryGetValue(name, out var t) ? t : throw new InvalidOperationException($"Osso do alvo não encontrado: {TP}{name}");
+
+    void InitRetarget(Pose stand)
+    {
+        tRoot = tInst.transform;
+        tRoot.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+        tRoot.localScale = Vector3.one;
+        var skin = tInst.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+        if (skin.Length == 0) throw new InvalidOperationException($"{TargetPath} sem SkinnedMeshRenderer.");
+        var skinBones = new HashSet<Transform>(skin.SelectMany(s => s.bones).Where(b => b != null));
+        tBones = tRoot.GetComponentsInChildren<Transform>(true).Where(skinBones.Contains).ToArray();
+        foreach (var t in tBones) tByName[t.name.Replace(TP, "")] = t;
+        tHips = T("Hips");
+        tPaths = tBones.Select(t => AnimationUtility.CalculateTransformPath(t, tRoot)).ToArray();
+        tRestLocal = tBones.Select(t => t.localRotation).ToArray();
+        tRestHipsLocal = tHips.localPosition;
+        tRestHipsModel = tHips.position;
+        foreach (var (bone, _) in Map) tRestModel[bone] = T(bone).rotation;
+
+        Apply(stand);
+        foreach (var (bone, _) in Map) mStandModel[bone] = B(bone).rotation;
+        mStandHips = hips.position;
+        float LegM(string s) => (B(s + "UpLeg").position - B(s + "Leg").position).magnitude + (B(s + "Leg").position - B(s + "Foot").position).magnitude;
+        float LegT(string s) => (T(s + "UpLeg").position - T(s + "Leg").position).magnitude + (T(s + "Leg").position - T(s + "Foot").position).magnitude;
+        ratio = (LegT("Left") + LegT("Right")) / (LegM("Left") + LegM("Right"));
+        retargetReady = true;
+    }
+
+    void ApplyTargetRest()
+    {
+        for (int i = 0; i < tBones.Length; i++) tBones[i].localRotation = tRestLocal[i];
+        tHips.localPosition = tRestHipsLocal;
+    }
+
+    /// <summary>A pose do Mixamo (já aplicada) passada para o esqueleto do alvo. Os dois ficam na origem, sem rotação.</summary>
+    TPose Retarget(Pose p)
+    {
+        if (!retargetReady) throw new InvalidOperationException("Retarget sem InitRetarget.");
+        Apply(p);
+        ApplyTargetRest();
+        tHips.position = tRestHipsModel + (hips.position - mStandHips) * ratio;
+        foreach (var (bone, child) in Map)
+        {
+            if (child == "-") continue;   // segue o pai como no repouso
+            var t = T(bone);
+            Quaternion delta = B(bone).rotation * Quaternion.Inverse(mStandModel[bone]);
+            t.rotation = delta * tRestModel[bone];
+            if (child.Length > 0)
+            {
+                Vector3 want = B(child).position - B(bone).position;
+                Vector3 have = T(child).position - t.position;
+                t.rotation = Quaternion.FromToRotation(have, want) * t.rotation;
+            }
+        }
+        // Os pés tocam o chão como no Mixamo (alturas na escala do alvo).
+        float lowM = new[] { "LeftFoot", "RightFoot", "LeftToeBase", "RightToeBase" }.Min(n => B(n).position.y);
+        float lowT = new[] { "LeftFoot", "RightFoot", "LeftToeBase", "RightToeBase" }.Min(n => T(n).position.y);
+        tHips.position += Vector3.up * (lowM * ratio - lowT);
+        return new TPose { rot = tBones.Select(b => b.localRotation).ToArray(), hips = tHips.localPosition };
+    }
+
+    /// <summary>Velocidade do pé de apoio da corrida no Mixamo, medida como em <see cref="StrideSpeed"/>.</summary>
+    float MixamoStride(Pose[] cycle, float length)
+    {
+        float minZ = float.MaxValue, maxZ = float.MinValue;
+        foreach (var p in cycle)
+        {
+            Apply(p);
+            float z = root.InverseTransformPoint(B("LeftToeBase").position).z;
+            minZ = Mathf.Min(minZ, z); maxZ = Mathf.Max(maxZ, z);
+        }
+        return (maxZ - minZ) / (length * 0.5f);
     }
 
     Transform B(string name) => byName.TryGetValue(name, out var t) ? t : throw new InvalidOperationException($"Osso não encontrado: {name}");
@@ -306,10 +425,12 @@ public sealed class ZatanRigAnimations
         return clip;
     }
 
-    AnimationClip MakeClip(List<(float time, Pose pose)> keys, bool loop)
+    /// <summary>Clipe do esqueleto do alvo: cada pose do Mixamo é retargetada antes de virar chave.</summary>
+    AnimationClip MakeClip(List<(float time, Pose pose)> mixamoKeys, bool loop)
     {
+        var keys = mixamoKeys.Select(k => (k.time, pose: Retarget(k.pose))).ToList();
         var clip = new AnimationClip { frameRate = 30f };
-        for (int b = 0; b < bones.Length; b++)
+        for (int b = 0; b < tBones.Length; b++)
         {
             var cx = new AnimationCurve(); var cy = new AnimationCurve(); var cz = new AnimationCurve(); var cw = new AnimationCurve();
             Quaternion prev = keys[0].pose.rot[b];
@@ -320,12 +441,12 @@ public sealed class ZatanRigAnimations
                 prev = q;
                 cx.AddKey(k.time, q.x); cy.AddKey(k.time, q.y); cz.AddKey(k.time, q.z); cw.AddKey(k.time, q.w);
             }
-            Set(clip, paths[b], "m_LocalRotation.x", cx);
-            Set(clip, paths[b], "m_LocalRotation.y", cy);
-            Set(clip, paths[b], "m_LocalRotation.z", cz);
-            Set(clip, paths[b], "m_LocalRotation.w", cw);
+            Set(clip, tPaths[b], "m_LocalRotation.x", cx);
+            Set(clip, tPaths[b], "m_LocalRotation.y", cy);
+            Set(clip, tPaths[b], "m_LocalRotation.z", cz);
+            Set(clip, tPaths[b], "m_LocalRotation.w", cw);
         }
-        string hp = AnimationUtility.CalculateTransformPath(hips, root);
+        string hp = AnimationUtility.CalculateTransformPath(tHips, tRoot);
         var px = new AnimationCurve(); var py = new AnimationCurve(); var pz = new AnimationCurve();
         foreach (var k in keys) { px.AddKey(k.time, k.pose.hips.x); py.AddKey(k.time, k.pose.hips.y); pz.AddKey(k.time, k.pose.hips.z); }
         Set(clip, hp, "m_LocalPosition.x", px);
@@ -362,15 +483,15 @@ public sealed class ZatanRigAnimations
         return clip;
     }
 
-    /// <summary>Velocidade do pé de apoio num clipe no lugar: quanto o pé corre para trás por meio ciclo.</summary>
+    /// <summary>Velocidade do pé de apoio num clipe no lugar (do alvo): quanto o pé corre para trás por meio ciclo.</summary>
     float StrideSpeed(AnimationClip clip)
     {
         const int n = 60;
         float minZ = float.MaxValue, maxZ = float.MinValue;
         for (int i = 0; i < n; i++)
         {
-            clip.SampleAnimation(inst, clip.length * i / n);
-            float z = root.InverseTransformPoint(B("LeftToeBase").position).z;
+            clip.SampleAnimation(tInst, clip.length * i / n);
+            float z = tRoot.InverseTransformPoint(T("LeftToeBase").position).z;
             minZ = Mathf.Min(minZ, z); maxZ = Mathf.Max(maxZ, z);
         }
         return (maxZ - minZ) / (clip.length * 0.5f);

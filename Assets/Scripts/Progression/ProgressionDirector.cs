@@ -47,6 +47,8 @@ namespace Jamlloween.Progression
         [Header("Debug")]
         [Tooltip("Abre a janela para pular direto para qualquer etapa (editor e development build).")]
         [SerializeField] Key debugKey = Key.F4;
+        [Tooltip("Desligados enquanto o menu de debug está aberto (o controle do jogador: senão o clique trava o cursor e o menu não recebe o clique).")]
+        [SerializeField] Behaviour[] disableWhileDebug = new Behaviour[0];
 
         int current = -1;
         readonly HashSet<string> satisfied = new HashSet<string>();
@@ -74,6 +76,8 @@ namespace Jamlloween.Progression
 
         public event Action<ProgressionStep, int> OnStepStarted;
         public event Action<ProgressionStep, int> OnStepCompleted;
+        /// <summary>Um pulo de etapa (menu de debug / JumpTo) terminou; o índice é a etapa de destino.</summary>
+        public event Action<int> OnJumped;
         /// <summary>Qualquer evento nomeado emitido por uma ação Event (ex.: GeneratorRestored).</summary>
         public event Action<string> OnNamedEvent;
         public event Action GeneratorRestored;
@@ -308,6 +312,7 @@ namespace Jamlloween.Progression
             }
             transitioning = false;
             StartStep(target);
+            OnJumped?.Invoke(target);
         }
 
         void Update()
@@ -322,12 +327,28 @@ namespace Jamlloween.Progression
 #if DEBUG
         CursorLockMode savedLock;
         bool savedVisible;
+        bool[] savedEnabled = new bool[0];
 
         void ToggleDebug()
         {
             debugOpen = !debugOpen;
-            if (debugOpen) { savedLock = Cursor.lockState; savedVisible = Cursor.visible; Cursor.lockState = CursorLockMode.None; Cursor.visible = true; }
-            else { Cursor.lockState = savedLock; Cursor.visible = savedVisible; }
+            if (debugOpen)
+            {
+                savedLock = Cursor.lockState; savedVisible = Cursor.visible;
+                Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
+                savedEnabled = new bool[disableWhileDebug.Length];
+                for (int i = 0; i < disableWhileDebug.Length; i++)
+                {
+                    if (disableWhileDebug[i] == null) throw new MissingReferenceException($"[Progression] disableWhileDebug[{i}] vazio.");
+                    savedEnabled[i] = disableWhileDebug[i].enabled;
+                    disableWhileDebug[i].enabled = false;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < disableWhileDebug.Length && i < savedEnabled.Length; i++) disableWhileDebug[i].enabled = savedEnabled[i];
+                Cursor.lockState = savedLock; Cursor.visible = savedVisible;
+            }
         }
 #endif
 

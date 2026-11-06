@@ -9,6 +9,7 @@ Shader "PSXCarnivalKit/PSX Unlit"
         _SnapRows ("Vertex Snap (rows on screen, 0 = off)", Float) = 240
         _Affine ("Affine Texture Warp", Range(0, 1)) = 0
         _Cutoff ("Alpha Cutoff", Range(0, 1)) = 0
+        [Toggle] _IgnoreBlackout ("Stays Visible In Catch Blackout (Zatan)", Float) = 0
     }
     SubShader
     {
@@ -28,7 +29,7 @@ Shader "PSXCarnivalKit/PSX Unlit"
             CBUFFER_START(UnityPerMaterial) // for URP's SRP Batcher
             float4 _MainTex_ST;
             fixed4 _Color;
-            float _SnapRows, _Affine, _Cutoff;
+            float _SnapRows, _Affine, _Cutoff, _IgnoreBlackout;
             CBUFFER_END
 
             struct appdata
@@ -36,6 +37,7 @@ Shader "PSXCarnivalKit/PSX Unlit"
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
                 fixed4 color : COLOR;
+                float3 normal : NORMAL;
             };
 
             struct v2f
@@ -46,13 +48,22 @@ Shader "PSXCarnivalKit/PSX Unlit"
                 fixed4 color : COLOR;
                 UNITY_FOG_COORDS(2)
                 float3 positionWS : TEXCOORD3;
+                float3 normalWS : TEXCOORD4;
             };
+
+            // In the catch blackout the world goes black; with _IgnoreBlackout (Zatan) the surface keeps the scare light.
+            float3 Blackout(float3 lit, float3 albedo, v2f i)
+            {
+                float3 scare = _IgnoreBlackout > 0.5 ? ZatanScareLight(albedo, i.positionWS, normalize(i.normalWS)) : float3(0, 0, 0);
+                return lerp(lit, scare, _ZatanBlackout);
+            }
 
             v2f vert (appdata v)
             {
                 v2f o;
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.positionWS = mul(unity_ObjectToWorld, v.vertex).xyz;
+                o.normalWS = UnityObjectToWorldNormal(v.normal);
                 if (_SnapRows > 0)
                 {
                     float2 grid = float2(_SnapRows * _ScreenParams.x / _ScreenParams.y, _SnapRows) * 0.5;
@@ -73,17 +84,18 @@ Shader "PSXCarnivalKit/PSX Unlit"
                 float2 uv = lerp(i.uv, i.affine.xy / i.affine.z, _Affine);
                 fixed4 c = tex2D(_MainTex, uv) * i.color * _Color;
                 clip(c.a - _Cutoff);
+                float3 albedo = c.rgb;
                 if (_RadialFogEnabled > 0.5)
                 {
                     float3 eyeLight = ZatanEyeLight(c.rgb, i.positionWS) + MinigameWorkLamp(c.rgb, i.positionWS) + WorldBeacons(c.rgb, i.positionWS);
                     c.rgb *= FlashlightBrightness(i.positionWS);
                     c.rgb = FlashlightApplyFog(c.rgb, i.positionWS, unity_FogColor.rgb) + eyeLight;
-                    c.rgb *= 1.0 - _ZatanBlackout;
+                    c.rgb = Blackout(c.rgb, albedo, i);
                     return c;
                 }
                 UNITY_APPLY_FOG(i.fogCoord, c);
                 c.rgb += MinigameWorkLamp(c.rgb, i.positionWS) + WorldBeacons(c.rgb, i.positionWS);
-                c.rgb *= 1.0 - _ZatanBlackout;
+                c.rgb = Blackout(c.rgb, albedo, i);
                 return c;
             }
             ENDCG

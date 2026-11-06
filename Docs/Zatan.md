@@ -101,7 +101,7 @@ Depois de uma captura, o jogador e Zatan voltam às posições iniciais quando o
 
 ## Animação
 
-Na `Level_Design` Zatan usa o modelo com rig `Assets/Zatan/Run.fbx` (`_Zatan/Zatan/ModelRig`, esqueleto Mixamo) e o controller `Assets/Zatan/Animation/Rig/Zatan_Rig.controller`. `ZatanAnimation`, com **Rigged** ligado, passa a velocidade do agente ao blend tree `Locomotion`: Idle, Walk (anda sem escorregar a 2,34 m/s) e Run (7,42 m/s). Fora desses valores, `Cadence` acelera ou freia o passo. Ele também liga os estados:
+Na `Level_Design` Zatan usa o modelo texturizado `Assets/Zatan/Temp/Zatan_Animado_Rig.fbx` (`_Zatan/Zatan/ModelRig`, esqueleto HumanIK QuickRig, material `M_ZatanPerseguicao_Rig` com **Stays Visible In Catch Blackout** ligado) e o controller `Assets/Zatan/Animation/Rig/Zatan_Rig.controller`. `ZatanAnimation`, com **Rigged** ligado, passa a velocidade do agente ao blend tree `Locomotion`: Idle, Walk (anda sem escorregar a 2,06 m/s) e Run (6,48 m/s). Fora desses valores, `Cadence` acelera ou freia o passo. Ele também liga os estados:
 
 - **Stare**: parado, rígido, cabeça inclinada. Quando ele avista o jogador e no primeiro encontro (`ZatanDirector` chama `SetStare`).
 - **Stalk**: caminhada curvada, com as garras à frente, no passo 17 (`SetStalk`).
@@ -110,9 +110,9 @@ Na `Level_Design` Zatan usa o modelo com rig `Assets/Zatan/Run.fbx` (`_Zatan/Zat
 
 Olhos, feixes e boca ficam em `HeadAnchor`, que segue o osso da cabeça (`ZatanHeadFollow`): posição inteira, giro lateral inteiro e só 40% da inclinação, para a corrida não apontar os feixes para o chão. Não há osso de mandíbula, então a boca não abre na mordida.
 
-A corrida vem do FBX, deixada no lugar e com tronco e cabeça endireitados (no Mixamo ele corre olhando de lado). Idle, Walk, Stare, Stalk, Bang e Catch são gerados por código pelo menu **Jamlloween > Zatan > Gerar animações do rig** (`Assets/Editor/ZatanRigAnimations.cs`), a partir da pose média da corrida. Rodar o menu de novo recria os clipes sem quebrar a cena. São placeholders: para trocar por animações feitas à mão, use o mesmo nome de arquivo ou troque o clipe no controller. Os passos (`ZatanFootsteps`) usam 1,5 m de passada andando e 2,7 m correndo.
+O movimento vem do esqueleto Mixamo de `Assets/Zatan/Run.fbx`: a corrida vem do FBX, deixada no lugar e com tronco e cabeça endireitados (no Mixamo ele corre olhando de lado). Idle, Walk, Stare, Stalk, Bang e Catch são gerados por código pelo menu **Jamlloween > Zatan > Gerar animações do rig** (`Assets/Editor/ZatanRigAnimations.cs`), a partir da pose média da corrida. Cada pose é retargetada para o esqueleto QuickRig do modelo do jogo (rotação relativa à pose de pé mais um ajuste de direção por osso; mãos e dedos dos pés seguem o pai). Rodar o menu de novo recria os clipes sem quebrar a cena. São placeholders: para trocar por animações feitas à mão, use o mesmo nome de arquivo ou troque o clipe no controller. Os passos (`ZatanFootsteps`) usam 1,32 m de passada andando e 2,36 m correndo.
 
-O Zatan de peças rígidas, com animação procedural e `Zatan.controller`, está em `Assets/Zatan/Prefabs/Zatan_Backup_AntesDoRig.prefab`. Com **Rigged** desligado, `ZatanAnimation` continua funcionando como antes.
+O Zatan de peças rígidas, com animação procedural e `Zatan.controller`, está em `Assets/Zatan/Prefabs/Zatan_Backup_AntesDoRig.prefab`. Com **Rigged** desligado, `ZatanAnimation` continua funcionando como antes. O Zatan com o esqueleto Mixamo (modelo `Run.fbx` sem textura) está em `Assets/Zatan/Prefabs/Zatan_Backup_RigMixamo.prefab`; como os clipes agora animam o QuickRig, para voltar a ele é preciso também voltar o gerador e os clipes pelo git.
 
 A versão ainda mais antiga, sem animação, está em `Assets/Zatan/Prefabs/Zatan_V00_SemAnimacao.prefab`. Para voltar a ela, apague o `Zatan` da cena, arraste o prefab para `_Zatan` e religue no Inspector o `target` da percepção, da tensão, do cérebro e da captura, o jogador em `beamIgnored` e os minigames no `onFinished` da captura.
 
@@ -128,7 +128,7 @@ Na `Level_Design` há 10 lixeiras escondíveis (`Assets/Zatan/Hiding/PF_TrashCan
 
 ## Limites atuais
 
-- Na `Level_Design`, Zatan usa o modelo com rig `Assets/Zatan/Run.fbx` (3,3 m), com as animações acima. Na `Zatan_Test` ele ainda é a cápsula. Os sons continuam sintetizados. Lista de sons em [ASSET_LEDGER.md](ASSET_LEDGER.md).
+- Na `Level_Design`, Zatan usa o modelo texturizado `Zatan_Animado_Rig` (3,3 m), com as animações acima. Na `Zatan_Test` ele ainda é a cápsula. Os sons continuam sintetizados. Lista de sons em [ASSET_LEDGER.md](ASSET_LEDGER.md).
 - As tendas têm só uma zona interior, `Zatan_IndoorZone_BigTop`, com caixa aproximada.
 - Portas fechadas ainda não são tratadas. Esconderijos só existem na `Level_Design`.
 - O sistema não usa os scripts dos Spikes 1 e 2.
