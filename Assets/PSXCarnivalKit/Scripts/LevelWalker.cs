@@ -79,6 +79,19 @@ namespace HeyHeyThere.PSXCarnivalKit
         /// <summary>O prompt do item na mira ("[E] Pegar fusível"), ou vazio.</summary>
         public string AimPrompt => aimPrompt;
 
+        /// <summary>Vira o corpo e inclina a camera para olhar um ponto (usado por cutscenes curtas).</summary>
+        public void LookAt(Vector3 point) => LookAt(point, view.position);
+
+        /// <summary>Como LookAt(point), medindo a partir de 'eye' (onde o olho vai estar, se a camera estiver em outro lugar agora).</summary>
+        public void LookAt(Vector3 point, Vector3 eye)
+        {
+            Vector3 d = point - eye;
+            Vector3 flat = new Vector3(d.x, 0f, d.z);
+            if (flat.sqrMagnitude > 1e-4f) transform.rotation = Quaternion.LookRotation(flat);
+            pitch = Mathf.Clamp(-Mathf.Atan2(d.y, flat.magnitude) * Mathf.Rad2Deg, -80f, 80f);
+            view.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+        }
+
         /// <summary>Falso quando outro HUD mostra o <see cref="AimPrompt"/> (o PlayerInteractor, com a fonte do jogo).</summary>
         public bool DrawAimPrompt { get; set; } = true;
 

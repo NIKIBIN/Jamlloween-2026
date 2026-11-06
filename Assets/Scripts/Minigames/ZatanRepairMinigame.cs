@@ -13,12 +13,13 @@ using UnityEngine.Serialization;
 ///  3. Reconectar o ar: arrastar a mangueira ate a valvula (encaixa com snap).
 ///  4. Ligar a chave geral (clique). O compressor liga e respira. Depois de ligada, a chave pode ser
 ///     virada para OFF e ON a vontade: ela muda so visualmente e o compressor continua funcionando.
-///  5. Girar: arrastar a manivela ate o eixo (snap), depois segurar e arrastar em circulo (sentido horario).
+///  5. Girar: a manivela ja comeca encaixada no eixo (crankStartsOnAxle); segurar e arrastar em circulo (sentido horario).
 ///     Fica mais pesado perto do fim, e a respiracao e os cliques aceleram.
 ///  6. Vazamentos de gas: em angulos configuraveis, uma junta vaza gas (chiado e jato branco) e a manivela trava
 ///     ate o jogador vedar a junta: arrastar o rolo de fita em vai-e-vem sobre ela.
 ///  7. Zero: a engrenagem trava com um clique, o motor segue funcionando e o minigame termina logo.
-/// Sem susto aqui: o susto vem depois, no mapa, fora do minigame.
+/// No fim, um susto curto (headScare): a camera sobe rapido do painel para a altura dos olhos, atras da cabine, e a
+/// cabeca do Zatan gira 180 graus de uma vez para encarar o jogador pela janela de tras. Logo depois a energia cai.
 ///
 /// Sem HUD: tudo vem do proprio painel. Posicoes no espaco local deste transform, que olha para +Z
 /// (a frente do painel fica em -Z). O progresso fica nos campos do componente, entao sair no meio nao reseta nada.
@@ -93,8 +94,10 @@ public class ZatanRepairMinigame : Minigame
 
     [Header("Chave geral")]
     [SerializeField] ZatanRepairPart mainSwitch;
-    [Tooltip("Gira em torno de Z: 0 = ON (alavanca para cima), 180 = OFF.")]
+    [Tooltip("Alavanca da chave (pivo na base, barra para +Y). Vira em torno do X local, como a alavanca do quadro de fusiveis: para baixo = OFF, para cima = ON, passando pela frente do painel.")]
     [SerializeField] Transform switchLever;
+    [Tooltip("Tempo da alavanca virando de uma ponta a outra (um clique).")]
+    [SerializeField] float switchThrowSeconds = 0.22f;
     [SerializeField] Renderer[] lamps;
     [SerializeField] Material[] lampOnMaterials;
     [SerializeField] Material lampOffMaterial;
@@ -124,6 +127,8 @@ public class ZatanRepairMinigame : Minigame
     [Tooltip("Eixo da engrenagem, onde a manivela encaixa.")]
     [SerializeField] Transform axleSlot;
     [SerializeField] float crankSnapDistance = 0.08f;
+    [Tooltip("A manivela ja comeca encaixada no eixo: o jogador so precisa girar.")]
+    [SerializeField] bool crankStartsOnAxle = true;
 
     [Header("Giro")]
     [Tooltip("Graus de cabeca por volta completa do mouse, no comeco (sem peso).")]
@@ -143,12 +148,8 @@ public class ZatanRepairMinigame : Minigame
     };
 
     [Header("Cabeca e fim")]
-    [Tooltip("Pivo da cabeca do Zatan. Vazio = procura um filho chamado 'Head' no Zatan da cena.")]
+    [Tooltip("Pivo da cabeca do Zatan (na cena: CabecaRigida, a cabeca do rig congelada em malha rigida, porque a do rig deforma ao girar). Vazio = procura um filho chamado 'Head'. A manivela nao gira a cabeca: ela so gira no susto.")]
     [SerializeField] Transform headPivot;
-    [Tooltip("Eixo local da cabeca em torno do qual ela gira.")]
-    [SerializeField] Vector3 headTurnAxis = Vector3.up;
-    [Tooltip("1 ou -1: sentido em que a cabeca gira.")]
-    [SerializeField] float headTurnSign = 1f;
     [Tooltip("Pausa (s) entre a engrenagem travar no zero e devolver o controle ao jogador.")]
     [SerializeField, Range(0f, 2f)] float finishDelay = 0.8f;
     [Tooltip("Depois do zero o motor segue funcionando (compressor, pistao, manometro, vapor e luzes).")]
@@ -157,6 +158,29 @@ public class ZatanRepairMinigame : Minigame
     [SerializeField, Range(0f, 1f)] float finishedSpeed01 = 0.3f;
     [Tooltip("Volume do compressor depois do zero, como fracao do volume normal.")]
     [SerializeField, Range(0f, 1f)] float finishedVolume = 0.5f;
+
+    [Header("Susto da cabeca (fim do conserto)")]
+    [Tooltip("No zero, a camera sobe para a vista do jogador em pe, atras da cabine, e a cabeca do Zatan gira de uma vez para encarar o jogador.")]
+    [SerializeField] bool headScare = true;
+    [Tooltip("Distancia (m, no chao) entre a cabeca do Zatan e o ponto onde o jogador fica em pe, atras da cabine.")]
+    [SerializeField] float scareStandBack = 1.3f;
+    [Tooltip("Zoom leve no susto (campo de visao, graus), feito durante a subida da camera. 0 = sem zoom.")]
+    [SerializeField, Range(0f, 90f)] float scareFov = 50f;
+    [Tooltip("Espera entre a engrenagem travar no zero e a camera subir.")]
+    [SerializeField] float scareStartDelay = 0.03f;
+    [Tooltip("Tempo da camera subindo do painel. Rapido, como o jogador se levantando: nao pode criar expectativa.")]
+    [SerializeField] float scareCameraMove = 0.18f;
+    [Tooltip("Pausa entre a camera chegar e a cabeca girar.")]
+    [SerializeField] float scareCalm = 0.03f;
+    [Tooltip("Silencio (o compressor para) antes do giro. 0 = a maquina para no mesmo instante do giro.")]
+    [SerializeField] float scareHush = 0f;
+    [Tooltip("Duracao do giro da cabeca. Curto = susto.")]
+    [SerializeField, Range(0.05f, 0.6f)] float scareSnapTime = 0.15f;
+    [Tooltip("Quanto tempo ele fica encarando antes da energia cair e o jogador ser solto. So o bastante para ver o giro.")]
+    [SerializeField] float scareStare = 0.35f;
+    [Tooltip("Engrenagem disparando e o CLAC da cabeca travando.")]
+    [SerializeField] AudioClip scareSnapClip;
+    [SerializeField, Range(0f, 1f)] float scareSnapVolume = 1f;
 
     [SerializeField] ZatanRepairAudio repairAudio;
     [SerializeField] Color hoverColor = new Color(1f, 0.85f, 0.2f);
@@ -174,15 +198,17 @@ public class ZatanRepairMinigame : Minigame
     // --- arrasto ---
     Drag drag;
     ZatanRepairPart hovered;
+    ZatanRepairPart[] parts;
     Vector3 grabOffset, dragStart;
-    float prevMouseAngle, effortLevel, scrubLevel, switchAngle = 180f;
+    float prevMouseAngle, effortLevel, scrubLevel, switchT;   // switchT: 0 = OFF (para baixo), 1 = ON (para cima)
     Coroutine coverGlide, ragGlide, hoseGlide, crankGlide, tapeGlide, tapeApply;
     ZatanScrubArea tapingArea;
     readonly List<ZatanScrubArea> areas = new List<ZatanScrubArea>();
 
     // --- cabeca ---
     Quaternion headRestLocal;
-    bool headResolved;
+    bool headResolved, hushed;
+    float headYaw;   // giro da cabeca em torno da vertical (graus), aplicado depois do Animator
 
     public ZatanRepairPart Hovered => hovered;
     public bool PanelOpen => coverOff;
@@ -216,6 +242,13 @@ public class ZatanRepairMinigame : Minigame
             foreach (var l in locks) if (l.gas != null) l.gas.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
         if (pistonRod != null) pistonRest = pistonRod.localPosition;
+        parts = GetComponentsInChildren<ZatanRepairPart>(true);
+        if (crankStartsOnAxle && crank != null && axleSlot != null)
+        {
+            crankOnAxle = true;
+            crank.transform.localPosition = axleSlot.localPosition;
+            crank.transform.localRotation = Quaternion.Euler(0f, 0f, -crankVisual);
+        }
         SetLamps(false);
         ApplyAngle();
         ApplySwitch(true);
@@ -252,11 +285,12 @@ public class ZatanRepairMinigame : Minigame
     // Som, mangueira, chave e luzes seguem o estado mesmo com o jogador fora do minigame.
     void LateUpdate()
     {
+        ApplyHead();
         DrawHose();
-        if (switchLever != null && !Mathf.Approximately(switchAngle, SwitchTarget))
+        if (switchLever != null && !Mathf.Approximately(switchT, SwitchTarget))
         {
-            switchAngle = Mathf.MoveTowards(switchAngle, SwitchTarget, 900f * Time.deltaTime);
-            switchLever.localRotation = Quaternion.Euler(0f, 0f, switchAngle);
+            switchT = Mathf.MoveTowards(switchT, SwitchTarget, Time.deltaTime / Mathf.Max(0.01f, switchThrowSeconds));
+            ApplySwitch(false);
         }
 
         AnimateMachine();
@@ -280,7 +314,7 @@ public class ZatanRepairMinigame : Minigame
     }
 
     // Depois do zero o motor segue no ritmo de funcionamento (finished) ou para, conforme machineRunsAfterFinish.
-    bool MotorRunning => compressorOn && !poweredDown && (!zeroReached || finished);
+    bool MotorRunning => compressorOn && !poweredDown && !hushed && (!zeroReached || finished);
 
     /// <summary>A energia do parque caiu: motor, luzes e todos os sons do painel param e ficam parados.</summary>
     public void PowerDown()
@@ -288,6 +322,10 @@ public class ZatanRepairMinigame : Minigame
         poweredDown = true;
         SetLamps(false);
         if (repairAudio != null) repairAudio.Silence();
+        // Sem energia o boneco para: a animacao (idle) congela na pose em que estava.
+        var head = ResolveHead();
+        var anim = head != null ? head.GetComponentInParent<Animator>() : null;
+        if (anim != null) anim.speed = 0f;
     }
     float MotorSpeed01 => finished ? finishedSpeed01 : headAngle / TotalAngle;
 
@@ -345,6 +383,41 @@ public class ZatanRepairMinigame : Minigame
 
     protected override void Tick(Camera viewCamera)
     {
+        TickInput(viewCamera);
+        UpdateHints();
+    }
+
+    /// <summary>
+    /// O proximo passo: a peca que o jogador deve usar agora. A fita fica de fora (ela ja pisca forte no vazamento),
+    /// e a estopa e a chave so contam enquanto ainda falta limpar ou ligar.
+    /// </summary>
+    bool IsNextStep(ZatanRepairPart p)
+    {
+        if (drag != Drag.None || zeroReached || !CanUse(p)) return false;
+        switch (p.kind)
+        {
+            case ZatanRepairPart.Kind.Rag: return !(DialClean && GearClean);
+            case ZatanRepairPart.Kind.Switch: return !compressorOn;
+            case ZatanRepairPart.Kind.Crank: return activeLock < 0;
+            case ZatanRepairPart.Kind.Tape: return false;
+        }
+        return true;
+    }
+
+    void UpdateHints()
+    {
+        float level = MinigameHint.Level;
+        foreach (var p in parts)
+            if (p != hovered && p != tape) p.SetHint(IsNextStep(p) ? level : 0f, hoverColor);
+    }
+
+    void ClearHints()
+    {
+        foreach (var p in parts) if (p != hovered && p != tape) p.SetHint(0f, hoverColor);
+    }
+
+    void TickInput(Camera viewCamera)
+    {
         var mouse = Mouse.current;
         if (mouse == null) return;
         Vector2 mp = mouse.position.ReadValue();
@@ -375,6 +448,7 @@ public class ZatanRepairMinigame : Minigame
     protected override void OnExitRequested()
     {
         SetHover(null);
+        ClearHints();
         // Solta o que estiver na mao: o resto do progresso fica como esta.
         switch (drag)
         {
@@ -684,7 +758,7 @@ public class ZatanRepairMinigame : Minigame
     // Passo 4: chave geral
     // =================================================================
 
-    float SwitchTarget => switchVisualOn ? 0f : 180f;
+    float SwitchTarget => switchVisualOn ? 1f : 0f;
 
     void ToggleSwitch()
     {
@@ -703,8 +777,10 @@ public class ZatanRepairMinigame : Minigame
     void ApplySwitch(bool instant)
     {
         if (switchLever == null) return;
-        if (instant) switchAngle = SwitchTarget;
-        switchLever.localRotation = Quaternion.Euler(0f, 0f, switchAngle);
+        if (instant) switchT = SwitchTarget;
+        // De -180 (para baixo) a 0 (para cima) em torno do X local: a ponta passa por -Z, a frente do painel.
+        float angle = Mathf.Lerp(-180f, 0f, Mathf.SmoothStep(0f, 1f, switchT));
+        switchLever.localRotation = Quaternion.Euler(angle, 0f, 0f);
     }
 
     IEnumerator FlickerLamps()
@@ -819,8 +895,15 @@ public class ZatanRepairMinigame : Minigame
     {
         if (pointer != null) pointer.localRotation = Quaternion.Euler(0f, 0f, TotalAngle - headAngle);
         if (gearVisual != null) gearVisual.localRotation = Quaternion.Euler(0f, 0f, -headAngle * GearRatio);
+    }
+
+    /// <summary>Gira a cabeca em torno da vertical do mundo. Roda no LateUpdate, depois do Animator do rig.</summary>
+    void ApplyHead()
+    {
         var head = ResolveHead();
-        if (head != null) head.localRotation = headRestLocal * Quaternion.AngleAxis(headTurnSign * headAngle, headTurnAxis);
+        if (head == null) return;
+        head.localRotation = headRestLocal;
+        if (headYaw != 0f) head.rotation = Quaternion.AngleAxis(headYaw, Vector3.up) * head.rotation;
     }
 
     // =================================================================
@@ -848,7 +931,133 @@ public class ZatanRepairMinigame : Minigame
             SetLamps(false);
             if (repairAudio != null) repairAudio.StopAll();
         }
-        Complete(finishDelay);
+        if (headScare && ResolveHead() != null && ViewCamera != null) StartCoroutine(HeadScare());
+        else Complete(finishDelay);
+    }
+
+    public override void ForceComplete()
+    {
+        base.ForceComplete();
+        // Pulo de etapa: a cabeca fica como depois do susto, encarando a traseira da cabine.
+        if (headScare && ResolveHead() != null) headYaw = ScareYaw(StandPoint());
+    }
+
+    // =================================================================
+    // Susto da cabeca
+    // =================================================================
+
+    /// <summary>Para onde o rosto do Zatan olha em repouso: para a frente da cabine, longe do painel (no plano).</summary>
+    Vector3 FaceForward()
+    {
+        Vector3 f = headPivot.position - EntryViewPoint.position;
+        f.y = 0f;
+        return f.sqrMagnitude > 1e-4f ? f.normalized : Vector3.forward;
+    }
+
+    Vector3 FacePoint => headPivot.position + Vector3.up * 0.05f;
+
+    /// <summary>Onde o jogador fica em pe: atras da cabine, sem entrar na parede que estiver la.</summary>
+    Vector3 StandPoint()
+    {
+        Vector3 back = -FaceForward();
+        float dist = scareStandBack;
+        Vector3 from = EntryViewPoint.position;   // atras da cabine, fora dela
+        from.y = headPivot.position.y - 0.9f;
+        float fromDist = Vector3.Dot(from - headPivot.position, back);
+        foreach (var hit in Physics.RaycastAll(from, back, Mathf.Max(0.1f, dist - fromDist + 0.45f), ~0, QueryTriggerInteraction.Ignore))
+        {
+            if (PlayerRoot != null && hit.collider.transform.IsChildOf(PlayerRoot)) continue;   // o proprio jogador nao conta
+            dist = Mathf.Min(dist, fromDist + hit.distance - 0.45f);
+        }
+        Vector3 p = headPivot.position + back * Mathf.Max(fromDist, dist);
+        p.y = 0f;
+        return p;
+    }
+
+    /// <summary>Giro (graus, na vertical) para o rosto apontar para um ponto.</summary>
+    float ScareYaw(Vector3 point)
+    {
+        Vector3 to = point - headPivot.position;
+        to.y = 0f;
+        return Vector3.SignedAngle(FaceForward(), to, Vector3.up);
+    }
+
+    IEnumerator HeadScare()
+    {
+        var cam = ViewCamera;
+        var lens = cam.GetComponent<Camera>();
+        float fov0 = lens != null ? lens.fieldOfView : 60f;
+        bool zoom = lens != null && scareFov > 0f;
+        yield return new WaitForSeconds(scareStartDelay);   // o clique do zero assenta
+
+        // O jogador ja fica em pe, um pouco atras da cabine, olhando para o rosto do Zatan. A camera sobe do painel
+        // ate a vista dele: quando o susto acaba, ele e solto ali mesmo, sem a camera voltar para lugar nenhum.
+        PlacePlayer(StandPoint(), FacePoint);
+        PlayerViewPose(out Vector3 endPos, out Quaternion endRot);
+
+        // A luz de trabalho do minigame vira a lanterna de verdade enquanto o jogador se levanta: no apagao ela ja esta
+        // acesa e apontada para o rosto dele, e nada troca de uma vez quando ele e solto.
+        var flashlight = PlayerRoot != null ? PlayerRoot.GetComponentInChildren<Jamlloween.Flashlight.PlayerFlashlight>(true) : null;
+        if (flashlight != null)
+        {
+            flashlight.SetOn(true);
+            flashlight.SetWorkMode(false, scareCameraMove + 0.05f);
+        }
+        Vector3 startPos = cam.position;
+        Quaternion startRot = cam.rotation;
+        for (float t = 0f; t < 1f; t += Time.deltaTime / Mathf.Max(0.01f, scareCameraMove))
+        {
+            float k = Mathf.SmoothStep(0f, 1f, t);
+            cam.SetPositionAndRotation(Vector3.Lerp(startPos, endPos, k), Quaternion.Slerp(startRot, endRot, k));
+            if (zoom) lens.fieldOfView = Mathf.Lerp(fov0, scareFov, k);
+            yield return null;
+        }
+        cam.SetPositionAndRotation(endPos, endRot);
+        if (zoom) lens.fieldOfView = scareFov;
+
+        yield return new WaitForSeconds(scareCalm);
+        if (scareHush > 0f)
+        {
+            hushed = true;
+            yield return new WaitForSeconds(scareHush);
+        }
+        hushed = true;   // a maquina para junto com o giro
+
+        // O giro: de uma vez, passa um pouco do ponto e trava com um tremido mecanico.
+        float target = ScareYaw(endPos);
+        if (scareSnapClip != null) AudioSource.PlayClipAtPoint(scareSnapClip, headPivot.position, scareSnapVolume);
+        for (float t = 0f; t < 1f; t += Time.deltaTime / scareSnapTime)
+        {
+            float k = 1f - Mathf.Pow(1f - t, 3f);
+            headYaw = target * k * 1.06f;   // passa 6% do alvo
+            yield return null;
+        }
+        float[] settle = { 1.06f, 0.97f, 1.015f, 0.995f, 1f };
+        foreach (float m in settle)
+        {
+            headYaw = target * m;
+            yield return new WaitForSeconds(0.035f);
+        }
+        headYaw = target;
+
+        // Ele encara. Um tremor quase invisivel, de motor.
+        for (float t = 0f; t < scareStare; t += Time.deltaTime)
+        {
+            headYaw = target + (Random.value - 0.5f) * 0.6f;
+            yield return null;
+        }
+        headYaw = target;
+
+        // A energia cai (a etapa apaga o parque) e o jogador e solto ali mesmo, ainda olhando para ele. O zoom volta devagar.
+        Complete(0f);
+        if (!zoom) yield break;
+        float from = lens.fieldOfView;
+        for (float t = 0f; t < 1f; t += Time.deltaTime / 0.6f)
+        {
+            lens.fieldOfView = Mathf.Lerp(from, fov0, Mathf.SmoothStep(0f, 1f, t));
+            yield return null;
+        }
+        lens.fieldOfView = fov0;
     }
 
     /// <summary>A cabeca do Zatan: o campo headPivot ou o filho "Head" do Zatan da cena. Guarda a rotacao de repouso na primeira vez.</summary>

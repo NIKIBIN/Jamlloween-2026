@@ -118,6 +118,7 @@ public abstract class Minigame : MonoBehaviour, IInteractable, IStepForceComplet
         if (IsCompleted || CurrentState != State.Idle || viewPoint == null) return;
         if (!string.IsNullOrEmpty(BlockedBy)) return;
 
+        playerRoot = interactor.transform;
         camTransform = interactor.ViewCamera;
         cam = camTransform.GetComponent<Camera>();
         camParent = camTransform.parent;
@@ -144,6 +145,43 @@ public abstract class Minigame : MonoBehaviour, IInteractable, IStepForceComplet
 
     /// <summary>Sai do minigame mantendo o progresso. Seguro de chamar a qualquer momento.</summary>
     public void Exit() => ExitInternal(exitTime);
+
+    /// <summary>A camera do jogador enquanto o minigame esta ativo (null fora dele). Para cutscenes curtas no fim: a saida volta dela.</summary>
+    protected Transform ViewCamera => camTransform;
+
+    Transform playerRoot;
+
+    /// <summary>
+    /// Leva o jogador (o corpo, travado) para um ponto do chao e o vira para olhar um ponto. A camera da cutscene fica
+    /// onde esta; a saida do minigame volta para a nova vista do jogador. Use PlayerViewPose para mirar nela antes.
+    /// </summary>
+    protected void PlacePlayer(Vector3 feet, Vector3 lookAt)
+    {
+        if (playerRoot == null || camTransform == null) return;
+        Vector3 camPos = camTransform.position;
+        Quaternion camRot = camTransform.rotation;
+        var body = playerRoot.GetComponent<CharacterController>();
+        bool bodyOn = body != null && body.enabled;
+        if (body != null) body.enabled = false;
+        playerRoot.position = new Vector3(feet.x, playerRoot.position.y, feet.z);
+        if (body != null) body.enabled = bodyOn;
+        var walker = playerRoot.GetComponent<HeyHeyThere.PSXCarnivalKit.LevelWalker>();
+        if (walker != null)
+        {
+            // Mira a partir de onde o olho fica com o jogador em pe (agora a camera esta no ponto do minigame).
+            GetHomePose(out Vector3 eye, out _);
+            walker.LookAt(lookAt, eye);
+            // Se a camera e a propria "view" do jogador, o LookAt girou ela: essa passa a ser a rotacao de volta.
+            if (camParent != null && camTransform == walker.view) camSavedRot = camTransform.localRotation;
+        }
+        camTransform.SetPositionAndRotation(camPos, camRot);
+    }
+
+    /// <summary>Onde a camera do jogador fica quando ele volta ao controle (a vista dele, de pe).</summary>
+    protected void PlayerViewPose(out Vector3 pos, out Quaternion rot) => GetHomePose(out pos, out rot);
+
+    /// <summary>O corpo do jogador que entrou no minigame (null fora dele).</summary>
+    protected Transform PlayerRoot => playerRoot;
 
     void ExitInternal(float duration)
     {

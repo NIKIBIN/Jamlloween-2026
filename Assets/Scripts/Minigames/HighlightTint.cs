@@ -19,8 +19,13 @@ public static class HighlightTint
     static readonly Dictionary<Renderer, Saved> cache = new Dictionary<Renderer, Saved>();
 
     /// <summary>Realca (ou restaura) os renderers com a cor dada: puxa a cor-base para ela e soma emissao.</summary>
-    public static void Tint(Renderer[] rs, bool on, Color color)
+    public static void Tint(Renderer[] rs, bool on, Color color) => Tint(rs, on ? 1f : 0f, color);
+
+    /// <summary>Realce com intensidade: 1 = o realce do hover, valores menores = mais suave, 0 = restaura.</summary>
+    public static void Tint(Renderer[] rs, float amount, Color color)
     {
+        bool on = amount > 0.001f;
+        amount = Mathf.Clamp01(amount);
         if (rs == null) return;
         foreach (var r in rs)
         {
@@ -46,11 +51,15 @@ public static class HighlightTint
                 if (on)
                 {
                     if (m.HasProperty(BaseColor))
-                        m.SetColor(BaseColor, Color.Lerp(s.baseColors[i], new Color(color.r, color.g, color.b, s.baseColors[i].a), 0.55f));
+                        m.SetColor(BaseColor, Color.Lerp(s.baseColors[i], new Color(color.r, color.g, color.b, s.baseColors[i].a), 0.55f * amount));
                     else if (m.HasProperty(KitColor))
-                        m.SetColor(KitColor, new Color(1.2f + color.r * 1.2f, 1.2f + color.g * 1.2f, 1.2f + color.b * 1.2f, s.kitColors[i].a));   // _Color multiplica a textura e o shader nao tem emissao: so clarear aparece
+                    {
+                        // _Color multiplica a textura e o shader nao tem emissao: so clarear aparece
+                        var full = new Color(1.2f + color.r * 1.2f, 1.2f + color.g * 1.2f, 1.2f + color.b * 1.2f, s.kitColors[i].a);
+                        m.SetColor(KitColor, Color.Lerp(s.kitColors[i], full, amount));
+                    }
                     m.EnableKeyword("_EMISSION");
-                    m.SetColor(EmissionColor, color * 0.9f);
+                    m.SetColor(EmissionColor, Color.Lerp(s.emission[i], color * 0.9f, amount));
                 }
                 else
                 {
@@ -68,4 +77,19 @@ public static class HighlightTint
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void ResetStatics() => cache.Clear();
+}
+
+/// <summary>
+/// Dica do proximo passo, igual em todos os minigames: a peca que o jogador deve usar agora "respira" com um realce
+/// suave (a mesma cor do hover, bem mais fraca). Passar o mouse por cima continua dando o realce forte.
+/// </summary>
+public static class MinigameHint
+{
+    /// <summary>Intensidade minima e maxima da respiracao (1 = realce do hover).</summary>
+    public const float Min = 0.1f, Max = 0.45f;
+    /// <summary>Respiracoes por segundo.</summary>
+    public const float Rate = 0.8f;
+
+    /// <summary>Intensidade da dica agora (sobe e desce devagar).</summary>
+    public static float Level => Mathf.Lerp(Min, Max, 0.5f + 0.5f * Mathf.Sin(Time.time * Rate * 2f * Mathf.PI));
 }

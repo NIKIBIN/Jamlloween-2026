@@ -27,7 +27,7 @@ namespace Jamlloween.Flashlight
         [Tooltip("Off: the player must find the flashlight and call Acquire() before F does anything.")]
         [SerializeField] bool startOwned = true;
 
-        float blend, workBlend, cosOuter, cosInner;
+        float blend, workBlend, cosOuter, cosInner, workFadeSeconds;
         bool workMode;
 
         public bool IsOn { get; private set; }
@@ -75,7 +75,9 @@ namespace Jamlloween.Flashlight
             beam.enabled = blend > 0f;
 
             // Work mode opens the beam wide, so a close-up minigame is lit all over and not just in the middle.
-            workBlend = workMode ? 1f : 0f;   // no fade: the beam changes at once when a minigame starts or ends
+            // No fade by default (the beam changes at once when a minigame starts or ends); a cutscene can ask for one.
+            float workTarget = workMode ? 1f : 0f;
+            workBlend = workFadeSeconds > 0f ? Mathf.MoveTowards(workBlend, workTarget, Time.deltaTime / workFadeSeconds) : workTarget;
             float outer = Mathf.Lerp(config.spotAngle, config.workSpotAngle, workBlend);
             float inner = Mathf.Lerp(config.innerSpotAngle, config.workInnerSpotAngle, workBlend);
             beam.intensity = Mathf.Lerp(config.intensity, config.workIntensity, workBlend) * blend;
@@ -106,11 +108,18 @@ namespace Jamlloween.Flashlight
         }
 
         /// <summary>Holds the beam on while the player works on a minigame, then gives it back to the F toggle.</summary>
-        public void SetWorkMode(bool on)
+        public void SetWorkMode(bool on) => SetWorkMode(on, 0f);
+
+        /// <summary>
+        /// Like SetWorkMode(on), but the beam shape eases between the wide work light and the normal flashlight over
+        /// fadeSeconds instead of snapping. Turn the flashlight on first to hand the work light over to it.
+        /// </summary>
+        public void SetWorkMode(bool on, float fadeSeconds)
         {
             if (on == workMode) return;
             workMode = on;
-            blend = IsOwned && (IsOn || workMode) ? 1f : 0f;   // snap, so the beam does not fade in or out around a minigame
+            workFadeSeconds = Mathf.Max(0f, fadeSeconds);
+            if (workFadeSeconds <= 0f) blend = IsOwned && (IsOn || workMode) ? 1f : 0f;   // snap, so the beam does not fade in or out around a minigame
         }
 
         public void SetOn(bool on)
