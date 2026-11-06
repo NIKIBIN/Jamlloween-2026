@@ -13,6 +13,13 @@ public class CarouselAudio : MonoBehaviour
     [Header("Clipes opcionais (vazio = som sintetico)")]
     [SerializeField] AudioClip creakClip;
     [SerializeField] AudioClip musicClip;
+    [SerializeField] AudioClip clickClip;
+    [Tooltip("Motor forcando contra as engrenagens travadas.")]
+    [SerializeField] AudioClip strainClip;
+    [Tooltip("Correia estourando.")]
+    [SerializeField] AudioClip snapClip;
+    [Tooltip("Zumbido do motor (loop).")]
+    [SerializeField] AudioClip humClip;
 
     [Header("Volumes")]
     [SerializeField] float maxDistance = 30f;
@@ -36,11 +43,11 @@ public class CarouselAudio : MonoBehaviour
         sfx = NewSource(false);
         hum = NewSource(true);
         music = musicSource != null ? musicSource : NewSource(true);
-        click = MakeClick();
+        click = clickClip != null ? clickClip : MakeClick();
         creak = creakClip != null ? creakClip : MakeCreak();
-        strain = MakeStrain();
-        snap = MakeSnap();
-        humLoop = MakeHum();
+        strain = strainClip != null ? strainClip : MakeStrain();
+        snap = snapClip != null ? snapClip : MakeSnap();
+        humLoop = humClip != null ? humClip : MakeHum();
         hum.clip = humLoop;
         hum.volume = humVolume;
     }

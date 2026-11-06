@@ -19,6 +19,7 @@ public class PlayerInteractor : MonoBehaviour
     InputAction interactAction;
     IInteractable current;
     HeyHeyThere.PSXCarnivalKit.LevelWalker walker;
+    PlayerFoley foley;
     string shown = string.Empty;
 
     void Awake()
@@ -34,6 +35,7 @@ public class PlayerInteractor : MonoBehaviour
         // estilo dos outros prompts, em vez do OnGUI do kit. Fica no OnEnable (e não no Awake), com a ação do E, porque ele roda
         // de novo quando o Unity recompila com o jogo rodando.
         walker = GetComponent<HeyHeyThere.PSXCarnivalKit.LevelWalker>();
+        foley = GetComponent<PlayerFoley>();
         if (walker != null) walker.DrawAimPrompt = false;
         if (interactAction == null)
         {
@@ -69,7 +71,10 @@ public class PlayerInteractor : MonoBehaviour
             : walker != null ? walker.AimPrompt : string.Empty;
 
         if (current != null && interactAction.WasPressedThisFrame())
+        {
+            if (current is ICollectible && foley != null) foley.PlayPickup();
             current.Interact(this);
+        }
     }
 
     void OnGUI()
