@@ -7,7 +7,7 @@ using UnityEngine;
 /// Com um StepInteraction no mesmo objeto, a PRIMEIRA vez que e pego conclui a etapa de pegar a gasolina (e fora da
 /// etapa mostra o texto de bloqueio). Depois de pego uma vez, pega-lo de novo nunca e bloqueado.
 /// </summary>
-public class GasCan : MonoBehaviour, IInteractable, IStepForceCompletable
+public class GasCan : MonoBehaviour, ICollectible, IStepForceCompletable
 {
     [SerializeField] string prompt = "Pegar galão";
 

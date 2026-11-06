@@ -76,6 +76,12 @@ namespace HeyHeyThere.PSXCarnivalKit
 
         string aimPrompt = "";
 
+        /// <summary>O prompt do item na mira ("[E] Pegar fusível"), ou vazio.</summary>
+        public string AimPrompt => aimPrompt;
+
+        /// <summary>Falso quando outro HUD mostra o <see cref="AimPrompt"/> (o PlayerInteractor, com a fonte do jogo).</summary>
+        public bool DrawAimPrompt { get; set; } = true;
+
         void Update()
         {
 #if PICKUPS
@@ -105,7 +111,7 @@ namespace HeyHeyThere.PSXCarnivalKit
 #if PICKUPS
             var aimedPickup = Aimed()?.GetComponentInParent<Pickup>();
             aimPrompt = aimedPickup != null && aimedPickup.kind == Pickup.Kind.Item
-                ? "[E] PEGAR " + (aimedPickup.title != "" ? aimedPickup.title : aimedPickup.item.Replace('_', ' ')).ToUpperInvariant()
+                ? "[E] Pegar " + (aimedPickup.title != "" ? aimedPickup.title : aimedPickup.item.Replace('_', ' ')).ToLowerInvariant()
                 : "";
 #endif
             if (Use())
@@ -211,7 +217,7 @@ namespace HeyHeyThere.PSXCarnivalKit
                 return;
 #endif
             GUI.Label(new Rect(Screen.width / 2f - 4f, Screen.height / 2f - 10f, 20f, 20f), "+");
-            if (aimPrompt != "")
+            if (aimPrompt != "" && DrawAimPrompt)
             {
                 var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = Mathf.Max(16, Screen.height / 34) };
                 var r = new Rect(0f, Screen.height * 0.56f, Screen.width, style.fontSize * 1.6f);

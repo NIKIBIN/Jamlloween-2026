@@ -6,7 +6,7 @@ using UnityEngine;
 /// A flashlight lying around. Interact (E) to take it: the player gets <see cref="PlayerFlashlight"/> and this object
 /// disappears. Needs a collider so the player's interaction ray can hit it.
 /// </summary>
-public class FlashlightPickup : MonoBehaviour, IInteractable, IStepForceCompletable
+public class FlashlightPickup : MonoBehaviour, ICollectible, IStepForceCompletable
 {
     [SerializeField] PlayerFlashlight flashlight;
     [SerializeField] string prompt = "Pegar lanterna";

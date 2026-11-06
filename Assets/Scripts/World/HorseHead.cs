@@ -6,7 +6,7 @@ using UnityEngine;
 /// mais lento. Com ela na mao, o <see cref="HorseNeckSocket"/> do cavalo encaixa.
 /// Com um StepInteraction no mesmo objeto, pegar conclui a etapa e fora dela mostra o texto de bloqueio.
 /// </summary>
-public class HorseHead : MonoBehaviour, IInteractable, IStepForceCompletable
+public class HorseHead : MonoBehaviour, ICollectible, IStepForceCompletable
 {
     [SerializeField] string prompt = "Pegar cabeça do cavalo";
     [Tooltip("Pose na mao, relativa a camera do jogador.")]
