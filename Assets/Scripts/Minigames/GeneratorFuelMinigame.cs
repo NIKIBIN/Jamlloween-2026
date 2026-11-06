@@ -139,6 +139,8 @@ public class GeneratorFuelMinigame : Minigame
     // --- temporarios ---
     Drag drag;
     GeneratorPart hovered;
+    GeneratorPart[] parts;
+    Renderer[] mouthRenderers;
     GasCanCarrier carrier;
     float tilt, needleAngle, spillTimer, follow;   // follow: 0 = galao na lateral, 1 = seguindo o cursor
     bool busy, pouring;
@@ -161,6 +163,8 @@ public class GeneratorFuelMinigame : Minigame
     protected override void Awake()
     {
         base.Awake();
+        parts = GetComponentsInChildren<GeneratorPart>(true);
+        mouthRenderers = tankMouth != null ? tankMouth.GetComponentsInChildren<Renderer>(true) : new Renderer[0];
         if (engineBody != null) engineHome = engineBody.localPosition;
         if (gaugeNeedle != null) needleHome = gaugeNeedle.localRotation;
         needleAngle = gaugeEmptyAngle;
@@ -244,6 +248,7 @@ public class GeneratorFuelMinigame : Minigame
     {
         CancelSteps();
         SetHover(null);
+        ClearHints();
         if (drag == Drag.Cord) ReleaseCord();
         drag = Drag.None;
         pouring = false;
@@ -266,6 +271,34 @@ public class GeneratorFuelMinigame : Minigame
     // ---------- Loop ----------
 
     protected override void Tick(Camera viewCamera)
+    {
+        TickInput(viewCamera);
+        UpdateHints();
+    }
+
+    /// <summary>
+    /// Dica do proximo passo: a tampa ou a corda respiram com um realce suave. Na hora de despejar, o bocal
+    /// (se tiver malha propria) mostra onde mirar.
+    /// </summary>
+    void UpdateHints()
+    {
+        float level = MinigameHint.Level;
+        foreach (var p in parts)
+        {
+            if (p == hovered) continue;
+            bool next = drag == Drag.None && p.kind != GeneratorPart.Kind.Can && CanUse(p);
+            p.SetHint(next ? level : 0f, HighlightTint.Contrast);
+        }
+        HighlightTint.Tint(mouthRenderers, CanPour && !pouring ? level : 0f, HighlightTint.Contrast);
+    }
+
+    void ClearHints()
+    {
+        foreach (var p in parts) if (p != hovered) p.SetHint(0f, HighlightTint.Contrast);
+        HighlightTint.Tint(mouthRenderers, 0f, HighlightTint.Contrast);
+    }
+
+    void TickInput(Camera viewCamera)
     {
         var mouse = Mouse.current;
         if (mouse == null) return;

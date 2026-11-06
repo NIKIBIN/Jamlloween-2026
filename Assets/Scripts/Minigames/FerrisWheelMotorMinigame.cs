@@ -45,10 +45,16 @@ public class FerrisWheelMotorMinigame : Minigame
         Ray ray = viewCamera.ScreenPointToRay(mouse.position.ReadValue());
         bool over = Physics.Raycast(ray, out var hit, 5f, ~0, QueryTriggerInteraction.Ignore) && hit.transform.IsChildOf(switchHandle);
         SetHover(over);
+        // Dica do proximo passo: a alavanca respira com um realce suave enquanto o mouse nao esta nela.
+        if (!over) HighlightTint.Tint(handleRenderers, MinigameHint.Level, HighlightTint.Contrast);
         if (over && mouse.leftButton.wasPressedThisFrame) StartCoroutine(Throw());
     }
 
-    protected override void OnExitRequested() => SetHover(false);
+    protected override void OnExitRequested()
+    {
+        SetHover(false);
+        HighlightTint.Tint(handleRenderers, 0f, HighlightTint.Contrast);
+    }
 
     void SetHover(bool on)
     {

@@ -64,6 +64,7 @@ public class FuseBoxMinigame : Minigame
     Quaternion leverHomeRot;
     Coroutine leverRoutine;
     FuseBoxPart hovered;
+    FuseBoxPart[] parts;
     Coroutine spareRoutine;
     AudioSource sfx;
 
@@ -74,6 +75,7 @@ public class FuseBoxMinigame : Minigame
     protected override void Awake()
     {
         base.Awake();
+        parts = GetComponentsInChildren<FuseBoxPart>(true);
         screwOut = new bool[screws.Length];
         screwHome = new Vector3[screws.Length];
         for (int i = 0; i < screws.Length; i++) screwHome[i] = screws[i].transform.localPosition;
@@ -139,6 +141,32 @@ public class FuseBoxMinigame : Minigame
 
     protected override void Tick(Camera viewCamera)
     {
+        TickInput(viewCamera);
+        UpdateHints();
+    }
+
+    /// <summary>O proximo passo. Entre os fusiveis, so o queimado (o que precisa sair).</summary>
+    bool IsNextStep(FuseBoxPart p)
+    {
+        if (leverDragging || !CanUse(p)) return false;
+        if (p.kind == FuseBoxPart.Kind.Fuse) return p.index == burntIndex && !burntRemoved;
+        return true;
+    }
+
+    void UpdateHints()
+    {
+        float level = MinigameHint.Level;
+        foreach (var p in parts)
+            if (p != hovered) p.SetHint(IsNextStep(p) ? level : 0f, HighlightTint.Contrast);
+    }
+
+    void ClearHints()
+    {
+        foreach (var p in parts) if (p != hovered) p.SetHint(0f, HighlightTint.Contrast);
+    }
+
+    void TickInput(Camera viewCamera)
+    {
         var mouse = Mouse.current;
         if (mouse == null) return;
 
@@ -184,6 +212,7 @@ public class FuseBoxMinigame : Minigame
     protected override void OnExitRequested()
     {
         SetHover(null);
+        ClearHints();
         if (leverDragging) ReleaseLever();   // solta a alavanca: se nao chegou ao fim, ela volta
         if (holdingSpare) DropSpare(instant: true);   // o resto do progresso fica como esta
     }

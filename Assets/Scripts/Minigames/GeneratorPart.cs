@@ -14,4 +14,11 @@ public class GeneratorPart : MonoBehaviour
         if (renderers == null || renderers.Length == 0) renderers = GetComponentsInChildren<Renderer>(true);
         HighlightTint.Tint(renderers, on, color);
     }
+
+    /// <summary>Dica suave do proximo passo (MinigameHint). 0 = sem dica.</summary>
+    public void SetHint(float amount, Color color)
+    {
+        if (renderers == null || renderers.Length == 0) renderers = GetComponentsInChildren<Renderer>(true);
+        HighlightTint.Tint(renderers, amount, color);
+    }
 }

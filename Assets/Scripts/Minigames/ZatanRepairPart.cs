@@ -19,6 +19,14 @@ public class ZatanRepairPart : MonoBehaviour
         Tint(renderers, on, color);
     }
 
+    /// <summary>Dica suave do proximo passo (MinigameHint). 0 = sem dica.</summary>
+    public void SetHint(float amount, Color color)
+    {
+        if (renderers == null || renderers.Length == 0)
+            renderers = highlightTargets != null && highlightTargets.Length > 0 ? highlightTargets : GetComponentsInChildren<Renderer>(true);
+        HighlightTint.Tint(renderers, amount, color);
+    }
+
     /// <summary>Atalho para o realce compartilhado (HighlightTint).</summary>
     public static void Tint(Renderer[] rs, bool on, Color color) => HighlightTint.Tint(rs, on, color);
 }

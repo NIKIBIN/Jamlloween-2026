@@ -48,7 +48,7 @@ public class RadioMinigame : Minigame
     [SerializeField] Material ledOnMaterial, ledOffMaterial;
     [SerializeField] TMP_Text noteLabel;
     [SerializeField] RadioAudio radioAudio;
-    [SerializeField] Color hoverColor = new Color(0.32f, 0.3f, 0.12f);
+    [SerializeField] Color hoverColor = new Color(1f, 0.85f, 0.35f);
 
     [Header("Sintonia")]
     [Tooltip("Frequencia escrita no bilhete, onde o patrao responde (MHz).")]
@@ -63,6 +63,8 @@ public class RadioMinigame : Minigame
     [SerializeField, Range(0f, 1f)] float exitDelayAfterTune = 0.7f;
 
     [Header("Pilhas")]
+    [Tooltip("O jogador ja comeca com as pilhas: elas aparecem na mesa ao abrir o radio, e nenhum item nasce no mapa.")]
+    [SerializeField] bool startWithBatteries = true;
     [Tooltip("Item do inventario do jogador que representa as pilhas.")]
     [SerializeField] string requiredItem = "battery";
     [SerializeField] int requiredCount = 2;
@@ -79,6 +81,7 @@ public class RadioMinigame : Minigame
     // --- arrasto ---
     Drag drag;
     RadioPart dragPart, hovered;
+    RadioPart[] parts;
     Vector3 dragStart, grabOffset;
     float dragPlaneY, prevMouseAngle, lockTimer;
     Coroutine coverGlide, batteriesGlide;
@@ -87,16 +90,17 @@ public class RadioMinigame : Minigame
     bool Powered => !coverOff && batteriesIn;
     float Frequency => Mathf.Lerp(MinFrequency, MaxFrequency, dialAngle / DialRange);
     bool Tuned => Mathf.Abs(Frequency - correctFrequency) <= tolerance;
-    bool HasBatteries => playerItems == null || playerItems.FindAll(i => i == requiredItem).Count >= requiredCount;
+    bool HasBatteries => startWithBatteries || playerItems == null || playerItems.FindAll(i => i == requiredItem).Count >= requiredCount;
 
     void OnValidate() => correctFrequency = Mathf.Clamp(correctFrequency, MinFrequency, MaxFrequency);
 
     protected override void Awake()
     {
         base.Awake();
+        parts = GetComponentsInChildren<RadioPart>(true);
         onExited.AddListener(() => { if (IsCompleted) TakeRadio(); });
         noteLabel.text = correctFrequency.ToString("0.0", CultureInfo.InvariantCulture) + " MHz";
-        batteries.gameObject.SetActive(false);
+        batteries.gameObject.SetActive(startWithBatteries);   // com as pilhas desde o comeco, elas ja ficam na mesa
         led.sharedMaterial = ledOffMaterial;
         ApplyDial();
         SpawnBatteryPickup();
@@ -104,7 +108,7 @@ public class RadioMinigame : Minigame
 
     void SpawnBatteryPickup()
     {
-        if (batteryPickupPrefab == null || batteryLocation == null) return;
+        if (startWithBatteries || batteryPickupPrefab == null || batteryLocation == null) return;
         var go = Instantiate(batteryPickupPrefab, batteryLocation.position, batteryLocation.rotation);
         go.name = "Pilhas (radio)";
         if (go.GetComponentInChildren<Collider>() == null)
@@ -172,6 +176,25 @@ public class RadioMinigame : Minigame
 
     protected override void Tick(Camera viewCamera)
     {
+        TickInput(viewCamera);
+        UpdateHints();
+    }
+
+    /// <summary>Dica do proximo passo: a peca que pode ser usada agora respira com um realce suave.</summary>
+    void UpdateHints()
+    {
+        float level = MinigameHint.Level;
+        foreach (var p in parts)
+            if (p != hovered) p.SetHint(drag == Drag.None && CanUse(p) ? level : 0f, hoverColor);
+    }
+
+    void ClearHints()
+    {
+        foreach (var p in parts) if (p != hovered) p.SetHint(0f, hoverColor);
+    }
+
+    void TickInput(Camera viewCamera)
+    {
         var mouse = Mouse.current;
         if (mouse == null) return;
         Vector2 mp = mouse.position.ReadValue();
@@ -195,6 +218,7 @@ public class RadioMinigame : Minigame
     protected override void OnExitRequested()
     {
         SetHover(null);
+        ClearHints();
         // Solta o que estiver na mao: o resto do progresso fica como esta.
         switch (drag)
         {
