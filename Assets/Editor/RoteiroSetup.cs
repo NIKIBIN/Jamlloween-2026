@@ -17,7 +17,7 @@ using UnityEngine;
 public static class RoteiroSetup
 {
     public const string Folder = "Assets/Data/Progression/Roteiro";
-    const string Placeholder = "Assets/Audio/Roteiro/Placeholder/";
+    const string Roteiro = "Assets/Audio/Roteiro/";
 
     // Eventos de conclusao enviados pela cena.
     public const string ZatanEscapedEvent = "ZatanEscaped";     // trigger da volta com a gasolina
@@ -69,7 +69,7 @@ public static class RoteiroSetup
                 onComplete: new[]
                 {
                     Trigger(GeneratorNoiseTrigger, false), Lights("park", false), Evt(PowerLostEvent),
-                    Snd(Placeholder + "SFX_Roteiro_PowerDown_PH.wav")
+                    Snd(Roteiro + "SFX_Roteiro_PowerDown.wav")
                 }),
             Step("R03_FalaGerador", "Reportar: abastecer o gerador", new[] { ProgressionDirector.RadioIdleEvent },
                 onStart: new[] { Say("Caiu tudo? Tem um gerador reserva, mas tá sem combustível. O pessoal da pirotecnia guarda gasolina no fundo da tenda. Pega lá.") },
@@ -130,7 +130,7 @@ public static class RoteiroSetup
             // 19: a roda gira e para no alto (FerrisWheelRide) porque a energia cai: apagao no parque inteiro
             // (LightGroup park: luzes, carrossel e musica). O som de tensao comeca.
             Step("R19_RodaGigante", "A roda-gigante gira", new[] { WheelStoppedEvent },
-                onComplete: new[] { Lights("park", false), Snd(Placeholder + "SFX_Roteiro_PowerDown_PH.wav") }),
+                onComplete: new[] { Lights("park", false), Snd(Roteiro + "SFX_Roteiro_PowerDown.wav") }),
             // 20: olhar para tras: Zatan ataca de fora da gondola (FerrisWheelRide -> ZatanDirector.FinalAttackFrom).
             Step("R20_OlharParaTras", "Zatan ataca na gôndola", new[] { FinalAttackDoneEvent },
                 onStart: new[] { Think("Parou... A energia caiu de novo?!") }),
