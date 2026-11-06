@@ -33,9 +33,9 @@ public class ZatanRepairMinigame : Minigame
     {
         [Tooltip("Angulo da cabeca (graus, 0 a 180) em que a manivela trava.")]
         [Range(1f, 179f)] public float angle = 60f;
-        [Tooltip("Distancia (m) do rolo de fita necessaria para vedar este vazamento. Maior = mais passadas.")]
+        [Tooltip("Sem uso desde que a fita veda sozinha (animacao). Fica para nao perder o valor serializado.")]
         public float scrubDistance = 0.3f;
-        [Tooltip("A junta que vaza (ZatanScrubArea com seal ligado). A fita aparece nela conforme o jogador passa o rolo.")]
+        [Tooltip("A junta que vaza (ZatanScrubArea com seal ligado). Quando o rolo encosta nela, a fita se aplica sozinha.")]
         public ZatanScrubArea joint;
         [Tooltip("Jato de gas que sai da junta enquanto ela vaza. Enfraquece conforme a fita cobre a junta.")]
         [FormerlySerializedAs("smoke")] public ParticleSystem gas;
@@ -70,6 +70,10 @@ public class ZatanRepairMinigame : Minigame
     [SerializeField] ZatanRepairPart tape;
     [Tooltip("Onde o rolo de fita fica preso na lateral do painel.")]
     [SerializeField] Transform tapeHome;
+    [Tooltip("Segundos da animacao da fita se desenrolando sobre o vazamento.")]
+    [SerializeField, Range(0.2f, 2f)] float tapeApplySeconds = 0.8f;
+    [Tooltip("Segundos da volta do rolo de fita para o lugar dele.")]
+    [SerializeField, Range(0.1f, 1f)] float tapeReturnSeconds = 0.4f;
     [Tooltip("Vazao maxima (particulas por segundo) do jato de gas de um vazamento aberto.")]
     [SerializeField] float gasMaxRate = 40f;
 
@@ -172,7 +176,8 @@ public class ZatanRepairMinigame : Minigame
     ZatanRepairPart hovered;
     Vector3 grabOffset, dragStart;
     float prevMouseAngle, effortLevel, scrubLevel, switchAngle = 180f;
-    Coroutine coverGlide, ragGlide, hoseGlide, crankGlide, tapeGlide;
+    Coroutine coverGlide, ragGlide, hoseGlide, crankGlide, tapeGlide, tapeApply;
+    ZatanScrubArea tapingArea;
     readonly List<ZatanScrubArea> areas = new List<ZatanScrubArea>();
 
     // --- cabeca ---
@@ -232,7 +237,7 @@ public class ZatanRepairMinigame : Minigame
             case ZatanRepairPart.Kind.Hose: return coverOff && DialClean && GearClean && !hoseConnected;
             case ZatanRepairPart.Kind.Switch: return hoseConnected;
             case ZatanRepairPart.Kind.Crank: return compressorOn;
-            case ZatanRepairPart.Kind.Tape: return activeLock >= 0;   // so com um vazamento aberto
+            case ZatanRepairPart.Kind.Tape: return activeLock >= 0 && tapeApply == null;   // so com um vazamento aberto
         }
         return false;
     }
@@ -271,7 +276,7 @@ public class ZatanRepairMinigame : Minigame
         repairAudio.SetEffort(drag == Drag.CrankTurn ? effortLevel : 0f, headAngle / TotalAngle);
         repairAudio.SetLeak(leak);
         repairAudio.SetScrub(drag == Drag.Rag ? scrubLevel : 0f);
-        repairAudio.SetTape(drag == Drag.Tape ? scrubLevel : 0f);
+        repairAudio.SetTape(tapeApply != null ? 1f : 0f);
     }
 
     // Depois do zero o motor segue no ritmo de funcionamento (finished) ou para, conforme machineRunsAfterFinish.
@@ -317,7 +322,7 @@ public class ZatanRepairMinigame : Minigame
     void PulseTape()
     {
         if (tape == null) return;
-        bool want = activeLock >= 0 && drag != Drag.Tape && hovered != tape;
+        bool want = activeLock >= 0 && drag != Drag.Tape && tapeApply == null && hovered != tape;
         if (want)
         {
             tapePulsing = true;
@@ -380,6 +385,7 @@ public class ZatanRepairMinigame : Minigame
             case Drag.CrankTurn: EndCrankTurn(); break;
             case Drag.Tape: ReleaseTape(instant: true); break;
         }
+        FinishTapeNow();
     }
 
     ZatanRepairPart Pick(Ray ray)
@@ -510,17 +516,17 @@ public class ZatanRepairMinigame : Minigame
             rag.transform.localPosition = next;
             Vector3 d = next - prev;
             d.z = 0f;
-            ScrubAt(next, d.magnitude, sealTool: false);
+            ScrubAt(next, d.magnitude);
         }
         if (!held) ReleaseRag(instant: false);
     }
 
-    /// <summary>A ferramenta percorreu dist sobre a posicao pos (local do painel). A estopa limpa o piche; a fita veda o gas.</summary>
-    void ScrubAt(Vector3 pos, float dist, bool sealTool)
+    /// <summary>A estopa percorreu dist sobre a posicao pos (local do painel) e limpa o piche. A fita nao esfrega: ver ApplyTape.</summary>
+    void ScrubAt(Vector3 pos, float dist)
     {
         foreach (var area in areas)
         {
-            if (area.Seal != sealTool) continue;
+            if (area.Seal) continue;
             if (!area.Active || area.IsClean || !area.Contains(pos, RagRadius)) continue;
             scrubLevel = Mathf.Clamp01(dist / Mathf.Max(Time.deltaTime, 0.0001f) / 0.5f);
             if (area.Scrub(dist)) OnAreaCleaned(area);
@@ -559,14 +565,70 @@ public class ZatanRepairMinigame : Minigame
             want.z = TapeZ;
             want.x = Mathf.Clamp(want.x, -0.6f, 0.6f);
             want.y = Mathf.Clamp(want.y, -0.4f, 0.4f);
-            Vector3 prev = tape.transform.localPosition;
-            Vector3 next = Vector3.Lerp(prev, want, 1f - Mathf.Exp(-30f * Time.deltaTime));
+            Vector3 next = Vector3.Lerp(tape.transform.localPosition, want, 1f - Mathf.Exp(-30f * Time.deltaTime));
             tape.transform.localPosition = next;
-            Vector3 d = next - prev;
-            d.z = 0f;
-            ScrubAt(next, d.magnitude, sealTool: true);
+            // Basta encostar o rolo no vazamento: a fita se aplica sozinha.
+            var joint = activeLock >= 0 ? locks[activeLock].joint : null;
+            if (joint != null && joint.Active && !joint.IsClean && joint.Contains(next, RagRadius))
+            {
+                drag = Drag.None;
+                StopGlide(ref tapeGlide);
+                tapingArea = joint;
+                tapeApply = StartCoroutine(ApplyTape(joint));
+                return;
+            }
         }
         if (!held) ReleaseTape(instant: false);
+    }
+
+    /// <summary>
+    /// O rolo vai ao topo da junta, desce por ela girando enquanto a fita aparece, e volta sozinho para o lugar.
+    /// </summary>
+    IEnumerator ApplyTape(ZatanScrubArea joint)
+    {
+        Transform patch = joint.Decal;
+        Vector3 center = transform.InverseTransformPoint(joint.DecalCenter);
+        Vector3 along = transform.InverseTransformDirection(patch.up);
+        along.z = 0f;
+        along = along.sqrMagnitude > 0.0001f ? along.normalized : Vector3.up;
+        float half = 0.5f * joint.DecalLength;
+        Vector3 start = center + along * half, end = center - along * half;
+        start.z = end.z = TapeZ;
+        Quaternion rot0 = tapeHome.localRotation;
+
+        // Ao topo da junta.
+        bool there = false;
+        Glide(ref tapeGlide, tape.transform, start, rot0, 0.15f, () => there = true);
+        while (!there) yield return null;
+
+        // Desce desenrolando: a fita aparece na junta ao mesmo tempo.
+        float required = joint.RequiredDistance;
+        for (float k = 0f; k < 1f; )
+        {
+            float step = Time.deltaTime / tapeApplySeconds;
+            k = Mathf.Min(1f, k + step);
+            float s = Mathf.SmoothStep(0f, 1f, k);
+            tape.transform.SetLocalPositionAndRotation(Vector3.Lerp(start, end, s), rot0 * Quaternion.Euler(0f, 0f, -540f * s));
+            if (joint.Scrub(required * step * 1.001f)) OnAreaCleaned(joint);
+            yield return null;
+        }
+        if (!joint.IsClean && joint.Scrub(required)) OnAreaCleaned(joint);
+
+        // Volta sozinho para o lugar.
+        tapeApply = null;
+        tapingArea = null;
+        Glide(ref tapeGlide, tape.transform, tapeHome.localPosition, tapeHome.localRotation, tapeReturnSeconds, null);
+    }
+
+    /// <summary>Saiu no meio da animacao: a fita termina de vedar na hora e o rolo volta ao lugar.</summary>
+    void FinishTapeNow()
+    {
+        if (tapeApply == null) return;
+        StopCoroutine(tapeApply);
+        tapeApply = null;
+        if (tapingArea != null && !tapingArea.IsClean && tapingArea.Scrub(tapingArea.RequiredDistance + 1f)) OnAreaCleaned(tapingArea);
+        tapingArea = null;
+        Glide(ref tapeGlide, tape.transform, tapeHome.localPosition, tapeHome.localRotation, 0f, null);
     }
 
     void ReleaseTape(bool instant)

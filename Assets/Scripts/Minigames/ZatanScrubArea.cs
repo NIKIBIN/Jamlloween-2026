@@ -34,7 +34,7 @@ public class ZatanScrubArea : MonoBehaviour
 
     Material decalMat, shineMat;
     Color baseColor = new Color(0.03f, 0.02f, 0.02f, 1f);
-    Vector3 decalScale = Vector3.one, shineScale = Vector3.one;
+    Vector3 decalScale = Vector3.one, shineScale = Vector3.one, decalPos;
     float scrubbed, grow = 1f;
 
     public bool Active { get; private set; }
@@ -46,12 +46,19 @@ public class ZatanScrubArea : MonoBehaviour
     public float RequiredDistance { get => requiredDistance; set => requiredDistance = Mathf.Max(0.001f, value); }
     /// <summary>True: vazamento de gas, fechado com fita. False: piche, limpo com a estopa.</summary>
     public bool Seal => seal;
+    /// <summary>O decal da area (a fita, num vazamento). Sem decal: a propria area.</summary>
+    public Transform Decal => decal != null ? decal.transform : transform;
+    /// <summary>Comprimento inteiro do decal ao longo do eixo Y dele, no espaco do pai da area.</summary>
+    public float DecalLength => decal != null ? decalScale.y * transform.localScale.y : radius * 2f;
+    /// <summary>Centro do decal inteiro (mundo): o decal da fita anda enquanto desenrola.</summary>
+    public Vector3 DecalCenter => decal != null ? decal.transform.parent.TransformPoint(decalPos) : transform.position;
 
     void Awake()
     {
         if (decal != null)
         {
             decalScale = decal.transform.localScale;
+            decalPos = decal.transform.localPosition;
             if (decal.sharedMaterial != null && decal.sharedMaterial.HasProperty(BaseColorId))
                 baseColor = decal.sharedMaterial.GetColor(BaseColorId);
         }
@@ -127,7 +134,10 @@ public class ZatanScrubArea : MonoBehaviour
             var tape = baseColor;
             tape.a = baseColor.a * Mathf.Lerp(0f, 1f, Mathf.SmoothStep(0f, 1f, k));
             decalMat.SetColor(BaseColorId, tape);
-            decal.transform.localScale = new Vector3(decalScale.x, decalScale.y * Mathf.Lerp(0.35f, 1f, k), decalScale.z);
+            // Desenrola de cima para baixo, atras do rolo: a borda de cima fica parada.
+            float len = Mathf.Lerp(0.05f, 1f, k);
+            decal.transform.localScale = new Vector3(decalScale.x, decalScale.y * len, decalScale.z);
+            decal.transform.localPosition = decalPos + decal.transform.localRotation * Vector3.up * (decalScale.y * (1f - len) * 0.5f);
             if (shineMat != null) shineMat.SetColor(BaseColorId, new Color(1f, 1f, 1f, 0.35f * k));
             return;
         }

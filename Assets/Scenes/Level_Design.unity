@@ -17,7 +17,7 @@ RenderSettings:
   m_Fog: 1
   m_FogColor: {r: 0.03, g: 0.034, b: 0.048, a: 1}
   m_FogMode: 2
-  m_FogDensity: 0.16
+  m_FogDensity: 0.08
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.03, g: 0.03, b: 0.045, a: 1}
@@ -1958,17 +1958,14 @@ Transform:
   - {fileID: 334057882}
   - {fileID: 947669934}
   - {fileID: 1032693375}
-  - {fileID: 359669719}
   - {fileID: 82459738}
   - {fileID: 2102142524}
-  - {fileID: 1912983240}
-  - {fileID: 1676030256}
-  - {fileID: 675488930}
   - {fileID: 329419662}
   - {fileID: 592134786}
-  - {fileID: 490885261}
   - {fileID: 5994593904848135535}
-  - {fileID: 1049356720}
+  - {fileID: 886224249}
+  - {fileID: 1584298124}
+  - {fileID: 2044841552}
   m_Father: {fileID: 1560166467}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &51674356
@@ -2339,6 +2336,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -3896,7 +3897,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 63.45
+      value: 58.59
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3948,6 +3949,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 2
@@ -5730,6 +5735,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 2
@@ -6623,6 +6632,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -6685,6 +6698,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 726100714}
     m_Modifications:
+    - target: {fileID: 603829862963133637, guid: 175b8178d280896fdc7a1c3d349fee9f, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 1711721296526634459, guid: 175b8178d280896fdc7a1c3d349fee9f, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -7002,6 +7019,8 @@ MonoBehaviour:
   until: {fileID: 11400000, guid: da3fd16df0e499d4ca57cf4477fa3870, type: 2}
   powerGroup: park
   brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
   brokenLevel: 0.3
   brokenBulbLevel: 0.4
   brokenMin: 0.3
@@ -7009,16 +7028,22 @@ MonoBehaviour:
   workingVariation: 0
   workingSpeed: 0.6
   flickerSeed: 0
+  decor: 0
+  ambient: 0
   color: {r: 1, g: 0.55, b: 0.1, a: 1}
   intensity: 4
   range: 6
+  softness: 0
   emitFrom: []
   pattern: 1
   blinkPeriod: 1
   blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
   renderers:
   - {fileID: 140422782}
   bulbsStayVisible: 0
+  rowBulbs: 0
+  litBulbs: -1
   fogDensity: 0.012
 --- !u!23 &140422782
 MeshRenderer:
@@ -11958,6 +11983,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -13562,6 +13591,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -15195,6 +15228,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 726100714}
     m_Modifications:
+    - target: {fileID: 603829862963133637, guid: 175b8178d280896fdc7a1c3d349fee9f, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 1711721296526634459, guid: 175b8178d280896fdc7a1c3d349fee9f, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -16454,7 +16491,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 25.02
+      value: 24.74
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalRotation.w
@@ -16905,7 +16942,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10
+      value: -5.79
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.y
@@ -16913,7 +16950,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -11
+      value: -4.96
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalRotation.w
@@ -18189,68 +18226,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 359567086}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1001 &359669718
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 51572202}
-    m_Modifications:
-    - target: {fileID: 1300848307986544941, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_Name
-      value: PF_Poste_10
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -32.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.004495248
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 63.45
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.92387956
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.38268343
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -45
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
---- !u!4 &359669719 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-  m_PrefabInstance: {fileID: 359669718}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &359876353
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18422,6 +18397,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -18586,6 +18565,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 2
@@ -18988,6 +18971,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -23240,72 +23227,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 2273674337229328569, guid: 5ad6cf1cb3834301d6f3eefc3096a854, type: 3}
---- !u!1001 &490885260
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 51572202}
-    m_Modifications:
-    - target: {fileID: 1300848307986544941, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_Name
-      value: PF_Poste_13 (4)
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.35
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 13.99
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.004495546
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 71.29
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
---- !u!4 &490885261 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-  m_PrefabInstance: {fileID: 490885260}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &492481060 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4317896518251706608, guid: 553ac0718df0885371354f32f2f82c00, type: 3}
@@ -26850,6 +26771,8 @@ MonoBehaviour:
   until: {fileID: 11400000, guid: 9e0338b6ca931b244a9ec7a578e525bf, type: 2}
   powerGroup: 
   brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
   brokenLevel: 0.3
   brokenBulbLevel: 0.4
   brokenMin: 0.3
@@ -26857,16 +26780,22 @@ MonoBehaviour:
   workingVariation: 0
   workingSpeed: 0.6
   flickerSeed: 0
+  decor: 0
+  ambient: 0
   color: {r: 1, g: 0.15, b: 0.08, a: 1}
   intensity: 1.2
   range: 4
+  softness: 0
   emitFrom: []
   pattern: 1
   blinkPeriod: 1
   blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
   renderers:
   - {fileID: 565210386}
   bulbsStayVisible: 0
+  rowBulbs: 0
+  litBulbs: -1
   fogDensity: 0.012
 --- !u!23 &565210386
 MeshRenderer:
@@ -28131,6 +28060,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -28273,7 +28206,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 18.32
+      value: 17.58
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.y
@@ -28281,7 +28214,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 60.568
+      value: 58.86
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalRotation.w
@@ -30655,6 +30588,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_ring_toss (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 9063174217267413573, guid: b5452fa7af7ba9c8e16b90656dfb4fd8, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -32060,68 +31997,6 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 524673781262196481, guid: 874e93e0589a175e0162d0998e037355, type: 3}
   m_PrefabInstance: {fileID: 671274506}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &675488929
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 51572202}
-    m_Modifications:
-    - target: {fileID: 1300848307986544941, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_Name
-      value: PF_Poste_13
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 7.87
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.004495546
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 10.69
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
---- !u!4 &675488930 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-  m_PrefabInstance: {fileID: 675488929}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &676035296
 GameObject:
@@ -34486,6 +34361,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 726100714}
     m_Modifications:
+    - target: {fileID: 603829862963133637, guid: 175b8178d280896fdc7a1c3d349fee9f, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 1711721296526634459, guid: 175b8178d280896fdc7a1c3d349fee9f, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -37923,6 +37802,8 @@ MonoBehaviour:
   until: {fileID: 0}
   powerGroup: park
   brokenUntil: {fileID: 11400000, guid: 3263e47999928f944a5783b386a6cac6, type: 2}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
   brokenLevel: 0.3
   brokenBulbLevel: 0.4
   brokenMin: 0.3
@@ -37930,15 +37811,21 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 1
+  decor: 0
+  ambient: 0
   color: {r: 1, g: 0.75, b: 0.42, a: 1}
   intensity: 2.5
   range: 8
+  softness: 0
   emitFrom: []
   pattern: 0
   blinkPeriod: 1
   blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
   renderers: []
   bulbsStayVisible: 1
+  rowBulbs: 0
+  litBulbs: -1
   fogDensity: 0.012
 --- !u!1001 &789016762
 PrefabInstance:
@@ -45387,7 +45274,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -38
+      value: -16.21
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.y
@@ -45395,7 +45282,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 8.51
+      value: 17.07
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalRotation.w
@@ -46921,6 +46808,8 @@ MonoBehaviour:
   until: {fileID: 0}
   powerGroup: park
   brokenUntil: {fileID: 11400000, guid: 3263e47999928f944a5783b386a6cac6, type: 2}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
   brokenLevel: 0.3
   brokenBulbLevel: 0.4
   brokenMin: 0.3
@@ -46928,16 +46817,22 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 1
+  decor: 0
+  ambient: 0
   color: {r: 1, g: 0.75, b: 0.42, a: 1}
   intensity: 2.5
   range: 8
+  softness: 0
   emitFrom: []
   pattern: 0
   blinkPeriod: 1
   blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
   renderers:
   - {fileID: 692589002}
   bulbsStayVisible: 1
+  rowBulbs: 0
+  litBulbs: -1
   fogDensity: 0.012
 --- !u!1 &983311571
 GameObject:
@@ -49519,7 +49414,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.000001
+      value: 9.96
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.y
@@ -49527,7 +49422,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2
+      value: -7.74
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalRotation.w
@@ -50670,6 +50565,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -50797,68 +50696,6 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 8915647916799386856, guid: 55ba7ed67c0f16c38249dd0d8450f36c, type: 3}
   m_PrefabInstance: {fileID: 1048161090}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &1049356719
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 51572202}
-    m_Modifications:
-    - target: {fileID: 1300848307986544941, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_Name
-      value: PF_Poste_13 (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 7.87
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.004495546
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 10.69
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
---- !u!4 &1049356720 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-  m_PrefabInstance: {fileID: 1049356719}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1050048543
 GameObject:
@@ -54619,10 +54456,7 @@ MonoBehaviour:
   groupId: park
   lights:
   - {fileID: 410087040}
-  objects:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  objects: []
   startOn: 1
   onChanged:
     m_PersistentCalls:
@@ -56918,6 +56752,8 @@ MonoBehaviour:
   until: {fileID: 0}
   powerGroup: park
   brokenUntil: {fileID: 11400000, guid: 3263e47999928f944a5783b386a6cac6, type: 2}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
   brokenLevel: 0.3
   brokenBulbLevel: 0.4
   brokenMin: 0.3
@@ -56925,15 +56761,21 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 1
+  decor: 0
+  ambient: 0
   color: {r: 1, g: 0.75, b: 0.42, a: 1}
   intensity: 2.5
   range: 8
+  softness: 0
   emitFrom: []
   pattern: 0
   blinkPeriod: 1
   blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
   renderers: []
   bulbsStayVisible: 1
+  rowBulbs: 0
+  litBulbs: -1
   fogDensity: 0.012
 --- !u!1 &1200347820 stripped
 GameObject:
@@ -58006,6 +57848,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -61720,6 +61566,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -63821,6 +63671,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -63966,6 +63820,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_ring_toss (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 9063174217267413573, guid: b5452fa7af7ba9c8e16b90656dfb4fd8, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -64891,6 +64749,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -66042,6 +65904,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -66470,6 +66336,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_ring_toss (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 9063174217267413573, guid: b5452fa7af7ba9c8e16b90656dfb4fd8, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -67134,6 +67004,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 2
@@ -71955,6 +71829,7 @@ Transform:
   - {fileID: 1461262864}
   - {fileID: 287350470}
   - {fileID: 51572202}
+  - {fileID: 1784517269}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1560967100 stripped
@@ -72693,6 +72568,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 2
@@ -72933,6 +72812,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -74902,6 +74785,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -77328,68 +77215,6 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 2545648207658625779, guid: 44dbf19a731f0407e6fcef77c04abdfc, type: 3}
   m_PrefabInstance: {fileID: 1675166234}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &1676030255
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 51572202}
-    m_Modifications:
-    - target: {fileID: 1300848307986544941, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_Name
-      value: PF_Poste_12
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -24.13
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.004495248
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 72.08
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.8944269
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.44721425
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
---- !u!4 &1676030256 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-  m_PrefabInstance: {fileID: 1676030255}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1678707139 stripped
 GameObject:
@@ -89482,6 +89307,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 2
@@ -91247,6 +91076,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_ring_toss (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 9063174217267413573, guid: b5452fa7af7ba9c8e16b90656dfb4fd8, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -91287,6 +91120,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 726100714}
     m_Modifications:
+    - target: {fileID: 603829862963133637, guid: 175b8178d280896fdc7a1c3d349fee9f, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 1711721296526634459, guid: 175b8178d280896fdc7a1c3d349fee9f, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -94164,68 +94001,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 524673781262196481, guid: 874e93e0589a175e0162d0998e037355, type: 3}
   m_PrefabInstance: {fileID: 1912955177}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &1912983239
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 51572202}
-    m_Modifications:
-    - target: {fileID: 1300848307986544941, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_Name
-      value: PF_Poste_10 (3)
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -43.78
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.004495248
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 47.92
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
---- !u!4 &1912983240 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
-  m_PrefabInstance: {fileID: 1912983239}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1913643437
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -94864,6 +94639,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -95076,6 +94855,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -97553,6 +97336,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_ring_toss (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 9063174217267413573, guid: b5452fa7af7ba9c8e16b90656dfb4fd8, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -100261,6 +100048,7 @@ Transform:
   - {fileID: 366175687}
   - {fileID: 850886567}
   - {fileID: 1717482437}
+  - {fileID: 193559970}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2062667085
@@ -101182,6 +100970,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_booth_bottles (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cffc0cd139edd4ce9a68b8c0a5eba0f8, type: 2}
     - target: {fileID: 8384579901681432696, guid: 39bd056584d6814a70363456e5b39794, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -101799,7 +101591,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 33.57
+      value: 38.88
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalRotation.w
@@ -102125,6 +101917,8 @@ MonoBehaviour:
   until: {fileID: 0}
   powerGroup: park
   brokenUntil: {fileID: 11400000, guid: da3fd16df0e499d4ca57cf4477fa3870, type: 2}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
   brokenLevel: 0.3
   brokenBulbLevel: 0.4
   brokenMin: 0.3
@@ -102132,16 +101926,22 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 2
+  decor: 0
+  ambient: 0
   color: {r: 1, g: 0.75, b: 0.42, a: 1}
   intensity: 3.5
   range: 15
+  softness: 0
   emitFrom: []
   pattern: 0
   blinkPeriod: 1
   blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
   renderers:
   - {fileID: 1295670494}
   bulbsStayVisible: 1
+  rowBulbs: 0
+  litBulbs: -1
   fogDensity: 0.012
 --- !u!4 &2106411396
 Transform:
@@ -103354,7 +103154,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4
+      value: -2.75
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.y
@@ -103362,7 +103162,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 79.759
+      value: 88.98
       objectReference: {fileID: 0}
     - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
       propertyPath: m_LocalRotation.w
@@ -103534,3 +103334,3459 @@ SceneRoots:
   - {fileID: 403563431}
   - {fileID: 830230259}
   - {fileID: 8506728281407084035}
+  - {fileID: 1448168486}
+--- !u!1 &10877759
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 10877760}
+  - component: {fileID: 10877761}
+  m_Layer: 0
+  m_Name: Luz_Barraca_24
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &10877760
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10877759}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.303423, y: 2.2099998, z: -12.998888}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &10877761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10877759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1047881554}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 0
+  fogDensity: 0.012
+--- !u!23 &54530053 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 54530050}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &54530054 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 54530050}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &55785584
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 55785585}
+  - component: {fileID: 55785586}
+  m_Layer: 0
+  m_Name: Luz_Barraca_10
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &55785585
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 55785584}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -27.366577, y: 2.2099998, z: -13.00889}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &55785586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 55785584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.1
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 214027457}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 4
+  fogDensity: 0.012
+--- !u!23 &82633055 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 82633053}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &82633056 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 82633053}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &114824990
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 114824991}
+  - component: {fileID: 114824992}
+  m_Layer: 0
+  m_Name: Luz_Barraca_21
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &114824991
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114824990}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.826576, y: 2.2099998, z: -8.8088875}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114824992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114824990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.15
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1941287190}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 9216
+  fogDensity: 0.012
+--- !u!23 &120359859 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 120359857}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &120359860 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 120359857}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &122874986
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 122874987}
+  - component: {fileID: 122874988}
+  m_Layer: 0
+  m_Name: Luz_Barraca_04
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &122874987
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 122874986}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -42.35, y: 2.2100015, z: 28.08}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &122874988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 122874986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.1
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 724634540}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 16
+  fogDensity: 0.012
+--- !u!23 &128691511 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 128691509}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &128691512 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 128691509}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!23 &128968244 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 603829862963133637, guid: 175b8178d280896fdc7a1c3d349fee9f, type: 3}
+  m_PrefabInstance: {fileID: 128968242}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &128968245 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 20138815997074060, guid: 175b8178d280896fdc7a1c3d349fee9f, type: 3}
+  m_PrefabInstance: {fileID: 128968242}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &155098465
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 155098466}
+  - component: {fileID: 155098467}
+  m_Layer: 0
+  m_Name: Luz_Barraca_23
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &155098466
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155098465}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.303421, y: 2.2099998, z: -0.51888686}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &155098467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155098465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 259563285}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 0
+  fogDensity: 0.012
+--- !u!1 &164811297
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 164811298}
+  - component: {fileID: 164811299}
+  m_Layer: 0
+  m_Name: Luz_Barraca_16
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &164811298
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164811297}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -20.23658, y: 2.2099998, z: 3.7311127}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &164811299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164811297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.1
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 375041032}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 16
+  fogDensity: 0.012
+--- !u!1 &193559969
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 193559970}
+  - component: {fileID: 193559971}
+  m_Layer: 0
+  m_Name: Luz_Trailer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &193559970
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 193559969}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 17.169998, y: 2.0900002, z: -9.82}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2061685972}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &193559971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 193559969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: 
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 0
+  color: {r: 1, g: 0.72, b: 0.42, a: 1}
+  intensity: 0.4
+  range: 3
+  softness: 1
+  emitFrom: []
+  pattern: 0
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers: []
+  bulbsStayVisible: 0
+  rowBulbs: 0
+  litBulbs: -1
+  fogDensity: 0.012
+--- !u!23 &214027457 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 214027455}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &214027458 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 214027455}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!23 &259563285 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 259563283}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &259563286 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 259563283}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &288678167
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 288678168}
+  - component: {fileID: 288678169}
+  m_Layer: 0
+  m_Name: Luz_Barraca_05
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &288678168
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288678167}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -30.66, y: 2.2100015, z: 23.880001}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &288678169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288678167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.1
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1398350786}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 1
+  fogDensity: 0.012
+--- !u!23 &304538542 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 603829862963133637, guid: 175b8178d280896fdc7a1c3d349fee9f, type: 3}
+  m_PrefabInstance: {fileID: 304538540}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &304538543 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 20138815997074060, guid: 175b8178d280896fdc7a1c3d349fee9f, type: 3}
+  m_PrefabInstance: {fileID: 304538540}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &355697726
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 355697727}
+  - component: {fileID: 355697728}
+  m_Layer: 0
+  m_Name: Luz_Barraca_27
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &355697727
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355697726}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.7134209, y: 2.2099998, z: 13.751114}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &355697728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355697726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.1
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 367021208}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 8192
+  fogDensity: 0.012
+--- !u!23 &362376913 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 362376911}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &362376914 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 362376911}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!23 &367021208 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 367021206}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &367021209 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 367021206}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!23 &375041032 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 375041030}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &375041033 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 375041030}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &398412831
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 398412832}
+  - component: {fileID: 398412833}
+  m_Layer: 0
+  m_Name: Luz_Barraca_28
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &398412832
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 398412831}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.843422, y: 2.2099998, z: 7.6911154}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &398412833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 398412831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.15
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1417322376}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 640
+  fogDensity: 0.012
+--- !u!1 &515380712
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 515380713}
+  - component: {fileID: 515380714}
+  m_Layer: 0
+  m_Name: Luz_Barraca_26
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &515380713
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 515380712}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.6534185, y: 2.2099998, z: 7.6911144}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &515380714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 515380712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.1
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1579051158}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 512
+  fogDensity: 0.012
+--- !u!23 &591638166 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 591638163}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &591638167 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 591638163}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &597659885
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 597659886}
+  - component: {fileID: 597659887}
+  m_Layer: 0
+  m_Name: Luz_Barraca_07
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &597659886
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 597659885}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -27.366585, y: 2.2099998, z: -4.6988916}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &597659887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 597659885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1279423169}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 0
+  fogDensity: 0.012
+--- !u!23 &641307069 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 9063174217267413573, guid: b5452fa7af7ba9c8e16b90656dfb4fd8, type: 3}
+  m_PrefabInstance: {fileID: 641307067}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &641307070 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2756938347070672136, guid: b5452fa7af7ba9c8e16b90656dfb4fd8, type: 3}
+  m_PrefabInstance: {fileID: 641307067}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &694153860
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 694153861}
+  - component: {fileID: 694153862}
+  m_Layer: 0
+  m_Name: Luz_Barraca_12
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &694153861
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 694153860}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -20.23658, y: 2.2099998, z: -0.51888925}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &694153862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 694153860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.15
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 362376913}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 2560
+  fogDensity: 0.012
+--- !u!1 &697006329
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 697006330}
+  - component: {fileID: 697006331}
+  m_Layer: 0
+  m_Name: Luz_Barraca_20
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &697006330
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 697006329}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.826578, y: 2.2099998, z: -4.698888}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &697006331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 697006329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1581517428}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 0
+  fogDensity: 0.012
+--- !u!23 &724634540 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 603829862963133637, guid: 175b8178d280896fdc7a1c3d349fee9f, type: 3}
+  m_PrefabInstance: {fileID: 724634538}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &724634541 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 20138815997074060, guid: 175b8178d280896fdc7a1c3d349fee9f, type: 3}
+  m_PrefabInstance: {fileID: 724634538}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &746390844
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 746390845}
+  - component: {fileID: 746390846}
+  m_Layer: 0
+  m_Name: Luz_Barraca_14
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &746390845
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 746390844}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -20.236576, y: 2.2099998, z: -12.998892}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &746390846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 746390844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 591638166}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 0
+  fogDensity: 0.012
+--- !u!1 &772850480
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 772850481}
+  - component: {fileID: 772850482}
+  m_Layer: 0
+  m_Name: Luz_Barraca_09
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &772850481
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 772850480}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -27.366585, y: 2.2099998, z: 3.701111}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &772850482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 772850480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.15
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 54530053}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 2304
+  fogDensity: 0.012
+--- !u!1001 &886224248
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 51572202}
+    m_Modifications:
+    - target: {fileID: 1300848307986544941, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_Name
+      value: PF_Poste_04 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -18.84
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.004495248
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -4.96
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.00000005418604
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+--- !u!4 &886224249 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+  m_PrefabInstance: {fileID: 886224248}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &906194367
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 906194368}
+  - component: {fileID: 906194369}
+  m_Layer: 0
+  m_Name: Luz_Barraca_13
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &906194368
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 906194367}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -20.23658, y: 2.2099998, z: -4.7188888}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &906194369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 906194367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 2085348392}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 0
+  fogDensity: 0.012
+--- !u!1 &966114390
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 966114391}
+  - component: {fileID: 966114392}
+  m_Layer: 0
+  m_Name: Luz_Barraca_06
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &966114391
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 966114390}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -26.48, y: 2.2100015, z: 23.880001}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &966114392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 966114390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.15
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 641307069}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 40
+  fogDensity: 0.012
+--- !u!1 &1028301141
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1028301142}
+  - component: {fileID: 1028301143}
+  m_Layer: 0
+  m_Name: Luz_Barraca_18
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1028301142
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1028301141}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.826578, y: 2.2099998, z: -0.52888554}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1028301143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1028301141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1932756558}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 0
+  fogDensity: 0.012
+--- !u!23 &1047881554 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1047881551}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1047881555 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1047881551}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &1130028632
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1130028633}
+  - component: {fileID: 1130028634}
+  m_Layer: 0
+  m_Name: Luz_Barraca_33
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1130028633
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130028632}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 18.98, y: 2.2, z: 22.52}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1130028634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130028632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.1
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1994764671}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 4096
+  fogDensity: 0.012
+--- !u!1 &1146438890
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1146438891}
+  - component: {fileID: 1146438892}
+  m_Layer: 0
+  m_Name: Luz_Barraca_15
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1146438891
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146438890}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -20.23658, y: 2.2099998, z: -8.828883}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1146438892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146438890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.15
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1622805604}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 528
+  fogDensity: 0.012
+--- !u!1 &1189521246
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1189521247}
+  - component: {fileID: 1189521248}
+  m_Layer: 0
+  m_Name: Luz_Barraca_29
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1189521247
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189521246}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.9034233, y: 2.2099998, z: 13.751114}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1189521248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189521246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 82633055}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 0
+  fogDensity: 0.012
+--- !u!1 &1203999057
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1203999058}
+  - component: {fileID: 1203999059}
+  m_Layer: 0
+  m_Name: Luz_Barraca_11
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1203999058
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1203999057}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -27.366581, y: 2.2099998, z: -8.808891}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1203999059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1203999057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.1
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 128691511}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 256
+  fogDensity: 0.012
+--- !u!23 &1219701707 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1219701705}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1219701708 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1219701705}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!23 &1279423169 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1279423166}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1279423170 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1279423166}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &1291218141
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1291218142}
+  - component: {fileID: 1291218143}
+  m_Layer: 0
+  m_Name: Luz_Barraca_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1291218142
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1291218141}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -42.35, y: 2.2100015, z: 19.73}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1291218143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1291218141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.15
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1844516480}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 4608
+  fogDensity: 0.012
+--- !u!23 &1323629548 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1323629545}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1323629549 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1323629545}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!23 &1326847947 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 9063174217267413573, guid: b5452fa7af7ba9c8e16b90656dfb4fd8, type: 3}
+  m_PrefabInstance: {fileID: 1326847945}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1326847948 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2756938347070672136, guid: b5452fa7af7ba9c8e16b90656dfb4fd8, type: 3}
+  m_PrefabInstance: {fileID: 1326847945}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!23 &1360769787 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1360769785}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1360769788 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1360769785}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!23 &1385798818 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1385798815}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1385798819 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1385798815}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!23 &1398350786 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 9063174217267413573, guid: b5452fa7af7ba9c8e16b90656dfb4fd8, type: 3}
+  m_PrefabInstance: {fileID: 1398350784}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1398350787 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2756938347070672136, guid: b5452fa7af7ba9c8e16b90656dfb4fd8, type: 3}
+  m_PrefabInstance: {fileID: 1398350784}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &1406864227
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1406864228}
+  - component: {fileID: 1406864229}
+  m_Layer: 0
+  m_Name: Luz_Barraca_30
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1406864228
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1406864227}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 11.093423, y: 2.2099998, z: 13.751114}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1406864229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1406864227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.1
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 120359859}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 32
+  fogDensity: 0.012
+--- !u!1 &1411591484
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1411591485}
+  - component: {fileID: 1411591486}
+  m_Layer: 0
+  m_Name: Luz_Barraca_19
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1411591485
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1411591484}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.826576, y: 2.2099998, z: -13.008888}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1411591486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1411591484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.1
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1219701707}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 1024
+  fogDensity: 0.012
+--- !u!23 &1417322376 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1417322374}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1417322377 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1417322374}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &1448168482
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1448168486}
+  - component: {fileID: 1448168485}
+  - component: {fileID: 1448168484}
+  - component: {fileID: 1448168483}
+  m_Layer: 0
+  m_Name: Cylinder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!136 &1448168483
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448168482}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5000001
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!23 &1448168484
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448168482}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 22b04a03408846566ae271d6a3ff9ca3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1448168485
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448168482}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1448168486
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448168482}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -12.007, y: 3.165, z: 78.936}
+  m_LocalScale: {x: 0.4, y: 0.01, z: 0.4}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1475858171
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1475858172}
+  - component: {fileID: 1475858173}
+  m_Layer: 0
+  m_Name: Luz_Barraca_22
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1475858172
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1475858171}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.303421, y: 2.2099998, z: -4.7188864}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1475858173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1475858171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.1
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1360769787}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 8
+  fogDensity: 0.012
+--- !u!1 &1486167189
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1486167190}
+  - component: {fileID: 1486167191}
+  m_Layer: 0
+  m_Name: Luz_Barraca_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1486167190
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1486167189}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -42.35, y: 2.2100015, z: 23.93}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1486167191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1486167189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.1
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 128968244}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 4
+  fogDensity: 0.012
+--- !u!23 &1579051158 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1579051156}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1579051159 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1579051156}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!23 &1581517428 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1581517425}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1581517429 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1581517425}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1001 &1584298123
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 51572202}
+    m_Modifications:
+    - target: {fileID: 1300848307986544941, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_Name
+      value: PF_Poste_05 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -7.97
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.004495248
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 17.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+--- !u!4 &1584298124 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+  m_PrefabInstance: {fileID: 1584298123}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1622805604 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1622805601}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1622805605 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1622805601}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &1784517268
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1784517269}
+  - component: {fileID: 1784517270}
+  m_Layer: 0
+  m_Name: Iluminacao_Barracas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1784517269
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784517268}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2054946830}
+  - {fileID: 1291218142}
+  - {fileID: 1486167190}
+  - {fileID: 122874987}
+  - {fileID: 288678168}
+  - {fileID: 966114391}
+  - {fileID: 597659886}
+  - {fileID: 2014175141}
+  - {fileID: 772850481}
+  - {fileID: 55785585}
+  - {fileID: 1203999058}
+  - {fileID: 694153861}
+  - {fileID: 906194368}
+  - {fileID: 746390845}
+  - {fileID: 1146438891}
+  - {fileID: 164811298}
+  - {fileID: 2070683910}
+  - {fileID: 1028301142}
+  - {fileID: 1411591485}
+  - {fileID: 697006330}
+  - {fileID: 114824991}
+  - {fileID: 1475858172}
+  - {fileID: 155098466}
+  - {fileID: 10877760}
+  - {fileID: 1830264119}
+  - {fileID: 515380713}
+  - {fileID: 355697727}
+  - {fileID: 398412832}
+  - {fileID: 1189521247}
+  - {fileID: 1406864228}
+  - {fileID: 1949221891}
+  - {fileID: 1868028919}
+  - {fileID: 1130028633}
+  m_Father: {fileID: 1560166467}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1784517270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784517268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e8fa17dd0dfc9901aa125939e52a82b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.PoweredMachines
+  groupId: park
+  machines:
+  - {fileID: 304538543}
+  - {fileID: 1844516481}
+  - {fileID: 128968245}
+  - {fileID: 724634541}
+  - {fileID: 1398350787}
+  - {fileID: 641307070}
+  - {fileID: 1279423170}
+  - {fileID: 1323629549}
+  - {fileID: 54530054}
+  - {fileID: 214027458}
+  - {fileID: 128691512}
+  - {fileID: 362376914}
+  - {fileID: 2085348393}
+  - {fileID: 591638167}
+  - {fileID: 1622805605}
+  - {fileID: 375041033}
+  - {fileID: 1326847948}
+  - {fileID: 1932756559}
+  - {fileID: 1219701708}
+  - {fileID: 1581517429}
+  - {fileID: 1941287191}
+  - {fileID: 1360769788}
+  - {fileID: 259563286}
+  - {fileID: 1047881555}
+  - {fileID: 1385798819}
+  - {fileID: 1579051159}
+  - {fileID: 367021209}
+  - {fileID: 1417322377}
+  - {fileID: 82633056}
+  - {fileID: 120359860}
+  - {fileID: 1804207848}
+  - {fileID: 1843197844}
+  - {fileID: 1994764672}
+--- !u!23 &1804207847 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1804207845}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1804207848 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1804207845}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &1830264118
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1830264119}
+  - component: {fileID: 1830264120}
+  m_Layer: 0
+  m_Name: Luz_Barraca_25
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1830264119
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830264118}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.303423, y: 2.2099998, z: -8.828885}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1830264120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830264118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.15
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1385798818}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 640
+  fogDensity: 0.012
+--- !u!23 &1843197843 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 9063174217267413573, guid: b5452fa7af7ba9c8e16b90656dfb4fd8, type: 3}
+  m_PrefabInstance: {fileID: 1843197842}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1843197844 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2756938347070672136, guid: b5452fa7af7ba9c8e16b90656dfb4fd8, type: 3}
+  m_PrefabInstance: {fileID: 1843197842}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!23 &1844516480 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 603829862963133637, guid: 175b8178d280896fdc7a1c3d349fee9f, type: 3}
+  m_PrefabInstance: {fileID: 1844516478}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1844516481 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 20138815997074060, guid: 175b8178d280896fdc7a1c3d349fee9f, type: 3}
+  m_PrefabInstance: {fileID: 1844516478}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &1868028918
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1868028919}
+  - component: {fileID: 1868028920}
+  m_Layer: 0
+  m_Name: Luz_Barraca_32
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1868028919
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1868028918}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 18.98, y: 2.2, z: 18.34}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1868028920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1868028918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.15
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1843197843}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 768
+  fogDensity: 0.012
+--- !u!23 &1932756558 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1932756555}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1932756559 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1932756555}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!23 &1941287190 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1941287188}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1941287191 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 1941287188}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &1949221890
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1949221891}
+  - component: {fileID: 1949221892}
+  m_Layer: 0
+  m_Name: Luz_Barraca_31
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1949221891
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1949221890}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 11.113423, y: 2.2099998, z: 7.6911163}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1949221892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1949221890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.1
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1804207847}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 2
+  fogDensity: 0.012
+--- !u!23 &1994764671 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 9063174217267413573, guid: b5452fa7af7ba9c8e16b90656dfb4fd8, type: 3}
+  m_PrefabInstance: {fileID: 1994764670}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1994764672 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2756938347070672136, guid: b5452fa7af7ba9c8e16b90656dfb4fd8, type: 3}
+  m_PrefabInstance: {fileID: 1994764670}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
+--- !u!1 &2014175140
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2014175141}
+  - component: {fileID: 2014175142}
+  m_Layer: 0
+  m_Name: Luz_Barraca_08
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2014175141
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014175140}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -27.366585, y: 2.2099998, z: -0.5288877}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2014175142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014175140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1323629548}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 0
+  fogDensity: 0.012
+--- !u!1001 &2044841551
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 51572202}
+    m_Modifications:
+    - target: {fileID: 1300848307986544941, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_Name
+      value: PF_Poste_05 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -45.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.004495248
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 7.51
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+--- !u!4 &2044841552 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2688797836391594433, guid: 549f64317ea08ce438f9aff7a6a5a556, type: 3}
+  m_PrefabInstance: {fileID: 2044841551}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2054946829
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2054946830}
+  - component: {fileID: 2054946831}
+  m_Layer: 0
+  m_Name: Luz_Barraca_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2054946830
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2054946829}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -42.35, y: 2.2100015, z: 15.5199995}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2054946831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2054946829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0.15
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 304538542}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 528
+  fogDensity: 0.012
+--- !u!1 &2070683909
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2070683910}
+  - component: {fileID: 2070683911}
+  m_Layer: 0
+  m_Name: Luz_Barraca_17
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2070683910
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2070683909}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -22.279999, y: 2.2100015, z: 23.880001}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1784517269}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2070683911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2070683909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
+  from: {fileID: 0}
+  until: {fileID: 0}
+  powerGroup: park
+  brokenUntil: {fileID: 0}
+  brokenStyle: 0
+  brokenGap: {x: 1, y: 2.5}
+  brokenLevel: 0.3
+  brokenBulbLevel: 0.4
+  brokenMin: 0.3
+  brokenSpeed: 0.4
+  workingVariation: 0.12
+  workingSpeed: 0.6
+  flickerSeed: 0
+  decor: 0
+  ambient: 1
+  color: {r: 1, g: 0.72, b: 0.4, a: 1}
+  intensity: 0
+  range: 3.5
+  softness: 0
+  emitFrom: []
+  pattern: 3
+  blinkPeriod: 1
+  blinkOn: 0.5
+  sputterGap: {x: 1.2, y: 3.5}
+  renderers:
+  - {fileID: 1326847947}
+  bulbsStayVisible: 1
+  rowBulbs: 14
+  litBulbs: 0
+  fogDensity: 0.012
+--- !u!23 &2085348392 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7142986917631753169, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 2085348390}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2085348393 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8223106822761677688, guid: 39bd056584d6814a70363456e5b39794, type: 3}
+  m_PrefabInstance: {fileID: 2085348390}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9b1db95240388b3e6c70161ea2c24a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: HeyHeyThere.PSXCarnivalKit::HeyHeyThere.PSXCarnivalKit.Machine
