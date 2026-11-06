@@ -186,10 +186,10 @@ public class RadioMinigame : Minigame
             return;
         }
 
-        var hit = Pick(ray);
+        var hit = Pick(ray, out Vector3 hitPoint);
         var usable = hit != null && CanUse(hit) ? hit : null;
         SetHover(usable);
-        if (down && usable != null) BeginDrag(viewCamera, usable, ray, mp);
+        if (down && usable != null) BeginDrag(viewCamera, usable, ray, mp, hitPoint);
     }
 
     protected override void OnExitRequested()
@@ -204,15 +204,16 @@ public class RadioMinigame : Minigame
         }
     }
 
-    RadioPart Pick(Ray ray)
+    RadioPart Pick(Ray ray, out Vector3 point)
     {
         var hits = Physics.RaycastAll(ray, 5f, ~0, QueryTriggerInteraction.Ignore);
         System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
         foreach (var h in hits)
         {
             var p = h.collider.GetComponent<RadioPart>();
-            if (p != null) return p;
+            if (p != null) { point = h.point; return p; }
         }
+        point = default;
         return null;
     }
 
@@ -228,7 +229,8 @@ public class RadioMinigame : Minigame
     // Arrasto
     // =================================================================
 
-    void BeginDrag(Camera cam, RadioPart part, Ray ray, Vector2 mp)
+    /// <param name="hit">O ponto da peça que o jogador clicou: ele fica embaixo do cursor durante o arrasto.</param>
+    void BeginDrag(Camera cam, RadioPart part, Ray ray, Vector2 mp, Vector3 hit)
     {
         dragPart = part;
         switch (part.kind)
@@ -240,11 +242,12 @@ public class RadioMinigame : Minigame
             case RadioPart.Kind.Cover:
                 StopGlide(ref coverGlide);
                 drag = Drag.Cover;
-                if (coverOff) { dragPlaneY = DragHeight; GrabOffset(cover.transform, ray); }
+                if (coverOff) { dragPlaneY = DragHeight; GrabOffset(cover.transform, hit); }
                 else
                 {
-                    dragPlaneY = transform.InverseTransformPoint(cover.transform.position).y;
-                    if (PlanePoint(ray, dragPlaneY, out var p)) dragStart = p;
+                    // Puxa no plano do ponto clicado: a tampa anda junto com ele, 1:1.
+                    dragPlaneY = transform.InverseTransformPoint(hit).y;
+                    dragStart = hit;
                 }
                 break;
 
@@ -252,7 +255,7 @@ public class RadioMinigame : Minigame
                 StopGlide(ref batteriesGlide);
                 drag = Drag.Batteries;
                 dragPlaneY = DragHeight;
-                GrabOffset(batteries.transform, ray);
+                GrabOffset(batteries.transform, hit);
                 break;
 
             case RadioPart.Kind.Dial:
@@ -299,20 +302,17 @@ public class RadioMinigame : Minigame
 
     // ---------- Tampa ----------
 
-    /// <summary>Encaixe por pressao: a tampa acompanha o mouse com resistencia ate o puxao vencer, ai ela solta.</summary>
+    /// <summary>A tampa acompanha o mouse 1:1 desde o clique; depois de <see cref="OpenDistance"/> ela solta com um clique.</summary>
     void PullCover(Ray ray)
     {
         if (!PlanePoint(ray, dragPlaneY, out var p)) return;
         Vector3 delta = Flat(p - dragStart);
-        if (delta.magnitude < OpenDistance)
-        {
-            cover.transform.position = coverAnchor.position + Vector3.ClampMagnitude(delta * 0.5f, 0.03f);
-            return;
-        }
+        cover.transform.position = coverAnchor.position + delta;
+        if (delta.magnitude < OpenDistance) return;
         coverOff = true;
         cover.transform.SetParent(loose, true);   // nao gira junto com o radio
         dragPlaneY = DragHeight;
-        GrabOffset(cover.transform, ray);
+        GrabOffset(cover.transform, p);           // p: o ponto clicado, que andou junto com a tampa
         radioAudio.Click();
     }
 
@@ -430,15 +430,21 @@ public class RadioMinigame : Minigame
         return false;
     }
 
-    void GrabOffset(Transform t, Ray ray)
+    /// <summary>Guarda onde a peça foi pega (em coordenadas do minigame): esse ponto segue o cursor, sem salto.</summary>
+    void GrabOffset(Transform t, Vector3 grabbed)
     {
-        grabOffset = PlanePoint(ray, dragPlaneY, out var p) ? Flat(t.position - p) : Vector3.zero;
+        grabOffset = transform.InverseTransformPoint(t.position) - transform.InverseTransformPoint(grabbed);
     }
 
+    /// <summary>
+    /// A peça flutua com o centro em <see cref="dragPlaneY"/>. O ponto pego fica mais alto ou mais baixo que o centro;
+    /// o raio do cursor corta o plano da altura desse ponto, então ele fica embaixo do cursor com a câmera inclinada.
+    /// A peça sobe da mesa até a altura de arrasto aos poucos, pela suavização.
+    /// </summary>
     void FollowMouse(Transform t, Ray ray)
     {
-        if (!PlanePoint(ray, dragPlaneY, out var p)) return;
-        Vector3 local = transform.InverseTransformPoint(p + grabOffset);
+        if (!PlanePoint(ray, dragPlaneY - grabOffset.y, out var p)) return;
+        Vector3 local = transform.InverseTransformPoint(p) + grabOffset;
         local.x = Mathf.Clamp(local.x, -TableHalf.x, TableHalf.x);
         local.z = Mathf.Clamp(local.z, -TableHalf.y, TableHalf.y);
         local.y = dragPlaneY;

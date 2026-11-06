@@ -366,10 +366,10 @@ public class ZatanRepairMinigame : Minigame
             return;
         }
 
-        var hit = Pick(ray);
+        var hit = Pick(ray, out Vector3 hitPoint);
         var usable = hit != null && CanUse(hit) ? hit : null;
         SetHover(usable);
-        if (down && usable != null) BeginDrag(viewCamera, usable, ray, mp);
+        if (down && usable != null) BeginDrag(viewCamera, usable, ray, mp, hitPoint);
     }
 
     protected override void OnExitRequested()
@@ -388,15 +388,16 @@ public class ZatanRepairMinigame : Minigame
         FinishTapeNow();
     }
 
-    ZatanRepairPart Pick(Ray ray)
+    ZatanRepairPart Pick(Ray ray, out Vector3 point)
     {
         var hits = Physics.RaycastAll(ray, 5f, ~0, QueryTriggerInteraction.Ignore);
         System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
         foreach (var h in hits)
         {
             var p = h.collider.GetComponent<ZatanRepairPart>();
-            if (p != null && p.transform.IsChildOf(transform)) return p;
+            if (p != null && p.transform.IsChildOf(transform)) { point = h.point; return p; }
         }
+        point = default;
         return null;
     }
 
@@ -408,34 +409,35 @@ public class ZatanRepairMinigame : Minigame
         if (hovered != null) hovered.SetHighlight(true, hoverColor);
     }
 
-    void BeginDrag(Camera cam, ZatanRepairPart part, Ray ray, Vector2 mp)
+    /// <param name="hit">O ponto da peça que o jogador clicou: ele fica embaixo do cursor durante o arrasto.</param>
+    void BeginDrag(Camera cam, ZatanRepairPart part, Ray ray, Vector2 mp, Vector3 hit)
     {
         switch (part.kind)
         {
             case ZatanRepairPart.Kind.Cover:
                 StopGlide(ref coverGlide);
                 drag = Drag.Cover;
-                if (LocalPoint(ray, coverAnchor.localPosition.z, out var p)) dragStart = p;
+                dragStart = transform.InverseTransformPoint(hit);   // puxa no plano do ponto clicado: a tampa anda junto, 1:1
                 break;
 
             case ZatanRepairPart.Kind.Rag:
                 StopGlide(ref ragGlide);
                 drag = Drag.Rag;
                 scrubLevel = 0f;
-                GrabOffset(rag.transform, ray, RagZ);
+                GrabOffset(rag.transform, hit);
                 break;
 
             case ZatanRepairPart.Kind.Tape:
                 StopGlide(ref tapeGlide);
                 drag = Drag.Tape;
                 scrubLevel = 0f;
-                GrabOffset(tape.transform, ray, TapeZ);
+                GrabOffset(tape.transform, hit);
                 break;
 
             case ZatanRepairPart.Kind.Hose:
                 StopGlide(ref hoseGlide);
                 drag = Drag.Hose;
-                GrabOffset(hose.transform, ray, HoseZ);
+                GrabOffset(hose.transform, hit);
                 break;
 
             case ZatanRepairPart.Kind.Switch:
@@ -453,7 +455,7 @@ public class ZatanRepairMinigame : Minigame
                 else
                 {
                     drag = Drag.CrankCarry;
-                    GrabOffset(crank.transform, ray, CrankZ);
+                    GrabOffset(crank.transform, hit);
                 }
                 break;
         }
@@ -469,19 +471,16 @@ public class ZatanRepairMinigame : Minigame
         if (!held) ReleaseCover(instant: false);
     }
 
-    /// <summary>Encaixe por pressao: a tampa acompanha o mouse com resistencia ate o puxao vencer, ai ela solta.</summary>
+    /// <summary>A tampa acompanha o mouse 1:1 desde o clique; depois de <see cref="coverOpenDistance"/> ela solta com um clique.</summary>
     void PullCover(Ray ray)
     {
-        if (!LocalPoint(ray, coverAnchor.localPosition.z, out var p)) return;
+        if (!LocalPoint(ray, dragStart.z, out var p)) return;
         Vector3 delta = p - dragStart;
         delta.z = 0f;
-        if (delta.magnitude < coverOpenDistance)
-        {
-            cover.transform.localPosition = coverAnchor.localPosition + Vector3.ClampMagnitude(delta * 0.5f, 0.02f);
-            return;
-        }
+        cover.transform.localPosition = coverAnchor.localPosition + delta;
+        if (delta.magnitude < coverOpenDistance) return;
         coverOff = true;
-        GrabOffset(cover.transform, ray, CoverLiftZ);
+        GrabOffset(cover.transform, transform.TransformPoint(p));   // p: o ponto clicado, que andou junto com a tampa
         if (repairAudio != null) repairAudio.Click();
     }
 
@@ -505,7 +504,7 @@ public class ZatanRepairMinigame : Minigame
     void UpdateRag(Ray ray, bool held)
     {
         scrubLevel = 0f;
-        if (LocalPoint(ray, RagZ, out var p))
+        if (LocalPoint(ray, RagZ - grabOffset.z, out var p))
         {
             Vector3 want = p + grabOffset;
             want.z = RagZ;
@@ -559,7 +558,7 @@ public class ZatanRepairMinigame : Minigame
     void UpdateTape(Ray ray, bool held)
     {
         scrubLevel = 0f;
-        if (LocalPoint(ray, TapeZ, out var p))
+        if (LocalPoint(ray, TapeZ - grabOffset.z, out var p))
         {
             Vector3 want = p + grabOffset;
             want.z = TapeZ;
@@ -887,12 +886,16 @@ public class ZatanRepairMinigame : Minigame
         return false;
     }
 
-    void GrabOffset(Transform t, Ray ray, float planeZ)
-        => grabOffset = LocalPoint(ray, planeZ, out var p) ? t.localPosition - p : Vector3.zero;
+    /// <summary>Guarda onde a peça foi pega (em coordenadas do painel): esse ponto segue o cursor, sem salto.</summary>
+    void GrabOffset(Transform t, Vector3 grabbed) => grabOffset = t.localPosition - transform.InverseTransformPoint(grabbed);
 
+    /// <summary>
+    /// A peça flutua com o centro no plano <paramref name="planeZ"/>; o raio do cursor corta o plano da altura do ponto
+    /// pego, então ele fica embaixo do cursor. A peça sai do painel até essa altura aos poucos, pela suavização.
+    /// </summary>
     void FollowMouse(Transform t, Ray ray, float planeZ)
     {
-        if (!LocalPoint(ray, planeZ, out var p)) return;
+        if (!LocalPoint(ray, planeZ - grabOffset.z, out var p)) return;
         Vector3 target = p + grabOffset;
         target.z = planeZ;
         target.x = Mathf.Clamp(target.x, -0.6f, 0.6f);

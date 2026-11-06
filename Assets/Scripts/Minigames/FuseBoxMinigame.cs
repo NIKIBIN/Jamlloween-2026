@@ -262,8 +262,9 @@ public class FuseBoxMinigame : Minigame
         local.x = Mathf.Clamp(local.x, -0.45f, 0.45f);
         local.y = Mathf.Clamp(local.y, -0.45f, 0.4f);
         var t = spareFuse.transform;
-        t.position = Vector3.Lerp(t.position, transform.TransformPoint(local), 20f * Time.deltaTime);
-        t.rotation = Quaternion.Slerp(t.rotation, transform.rotation, 12f * Time.deltaTime);
+        // Suavização que não depende do FPS (com 20 * deltaTime, o fusível ficava "mole" com o jogo lento).
+        t.position = Vector3.Lerp(t.position, transform.TransformPoint(local), 1f - Mathf.Exp(-30f * Time.deltaTime));
+        t.rotation = Quaternion.Slerp(t.rotation, transform.rotation, 1f - Mathf.Exp(-12f * Time.deltaTime));
     }
 
     void DropSpare(bool instant = false)
