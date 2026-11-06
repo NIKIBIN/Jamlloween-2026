@@ -1,6 +1,7 @@
 # Texturas do RadioMinigame no estilo do atlas do PSX Carnival Kit.
 # Coordenadas tiradas do prefab: corpo 0.09 x 0.26 m (x, z), dial em (0, 0.012), escala 88-108 MHz em 270 graus
 # a partir de baixo-esquerda no sentido horario (RadioMinigame.ApplyDial), raio 0.0297 m.
+# A marca vermelha fica na frequencia do bilhete: RADIO_FREQ no ambiente (padrao 97.3, o correctFrequency do RadioMinigame).
 import math, random, sys, os
 from PIL import Image
 sys.path.insert(0, os.path.dirname(__file__))
@@ -53,6 +54,15 @@ for f in range(88, 109):
         r = r0 + (r1 - r0) * k / 7
         x, y = int(round(cx + math.sin(a) * r)), int(round(cy - math.cos(a) * r))
         if 0 <= x < W and 0 <= y < H: p[x, y] = INK
+# marca vermelha na frequencia do bilhete (RadioMinigame.correctFrequency), um pouco mais longa que as outras
+TARGET = float(os.environ.get("RADIO_FREQ", "97.3"))
+a = math.radians((TARGET - 88) / 20 * 270 - 135)
+r0, r1 = 0.0255 * pxm, 0.0345 * pxm
+for k in range(10):
+    r = r0 + (r1 - r0) * k / 9
+    x, y = int(round(cx + math.sin(a) * r)), int(round(cy - math.cos(a) * r))
+    for dx in (0, 1):
+        if 0 <= x + dx < W and 0 <= y < H: p[x + dx, y] = (196, 32, 26)
 for label, (x, z) in {"90": (-0.037, 0.008), "95": (-0.025, 0.042), "100": (0.018, 0.047), "105": (0.039, -0.008)}.items():
     w_ = width(label); x0 = int(round(U(x) - w_ / 2)); x0 = max(1, min(W - w_ - 1, x0))
     text(p, label, x0, int(round(V(z) - 2)), INK, 1, (W, H))
