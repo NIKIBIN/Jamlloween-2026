@@ -6167,6 +6167,7 @@ MonoBehaviour:
   - {fileID: 154041011}
   colliders:
   - {fileID: 184792706}
+  startDormant: 0
 --- !u!136 &184792706
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -6236,6 +6237,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 9e094ea8ad5879b40a0e23abecebea98, type: 3}
   - {fileID: 8300000, guid: 96ab0c12038dbbb4386f6ca9d6bd13b2, type: 3}
   stepLength: 1.4
+  runStepLength: 0
+  walkRunSpeed: {x: 2.3, y: 7.4}
   heavyFromTension: 0.6
 --- !u!82 &184792709
 AudioSource:
@@ -6368,6 +6371,8 @@ MonoBehaviour:
   loopFadeSpeed: 2.5
   voiceIntervalMin: 15
   voiceIntervalMax: 35
+  playReappearSound: 1
+  playVanishSound: 1
 --- !u!82 &184792711
 AudioSource:
   m_ObjectHideFlags: 0
@@ -6782,6 +6787,7 @@ MonoBehaviour:
   beamIgnored:
   - {fileID: 184792704}
   - {fileID: 1575788518}
+  aimDrop: 0.35
 --- !u!114 &184792716
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6800,11 +6806,15 @@ MonoBehaviour:
   mouth: {fileID: 1851294337}
   jaw: {fileID: 316081594}
   throat: {fileID: 1130426452}
+  faceBone: {fileID: 0}
   oneShotSource: {fileID: 1038003919}
   shakeSource: {fileID: 1038003918}
   grabClip: {fileID: 8300000, guid: 15876b4e3af54b64c93438e9afca2cfa, type: 3}
   shakeLoop: {fileID: 8300000, guid: 0ad7115d159e4984598a88932a0295b5, type: 3}
   biteClip: {fileID: 8300000, guid: 6a3628f8a68030f40995c40528b38bf9, type: 3}
+  singleJumpscareClip: 0
+  jumpscareClip: {fileID: 0}
+  jumpscareStartTime: 0.25
   onFinished:
     m_PersistentCalls:
       m_Calls:
@@ -9498,6 +9508,7 @@ MonoBehaviour:
   steps: 1
   takes: 
   keep: 0
+  locked: 0
   item: 
   code: 
   lit: []
@@ -9914,6 +9925,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 343163c3a68fac86f820d08c1558f096, type: 2}
   - {fileID: 11400000, guid: 96069d3e7cf5dd6a5ac85fb99d7d318e, type: 2}
   - {fileID: 11400000, guid: b223b36ce232d846bbc290acdc18d056, type: 2}
+  waitForBegin: 0
   tasks:
   - id: flashlight
     text: Pegar a lanterna
@@ -9967,6 +9979,7 @@ MonoBehaviour:
   - Tenho que voltar aqui depois.
   blockedTextSeconds: 2.2
   debugKey: 97
+  disableWhileDebug: []
 --- !u!114 &274890981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9982,6 +9995,7 @@ MonoBehaviour:
   key: 3
   altKey: 17
   raiseSeconds: 0.25
+  viewCamera: {fileID: 0}
   visibleFraction: 0.3
   anchorX: 0.2
   distance: 0.45
@@ -10009,6 +10023,16 @@ MonoBehaviour:
   baseSeconds: 0.75
   minSeconds: 2.5
   gapSeconds: 0.5
+  staticLoop: {fileID: 8300000, guid: 38d0744f6ae647c89b90f4f812c709cc, type: 3}
+  bossVoice: {fileID: 8300000, guid: d8fee1aaa018bde7f8454c3fde201787, type: 3}
+  keyClick: {fileID: 8300000, guid: 9e8ee452b9eef378f96ba865900bc16a, type: 3}
+  staticVolume: 0.55
+  staticBedVolume: 0.12
+  voiceVolume: 0.7
+  clickVolume: 0.6
+  burstSeconds: 0.35
+  tailSeconds: 0.3
+  voiceFadeSeconds: 0.15
 --- !u!1 &275883540 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2675635985983543851, guid: ccc48bf37b89041966c382ee667c276d, type: 3}
@@ -15923,12 +15947,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CarouselAudio
   creakClip: {fileID: 0}
   musicClip: {fileID: 0}
+  clickClip: {fileID: 0}
+  strainClip: {fileID: 0}
+  snapClip: {fileID: 0}
+  humClip: {fileID: 0}
   maxDistance: 30
   sfxVolume: 0.9
   creakVolume: 0.35
   humVolume: 0.35
   musicVolume: 0.7
   musicPitchWobble: 0.1
+  musicSource: {fileID: 0}
 --- !u!4 &432158662
 Transform:
   m_ObjectHideFlags: 0
@@ -27189,6 +27218,7 @@ MonoBehaviour:
   completionEvent: FuseBoxFixed
   blockedText: 
   disableCollidersWhenInactive: 0
+  waitForInspectClose: 0
   onForceCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -29340,6 +29370,7 @@ MonoBehaviour:
   completionEvent: GasCanTaken
   blockedText: 
   disableCollidersWhenInactive: 0
+  waitForInspectClose: 0
   onForceCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -39644,6 +39675,7 @@ MonoBehaviour:
   completionEvent: FlashlightTaken
   blockedText: 
   disableCollidersWhenInactive: 0
+  waitForInspectClose: 0
   onForceCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -41760,6 +41792,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MinigameFlashlightLink
   flashlight: {fileID: 546246710}
   blockedPrompt: Precisa da lanterna
+  withoutFlashlight: []
 --- !u!4 &1126976712
 Transform:
   m_ObjectHideFlags: 0
@@ -47453,6 +47486,7 @@ MonoBehaviour:
   completionEvent: FuseTaken
   blockedText: 
   disableCollidersWhenInactive: 1
+  waitForInspectClose: 0
   onForceCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -47848,6 +47882,7 @@ MonoBehaviour:
   completionEvent: ZatanFixed
   blockedText: 
   disableCollidersWhenInactive: 0
+  waitForInspectClose: 0
   onForceCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -55983,6 +56018,7 @@ MonoBehaviour:
   completionEvent: RadioFixed
   blockedText: 
   disableCollidersWhenInactive: 0
+  waitForInspectClose: 0
   onForceCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -57262,7 +57298,8 @@ MonoBehaviour:
   interactMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  promptLabel: {fileID: 614035275}
+  promptText: Interagir
+  promptHeight: 0.575
 --- !u!114 &1575788520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61585,6 +61622,7 @@ MonoBehaviour:
   completionEvent: HorseHeadTaken
   blockedText: 
   disableCollidersWhenInactive: 0
+  waitForInspectClose: 0
   onForceCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -67885,6 +67923,7 @@ MonoBehaviour:
   completionEvent: HorseHeadFixed
   blockedText: 
   disableCollidersWhenInactive: 0
+  waitForInspectClose: 0
   onForceCompleted:
     m_PersistentCalls:
       m_Calls: []

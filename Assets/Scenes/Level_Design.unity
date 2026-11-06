@@ -4055,10 +4055,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.RadioDialogue
   source: {fileID: 0}
-  secondsPerCharacter: 0.06
-  baseSeconds: 0.75
-  minSeconds: 2.5
+  secondsPerCharacter: 0.085
+  baseSeconds: 1.5
+  minSeconds: 4
   gapSeconds: 0.5
+  staticLoop: {fileID: 8300000, guid: 38d0744f6ae647c89b90f4f812c709cc, type: 3}
+  bossVoice: {fileID: 8300000, guid: d8fee1aaa018bde7f8454c3fde201787, type: 3}
+  keyClick: {fileID: 8300000, guid: 9e8ee452b9eef378f96ba865900bc16a, type: 3}
+  staticVolume: 0.55
+  staticBedVolume: 0.12
+  voiceVolume: 0.7
+  clickVolume: 0.6
+  burstSeconds: 0.35
+  tailSeconds: 0.3
+  voiceFadeSeconds: 0.15
 --- !u!114 &81572223
 MonoBehaviour:
   m_ObjectHideFlags: 0
