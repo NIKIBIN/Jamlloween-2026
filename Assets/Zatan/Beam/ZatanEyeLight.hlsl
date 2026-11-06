@@ -3,18 +3,15 @@
 
 #include "Assets/Flashlight/Shaders/FlashlightFog.hlsl"
 #include "Assets/Scripts/Minigames/Shaders/MinigameWorkLamp.hlsl"
+#include "Assets/Zatan/Beam/ZatanEyeOcclusion.hlsl"
 
 // The light of Zatan's eyes on the scenery, set globally by ZatanEyeLights. Most of the scene is unlit, so real spot lights can't
 // show on it. Only evaluated under the radial fog: scenes without it never reach this code.
 float _ZatanEyeOn;
 float _ZatanEyeCosInner;
-float _ZatanEyeClipMargin;
 float _ZatanEyeFogCut;
 float _ZatanEyeMinAlbedo;
-float4 _ZatanEyePosition; // xyz: origin, w: range
-float4 _ZatanEyeDirection; // xyz: forward, w: cos of the outer angle
 float4 _ZatanEyeColor; // rgb: colour x intensity
-float4 _ZatanEyeClipPlane; // xyz: normal toward the eyes, w: plane offset. Zero normal and w = 1: nothing blocks
 
 // The catch sequence, set globally by ZatanCatchSequence. 0 in every other moment and scene: nothing changes.
 float _ZatanBlackout;
@@ -42,7 +39,8 @@ float3 ZatanEyeLight(float3 albedo, float3 positionWS)
     reach = 1.0 - reach * reach;
     reach *= reach;
 
-    float blocked = saturate((dot(_ZatanEyeClipPlane.xyz, positionWS) + _ZatanEyeClipPlane.w + _ZatanEyeClipMargin) / _ZatanEyeClipMargin);
+    // Past the obstacle in this direction the light fades out over the margin.
+    float blocked = ZatanEyeUnblocked(positionWS);
 
     // Face normal from the position: the kit's meshes bake their shading, and this stops the far side of a wall from lighting up.
     float3 normalWS = normalize(cross(ddy(positionWS), ddx(positionWS)));

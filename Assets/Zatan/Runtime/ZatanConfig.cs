@@ -179,13 +179,7 @@ namespace Jamlloween.Zatan
         [Header("Luz dos olhos: obstáculos")]
         [Tooltip("O que bloqueia o feixe.")]
         public LayerMask beamBlockers = ~0;
-        [Tooltip("Raios ao redor do raio central de cada olho.")]
-        [Min(1)] public int beamFanRays = 6;
-        [Range(0f, 1f), Tooltip("Onde ficam os raios ao redor: 0 = no eixo, 1 = na borda do cone.")]
-        public float beamFanSpread = 0.7f;
-        [Range(0.1f, 1f), Tooltip("Fração dos raios que precisa bater para encurtar o feixe. Assim, um poste fino não corta o cone inteiro.")]
-        public float beamBlockFraction = 0.4f;
-        [Range(0f, 1f), Tooltip("Superfície com normal.y acima disso é chão: ela já esconde o cone e não encurta o feixe.")]
+        [Range(0f, 1f), Tooltip("Superfície com normal.y acima disso é chão: ela já esconde o cone e não bloqueia a luz.")]
         public float beamFloorNormalY = 0.7f;
         [Tooltip("Segundos entre as medições.")]
         public float beamProbeInterval = 0.05f;
@@ -195,17 +189,9 @@ namespace Jamlloween.Zatan
         public float beamGrowSpeed = 12f;
         public float beamMinLength = 0.3f;
 
-        [Header("Luz dos olhos: paredes")]
-        [Tooltip("Raios horizontais que procuram a parede à frente, mesmo com o feixe apontado para o chão.")]
-        [Min(2)] public int beamWallRays = 5;
-        [Tooltip("Graus entre os raios das pontas.")]
-        public float beamWallSpread = 26f;
-        [Tooltip("Metros abaixo dos olhos de onde saem os raios.")]
-        public float beamWallProbeDrop = 0.7f;
-        [Min(1), Tooltip("Raios que precisam bater para a parede cortar a luz. Assim, um poste fino não corta.")]
-        public int beamWallMinHits = 2;
-        [Tooltip("Metros atrás da parede em que a luz termina de sumir.")]
-        public float beamWallClipMargin = 0.5f;
+        [Header("Luz dos olhos: sombra dos obstáculos")]
+        [Tooltip("Metros atrás do obstáculo em que a luz no cenário termina de sumir. Maior = borda da sombra mais suave.")]
+        [Min(0.05f)] public float beamWallClipMargin = 1f;
 
         [Header("Captura: tempos (segundos)")]
         public float scareGrabTime = 0.25f;

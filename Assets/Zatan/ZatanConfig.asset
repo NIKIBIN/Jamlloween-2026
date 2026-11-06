@@ -73,10 +73,10 @@ MonoBehaviour:
   beamTransitionTime: 0.35
   beamIdlePitch: 23
   beamChasePitch: 1
-  beamLength: 16
+  beamLength: 32
   beamConeAngle: 22
   beamInnerConeAngle: 12
-  beamChaseLength: 24
+  beamChaseLength: 40
   beamChaseConeAngle: 32
   beamChaseInnerConeAngle: 18
   beamSurfaceIntensity: 5
@@ -87,19 +87,12 @@ MonoBehaviour:
   beamBlockers:
     serializedVersion: 2
     m_Bits: 4294967295
-  beamFanRays: 6
-  beamFanSpread: 0.7
-  beamBlockFraction: 0.4
   beamFloorNormalY: 0.7
   beamProbeInterval: 0.05
   beamShrinkSpeed: 80
   beamGrowSpeed: 12
   beamMinLength: 0.3
-  beamWallRays: 5
-  beamWallSpread: 26
-  beamWallProbeDrop: 0.7
-  beamWallMinHits: 2
-  beamWallClipMargin: 0.5
+  beamWallClipMargin: 1
   scareGrabTime: 0.25
   scareShakeTime: 1
   scareBiteTime: 0.5

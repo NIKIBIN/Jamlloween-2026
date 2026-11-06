@@ -16,8 +16,15 @@ namespace Jamlloween.Zatan
         static readonly int LightPositionId =Shader.PropertyToID("_ZatanEyePosition");
         static readonly int LightDirectionId = Shader.PropertyToID("_ZatanEyeDirection");
         static readonly int LightColorId = Shader.PropertyToID("_ZatanEyeColor");
-        static readonly int LightClipPlaneId = Shader.PropertyToID("_ZatanEyeClipPlane");
-        static readonly Vector4 NoClip = new Vector4(0f, 0f, 0f, 1f);
+        static readonly int LightRightId = Shader.PropertyToID("_ZatanEyeRight");
+        static readonly int LightUpId = Shader.PropertyToID("_ZatanEyeUp");
+        static readonly int LightOcclusionId = Shader.PropertyToID("_ZatanEyeOcclusion");
+
+        // The scenery light's own "shadow map": the distance to the first obstacle along a few directions of the cone, the axis
+        // and two rings around it. Must match ZATAN_EYE_RING_RAYS and the ring radii in ZatanEyeLight.hlsl.
+        public const int OcclusionRingRays = 12;
+        static readonly float[] OcclusionRings = { 0.5f, 1f };
+        public const int OcclusionSamples = 1 + 12 * 2;
 
         [SerializeField] ZatanConfig config;
         [SerializeField] ZatanBehaviourBrain brain;
@@ -26,11 +33,12 @@ namespace Jamlloween.Zatan
         [SerializeField] Renderer[] eyes;
         [Tooltip("Nunca bloqueiam o feixe: o próprio Zatan e o jogador.")]
         [SerializeField] Transform[] beamIgnored;
+        [Tooltip("Mirando no jogador (AimAt), o feixe aponta este tanto abaixo da câmera dele (m): ilumina o jogador sem ir só no olho.")]
+        [SerializeField, Min(0f)] float aimDrop = 0.35f;
 
         public Color CurrentColor { get; private set; }
         public float CurrentPitch { get; private set; }
         public bool IsLit { get; private set; } = true;
-        public Vector4 WallPlane { get; private set; } = NoClip;
 
         public float BeamLengthOf(int eye) => lengths[eye];
 
@@ -38,8 +46,23 @@ namespace Jamlloween.Zatan
         MaterialPropertyBlock eyeBlock, volumeBlock;
         Color huntColor;
         float huntBlend;
-        float[] lengths, targetLengths, probeDistances;
+        float[] lengths, targetLengths;
+        readonly float[] occlusion = new float[OcclusionSamples], targetOcclusion = new float[OcclusionSamples];
         float probeTimer, coneSlope, cosOuter, cosInner, maxLength;
+        Transform aimTarget;
+        Vector3 aimPoint;
+        float aimBlend;
+
+        /// <summary>The beams turn from their pitch to point at this target (the player's camera) until StopAim.</summary>
+        public void AimAt(Transform target)
+        {
+            if (target == null) throw new System.ArgumentNullException(nameof(target));
+            aimTarget = target;
+            aimPoint = target.position + Vector3.down * aimDrop;
+        }
+
+        /// <summary>Back to the state's own pitch, blending over the beam transition time.</summary>
+        public void StopAim() => aimTarget = null;
 
         void Awake()
         {
@@ -56,9 +79,9 @@ namespace Jamlloween.Zatan
             SetShape(0f);
             lengths = new float[pivots.Length];
             targetLengths = new float[pivots.Length];
-            probeDistances = new float[config.beamFanRays + 1];
 
             for (int i = 0; i < lengths.Length; i++) SetLength(i, config.beamLength);
+            for (int i = 0; i < OcclusionSamples; i++) occlusion[i] = targetOcclusion[i] = maxLength;
         }
 
         void OnEnable()
@@ -94,8 +117,23 @@ namespace Jamlloween.Zatan
 
             float step = Time.deltaTime / config.beamTransitionTime;
             Apply(Mathf.MoveTowards(huntBlend, hunting ? 1f : 0f, step));
+            ApplyAim(step);
             UpdateLengths();
             PublishLight();
+        }
+
+        /// <summary>Over the pitch Apply just set: turn the pivots toward the aim point, blended in and out.</summary>
+        void ApplyAim(float step)
+        {
+            if (aimTarget != null) aimPoint = aimTarget.position + Vector3.down * aimDrop;
+            aimBlend = Mathf.MoveTowards(aimBlend, aimTarget != null ? 1f : 0f, step);
+            if (aimBlend <= 0f) return;
+            foreach (Transform p in pivots)
+            {
+                Vector3 to = aimPoint - p.position;
+                if (to.sqrMagnitude < 0.0001f) continue;
+                p.rotation = Quaternion.Slerp(p.rotation, Quaternion.LookRotation(to, Vector3.up), aimBlend);
+            }
         }
 
         void OnStateChanged(ZatanBehaviourState state)
@@ -128,102 +166,81 @@ namespace Jamlloween.Zatan
             if (probeTimer <= 0f)
             {
                 probeTimer = config.beamProbeInterval;
-                WallPlane = ProbeWall();
-                for (int i = 0; i < pivots.Length; i++) targetLengths[i] = ClampToWall(pivots[i], ProbeLength(pivots[i]));
+                ProbeOcclusion();
+                float reach = ConeReach();
+                for (int i = 0; i < pivots.Length; i++) targetLengths[i] = reach;
             }
             for (int i = 0; i < lengths.Length; i++)
             {
                 float speed = targetLengths[i] < lengths[i] ? config.beamShrinkSpeed : config.beamGrowSpeed;
                 SetLength(i, Mathf.MoveTowards(lengths[i], targetLengths[i], speed * Time.deltaTime));
             }
+            for (int i = 0; i < OcclusionSamples; i++)
+            {
+                float speed = targetOcclusion[i] < occlusion[i] ? config.beamShrinkSpeed : config.beamGrowSpeed;
+                occlusion[i] = Mathf.MoveTowards(occlusion[i], targetOcclusion[i], speed * Time.deltaTime);
+            }
         }
 
         void SnapLengths()
         {
             probeTimer = config.beamProbeInterval;
-            WallPlane = ProbeWall();
+            ProbeOcclusion();
+            System.Array.Copy(targetOcclusion, occlusion, OcclusionSamples);
+            float reach = ConeReach();
             for (int i = 0; i < pivots.Length; i++)
             {
-                targetLengths[i] = ClampToWall(pivots[i], ProbeLength(pivots[i]));
-                SetLength(i, targetLengths[i]);
+                targetLengths[i] = reach;
+                SetLength(i, reach);
             }
-        }
-
-        /// <summary>Aimed at the ground, the beam's own rays stop at the floor: the wall plane still ends the visible cone.</summary>
-        float ClampToWall(Transform pivot, float length)
-        {
-            Vector3 normal = new Vector3(WallPlane.x, WallPlane.y, WallPlane.z);
-            float approach = Vector3.Dot(normal, pivot.forward);
-            if (approach >= -0.01f) return length;
-            float toWall = -(Vector3.Dot(normal, pivot.position) + WallPlane.w) / approach;
-            return Mathf.Max(Mathf.Min(length, toWall), config.beamMinLength);
-        }
-
-        /// <summary>Where the beam ends: the distance at which enough of the fan is blocked, so a thin pole doesn't cut it.</summary>
-        float ProbeLength(Transform pivot)
-        {
-            Vector3 origin = pivot.position, forward = pivot.forward;
-            probeDistances[0] = BlockDistance(origin, forward);
-            float offset = coneSlope * config.beamFanSpread;
-            for (int r = 0; r < config.beamFanRays; r++)
-            {
-                float angle = r * Mathf.PI * 2f / config.beamFanRays;
-                Vector3 around = pivot.right * Mathf.Cos(angle) + pivot.up * Mathf.Sin(angle);
-                probeDistances[r + 1] = BlockDistance(origin, (forward + around * offset).normalized);
-            }
-            System.Array.Sort(probeDistances);
-            int index = Mathf.Clamp(Mathf.CeilToInt(probeDistances.Length * config.beamBlockFraction) - 1, 0, probeDistances.Length - 1);
-            return Mathf.Max(probeDistances[index], config.beamMinLength);
-        }
-
-        float BlockDistance(Vector3 origin, Vector3 direction)
-        {
-            bool found = TryNearestHit(origin, direction, out RaycastHit nearest);
-            if (!found || nearest.normal.y > config.beamFloorNormalY) return maxLength;
-            return nearest.distance;
         }
 
         /// <summary>
-        /// The wall ahead, as a plane the light stops at. No shadow pass exists here, and aimed at the ground the beam's own rays
-        /// reach the floor first, so these rays run level and skip it.
+        /// The visible cone reaches as far as its longest clear ray. The beam shader fades each part of it behind whatever blocks
+        /// that direction, so the cone is only cut where something is really in the way.
         /// </summary>
-        Vector4 ProbeWall()
+        float ConeReach()
         {
-            Vector3 origin = EyeCentre() + Vector3.down * config.beamWallProbeDrop;
-            Vector3 forward = transform.forward;
-            int blocked = 0;
-            float nearestDistance = float.PositiveInfinity;
-            Vector3 nearestPoint = Vector3.zero, nearestNormal = Vector3.zero;
-
-            for (int r = 0; r < config.beamWallRays; r++)
-            {
-                float yaw = Mathf.Lerp(-0.5f, 0.5f, r / (config.beamWallRays - 1f)) * config.beamWallSpread;
-                Vector3 direction = Quaternion.AngleAxis(yaw, Vector3.up) * forward;
-                if (!TryNearestHit(origin, direction, out RaycastHit hit) || Mathf.Abs(hit.normal.y) > config.beamFloorNormalY) continue;
-                blocked++;
-                if (hit.distance >= nearestDistance) continue;
-                nearestDistance = hit.distance;
-                nearestPoint = hit.point;
-                // Upright, or a slanted face would tilt the plane across the floor.
-                nearestNormal = new Vector3(hit.normal.x, 0f, hit.normal.z).normalized;
-            }
-
-            if (blocked < config.beamWallMinHits) return NoClip;
-            return new Vector4(nearestNormal.x, nearestNormal.y, nearestNormal.z, -Vector3.Dot(nearestNormal, nearestPoint));
+            float longest = 0f;
+            foreach (float d in targetOcclusion) longest = Mathf.Max(longest, d);
+            return Mathf.Clamp(longest + config.beamWallClipMargin, config.beamMinLength, maxLength);
         }
 
-        bool TryNearestHit(Vector3 origin, Vector3 direction, out RaycastHit nearest)
+        /// <summary>
+        /// Distance to the first obstacle along the axis of the scenery light and two rings around it. The shader blends these, so
+        /// the light ends behind the obstacle that is really in the way, softly, instead of along a straight cut.
+        /// </summary>
+        void ProbeOcclusion()
+        {
+            Vector3 origin = EyeCentre();
+            Transform basis = pivots[0];
+            targetOcclusion[0] = BlockDistance(origin, basis.forward);
+            for (int ring = 0; ring < OcclusionRings.Length; ring++)
+            {
+                float offset = coneSlope * OcclusionRings[ring];
+                for (int r = 0; r < OcclusionRingRays; r++)
+                {
+                    float angle = r * Mathf.PI * 2f / OcclusionRingRays;
+                    Vector3 around = basis.right * Mathf.Cos(angle) + basis.up * Mathf.Sin(angle);
+                    targetOcclusion[1 + ring * OcclusionRingRays + r] = BlockDistance(origin, (basis.forward + around * offset).normalized);
+                }
+            }
+        }
+
+        /// <summary>
+        /// The nearest obstacle along the ray, or the full range. Floors don't count: the floor under the beam is what it lights,
+        /// and nothing past the point where a ray meets the ground can be seen anyway.
+        /// </summary>
+        float BlockDistance(Vector3 origin, Vector3 direction)
         {
             int count = Physics.RaycastNonAlloc(origin, direction, hits, maxLength, config.beamBlockers, QueryTriggerInteraction.Ignore);
-            nearest = default;
-            float nearestDistance = float.PositiveInfinity;
+            float nearest = maxLength;
             for (int i = 0; i < count; i++)
             {
-                if (hits[i].distance >= nearestDistance || IsIgnored(hits[i].transform)) continue;
-                nearestDistance = hits[i].distance;
-                nearest = hits[i];
+                if (hits[i].distance >= nearest || hits[i].normal.y > config.beamFloorNormalY || IsIgnored(hits[i].transform)) continue;
+                nearest = hits[i].distance;
             }
-            return nearestDistance < float.PositiveInfinity;
+            return nearest;
         }
 
         bool IsIgnored(Transform hit)
@@ -251,12 +268,16 @@ namespace Jamlloween.Zatan
         void PublishLight()
         {
             Vector3 position = EyeCentre();
-            Vector3 forward = pivots[0].forward;
+            Transform basis = pivots[0];
+            Vector3 forward = basis.forward, right = basis.right, up = basis.up;
             Shader.SetGlobalVector(LightPositionId, new Vector4(position.x, position.y, position.z, maxLength));
             Shader.SetGlobalVector(LightDirectionId, new Vector4(forward.x, forward.y, forward.z, cosOuter));
+            // w: the cone's tangent, so the shader finds where a pixel sits among the occlusion rings.
+            Shader.SetGlobalVector(LightRightId, new Vector4(right.x, right.y, right.z, coneSlope));
+            Shader.SetGlobalVector(LightUpId, new Vector4(up.x, up.y, up.z, 0f));
+            Shader.SetGlobalFloatArray(LightOcclusionId, occlusion);
             Shader.SetGlobalFloat(LightCosInnerId, cosInner);
             Shader.SetGlobalVector(LightColorId, CurrentColor * config.beamSurfaceIntensity);
-            Shader.SetGlobalVector(LightClipPlaneId, WallPlane);
         }
 
         /// <summary>Wider and longer as he hunts: 0 = patrol beam, 1 = chase beam.</summary>

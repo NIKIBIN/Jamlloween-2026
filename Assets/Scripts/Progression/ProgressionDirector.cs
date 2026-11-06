@@ -26,6 +26,9 @@ namespace Jamlloween.Progression
 
         [Header("Etapas (em ordem)")]
         [SerializeField] List<ProgressionStep> steps = new List<ProgressionStep>();
+        [Tooltip("Ligado: a primeira etapa só começa quando alguém chama Begin (ex.: a tela de introdução, ao apertar uma tecla). " +
+                 "Desligado: começa no Start, como antes.")]
+        [SerializeField] bool waitForBegin;
 
         [Header("Prancheta")]
         [Tooltip("Linhas da prancheta, na ordem em que aparecem. As etapas mudam o estado delas com ações do tipo Task.")]
@@ -116,6 +119,17 @@ namespace Jamlloween.Progression
         void Start()
         {
             ResetTasks();
+            if (!waitForBegin) Begin();
+        }
+
+        /// <summary>True once the first step has started (right away, or after Begin when waitForBegin is on).</summary>
+        public bool HasBegun { get; private set; }
+
+        /// <summary>Starts the first step. With waitForBegin on, the intro screen calls this when the player dismisses it.</summary>
+        public void Begin()
+        {
+            if (HasBegun) return;
+            HasBegun = true;
             if (steps.Count > 0) StartStep(0);
         }
 
@@ -295,6 +309,7 @@ namespace Jamlloween.Progression
         public void JumpTo(int target)
         {
             if (target < 0 || target >= steps.Count) return;
+            HasBegun = true;   // a jump (F4) during the intro counts as starting the story
             transitioning = true;
             if (radio != null) radio.Clear();
             ResetTasks();

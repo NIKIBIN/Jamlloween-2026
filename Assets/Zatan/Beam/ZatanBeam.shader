@@ -24,6 +24,7 @@ Shader "Zatan/Beam"
             #pragma multi_compile_fog
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
+            #include "Assets/Zatan/Beam/ZatanEyeOcclusion.hlsl"
 
             CBUFFER_START(UnityPerMaterial)
                 float4 _BeamColor;
@@ -87,7 +88,11 @@ Shader "Zatan/Beam"
                 float beamDepth = LinearEyeDepth(input.positionCS.z, _ZBufferParams);
                 float soft = saturate((sceneDepth - beamDepth) / max(_SoftIntersection, 0.001));
 
-                return float4(_BeamColor.rgb * shape * length01 * nearCamera * fog * inside * soft, 1.0);
+                // The cone reaches as far as its longest clear ray; each part of it ends softly behind what blocks that direction,
+                // so a pole or a corner at the edge doesn't cut the whole beam short.
+                float unblocked = ZatanEyeUnblocked(input.positionWS);
+
+                return float4(_BeamColor.rgb * shape * length01 * nearCamera * fog * inside * soft * unblocked, 1.0);
             }
             ENDHLSL
         }

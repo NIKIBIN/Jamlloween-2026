@@ -20,6 +20,8 @@ namespace Jamlloween.Zatan
         [SerializeField] ZatanCatchSequence catchSequence;
         [Tooltip("Plays the stare and stalk poses of the rigged model.")]
         [SerializeField] ZatanAnimation animationDriver;
+        [Tooltip("His eye beams: during the stare they point at the player instead of the ground.")]
+        [SerializeField] ZatanEyeLights eyeLights;
 
         [Tooltip("Where the player comes back after a catch. Story events can move it with SetCheckpoint.")]
         [SerializeField] Transform checkpoint;
@@ -73,6 +75,7 @@ namespace Jamlloween.Zatan
             if (target == null) throw new MissingReferenceException(nameof(target));
             if (catchSequence == null) throw new MissingReferenceException(nameof(catchSequence));
             if (animationDriver == null) throw new MissingReferenceException(nameof(animationDriver));
+            if (eyeLights == null) throw new MissingReferenceException(nameof(eyeLights));
             if (checkpoint == null) throw new MissingReferenceException(nameof(checkpoint));
             if (playerView == null) throw new MissingReferenceException(nameof(playerView));
         }
@@ -127,6 +130,7 @@ namespace Jamlloween.Zatan
             brain.Respawn(spawn.position);
             brain.BeginScripted(calmEyes: true);
             animationDriver.SetStare(true);
+            eyeLights.AimAt(playerView);
             stare = StartCoroutine(Stare());
         }
 
@@ -134,7 +138,7 @@ namespace Jamlloween.Zatan
         {
             for (float t = 0f; ; t += Time.deltaTime)
             {
-                if (brain.State != ZatanBehaviourState.Scripted) { stare = null; yield break; }   // something else took him
+                if (brain.State != ZatanBehaviourState.Scripted) { stare = null; eyeLights.StopAim(); yield break; }   // something else took him
                 brain.ScriptedFace(target.Position);
                 if (PlayerLooksAtHim()) break;
                 if (t >= stareFallbackSeconds)
@@ -146,6 +150,7 @@ namespace Jamlloween.Zatan
             }
             stare = null;
             animationDriver.SetStare(false);
+            eyeLights.StopAim();
             brain.SpotThenChase(stareAlertSeconds);
         }
 
@@ -248,6 +253,7 @@ namespace Jamlloween.Zatan
             stare = null;
             animationDriver.SetStare(false);
             animationDriver.SetStalk(false);
+            eyeLights.StopAim();
         }
     }
 }

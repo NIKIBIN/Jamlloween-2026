@@ -32,6 +32,11 @@ namespace Jamlloween.Zatan
         [SerializeField] AudioClip grabClip;
         [SerializeField] AudioClip shakeLoop;
         [SerializeField] AudioClip biteClip;
+        [Tooltip("Ligado: a captura toca só o Jumpscare Clip, inteiro, do agarrão em diante (no lugar de agarrão, sacudida e mordida).")]
+        [SerializeField] bool singleJumpscareClip;
+        [SerializeField] AudioClip jumpscareClip;
+        [Tooltip("Segundos pulados do começo do Jumpscare Clip, para o som bater junto com a captura (o arquivo começa quase em silêncio).")]
+        [SerializeField, Min(0f)] float jumpscareStartTime = 0.25f;
 
         [Header("Eventos")]
         [Tooltip("Depois do corte para preto. Ex.: Minigame.Exit para tirar o jogador de um minigame em que foi pego.")]
@@ -65,6 +70,7 @@ namespace Jamlloween.Zatan
             if (grabClip == null) throw new MissingReferenceException(nameof(grabClip));
             if (shakeLoop == null) throw new MissingReferenceException(nameof(shakeLoop));
             if (biteClip == null) throw new MissingReferenceException(nameof(biteClip));
+            if (singleJumpscareClip && jumpscareClip == null) throw new MissingReferenceException(nameof(jumpscareClip));
 
             viewCamera = target.View;
             view = viewCamera.transform;
@@ -77,8 +83,20 @@ namespace Jamlloween.Zatan
                 faceUpLocal = faceBone.InverseTransformDirection(transform.up);
                 mouthOnFace = faceBone.InverseTransformPoint(mouth.position);
             }
-            shakeSource.clip = shakeLoop;
-            shakeSource.loop = true;
+            if (singleJumpscareClip)
+            {
+                if (jumpscareStartTime >= jumpscareClip.length) throw new InvalidOperationException($"[{name}] jumpscareStartTime passa do fim do clip.");
+                // Played as the source's own clip, not a one-shot: only that way it can start past the silent lead-in.
+                oneShotSource.clip = jumpscareClip;
+                oneShotSource.loop = false;
+                // Decoded now, not on the first catch: loading it then delays the sound.
+                jumpscareClip.LoadAudioData();
+            }
+            else
+            {
+                shakeSource.clip = shakeLoop;
+                shakeSource.loop = true;
+            }
             throat.enabled = false;
         }
 
@@ -116,8 +134,16 @@ namespace Jamlloween.Zatan
             bitten = false;
             Elapsed = 0f;
             EnterPhase(ZatanCatchPhase.Grab);
-            oneShotSource.PlayOneShot(grabClip);
-            shakeSource.Play();
+            if (singleJumpscareClip)
+            {
+                oneShotSource.time = jumpscareStartTime;
+                oneShotSource.Play();
+            }
+            else
+            {
+                oneShotSource.PlayOneShot(grabClip);
+                shakeSource.Play();
+            }
         }
 
         void EnterPhase(ZatanCatchPhase next)
@@ -178,8 +204,12 @@ namespace Jamlloween.Zatan
             if (!bitten && t >= config.scareBiteImpactFraction)
             {
                 bitten = true;
-                shakeSource.Stop();
-                oneShotSource.PlayOneShot(biteClip);
+                // The single clip already carries the bite, and stopping the source would cut it.
+                if (!singleJumpscareClip)
+                {
+                    shakeSource.Stop();
+                    oneShotSource.PlayOneShot(biteClip);
+                }
             }
 
             float kick = bitten ? config.scareImpactKick * (1f - Mathf.InverseLerp(config.scareBiteImpactFraction, 1f, t)) : 0f;
@@ -256,7 +286,8 @@ namespace Jamlloween.Zatan
             viewCamera.cullingMask = viewCullingMask;
             jaw.localRotation = jawRestRotation;
             throat.enabled = false;
-            shakeSource.Stop();
+            // The single clip is longer than the scene: let its tail play out over the respawn.
+            if (!singleJumpscareClip) shakeSource.Stop();
             Shader.SetGlobalFloat(BlackoutId, 0f);
             target.SetInputEnabled(true);
         }
