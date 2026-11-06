@@ -22,6 +22,9 @@ namespace Jamlloween.Zatan
         [SerializeField] Transform jaw;
         [Tooltip("Fundo da boca: só aparece durante a captura.")]
         [SerializeField] Renderer throat;
+        [Tooltip("Opcional (modelo com rig): o osso da cabeça. Na captura ele é girado para o rosto encarar a câmera, " +
+                 "por cima da pose da animação. Vazio = a cabeça fica como a animação deixar (modelo sem rig).")]
+        [SerializeField] Transform faceBone;
 
         [Header("Áudio")]
         [SerializeField] AudioSource oneShotSource;
@@ -47,6 +50,7 @@ namespace Jamlloween.Zatan
         int viewCullingMask;
         float phaseTime, startDistance;
         bool bitten;
+        Vector3 faceForwardLocal, faceUpLocal, mouthOnFace;
 
         void Awake()
         {
@@ -66,6 +70,13 @@ namespace Jamlloween.Zatan
             view = viewCamera.transform;
             jawRestRotation = jaw.localRotation;
             mouthLocal = transform.InverseTransformPoint(mouth.position);
+            if (faceBone != null)
+            {
+                // Pose de repouso (antes do Animator): o rosto aponta para a frente do Zatan.
+                faceForwardLocal = faceBone.InverseTransformDirection(transform.forward);
+                faceUpLocal = faceBone.InverseTransformDirection(transform.up);
+                mouthOnFace = faceBone.InverseTransformPoint(mouth.position);
+            }
             shakeSource.clip = shakeLoop;
             shakeSource.loop = true;
             throat.enabled = false;
@@ -221,6 +232,18 @@ namespace Jamlloween.Zatan
             mouthLocal = transform.InverseTransformPoint(mouth.position);
             Vector3 anchor = mouthLocal + Vector3.up * faceRaise;
             transform.SetPositionAndRotation(viewPosition + toZatan * distance + offset - rotation * anchor, rotation);
+            if (faceBone == null) return;
+
+            // Rigged: the catch pose can tilt the head down (turban to the camera). Turn the head so the face looks at
+            // the camera, then place him again by the mouth, which moved with the head.
+            Vector3 toView = viewPosition - faceBone.position;
+            Quaternion faceNow = Quaternion.LookRotation(faceBone.rotation * faceForwardLocal, faceBone.rotation * faceUpLocal);
+            Quaternion faceWanted = Quaternion.LookRotation(toView, rotation * Vector3.up);
+            faceBone.rotation = faceWanted * Quaternion.Inverse(faceNow) * faceBone.rotation;
+            // The mouth anchor follows the head a frame late: read the mouth straight from the bone.
+            mouthLocal = transform.InverseTransformPoint(faceBone.TransformPoint(mouthOnFace));
+            anchor = mouthLocal + Vector3.up * faceRaise;
+            transform.position = viewPosition + toZatan * distance + offset - rotation * anchor;
         }
 
         void SetJaw(float angle) => jaw.localRotation = jawRestRotation * Quaternion.Euler(angle, 0f, 0f);

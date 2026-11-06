@@ -26,9 +26,34 @@ MonoBehaviour:
       text: "Ele t\xE1 vindo... n\xE3o tem sa\xEDda!"
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: 
     state: 1
     taskState: 2
     clip: {fileID: 0}
     volume: 1
-  onComplete: []
+  - kind: 3
+    line:
+      speaker: "PATR\xC3O"
+      text: 
+      audio: {fileID: 0}
+      volume: 1
+      seconds: 0
+    targetId: fim_barreiras
+    state: 1
+    taskState: 2
+    clip: {fileID: 0}
+    volume: 1
+  onComplete:
+  - kind: 3
+    line:
+      speaker: "PATR\xC3O"
+      text: 
+      audio: {fileID: 0}
+      volume: 1
+      seconds: 0
+    targetId: fim_barreiras
+    state: 0
+    taskState: 2
+    clip: {fileID: 0}
+    volume: 1

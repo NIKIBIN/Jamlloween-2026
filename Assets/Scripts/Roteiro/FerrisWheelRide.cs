@@ -116,6 +116,7 @@ namespace Jamlloween.Roteiro
         public float Angle { get; private set; }
         public UnityEvent OnLookedBack => onLookedBack;
         public UnityEvent OnCarDown => onCarDown;
+        public UnityEvent OnBoarded => onBoarded;
 
         void Awake()
         {

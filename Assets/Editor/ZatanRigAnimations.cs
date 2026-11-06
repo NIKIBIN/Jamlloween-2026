@@ -9,21 +9,39 @@ using UnityEngine;
 /// <summary>
 /// Gera as animações do Zatan da perseguição e o Animator Controller delas.
 /// O movimento vem do esqueleto Mixamo (Assets/Zatan/Run.fbx): Run é a corrida do FBX (sem o avanço do quadril, para o
-/// NavMeshAgent mover); Walk, Idle, Stare, Stalk, Bang e Catch são montados a partir da pose média da corrida, mirando
+/// NavMeshAgent mover) só para medir; o Run do jogo é o sprint do próprio FBX alvo, no lugar. Walk, Idle, Stare, Stalk, Bang e Catch são montados a partir da pose média da corrida, mirando
 /// os ossos em direções no espaço do modelo. Cada pose é então retargetada para o modelo que o jogo usa
-/// (<see cref="TargetPath"/>, esqueleto HumanIK QuickRig): rotação no espaço do modelo relativa à pose de pé, mais um
+/// (<see cref="TargetPath"/>, Zatan_chase, esqueleto padrão UE; mapa em TargetBone): rotação no espaço do modelo relativa à pose de pé, mais um
 /// ajuste para cada osso apontar para o filho na mesma direção do Mixamo. Os clipes animam o esqueleto do alvo.
 /// Menu: Jamlloween/Zatan/Gerar animações do rig. Pode rodar de novo: recria os clipes e o controller (mesmos GUIDs).
 /// </summary>
 public sealed class ZatanRigAnimations
 {
     public const string ModelPath = "Assets/Zatan/Run.fbx";
-    public const string TargetPath = "Assets/Zatan/Temp/Zatan_Animado_Rig.fbx";
+    public const string TargetPath = "Assets/Zatan/Temp/Zatan_chase.fbx";
     public const string Folder = "Assets/Zatan/Animation/Rig";
     public const string ControllerPath = Folder + "/Zatan_Rig.controller";
+    /// <summary>Altura do Zatan no jogo (m). O modelo alvo vem minúsculo do FBX; a cena o escala para esta altura.</summary>
+    public const float TargetHeight = 3.3f;
+    /// <summary>
+    /// Velocidade (m/s) em que o sprint do FBX entra inteiro no blend: a da perseguição. O sprint foi animado para
+    /// passadas bem mais longas do que a perseguição anda, então os pés escorregam um pouco; mais rápido o
+    /// tornaria lento demais.
+    /// </summary>
+    public const float ChaseRunSpeed = 6.5f;
 
     const string P = "mixamorig:";
-    const string TP = "QuickRigCharacter_";
+
+    /// <summary>Nome do osso no Mixamo (sem prefixo) para o nome no esqueleto do alvo (Zatan_chase, padrão UE).</summary>
+    static readonly Dictionary<string, string> TargetBone = new Dictionary<string, string>
+    {
+        ["Hips"] = "pelvis", ["Spine"] = "spine_01", ["Spine1"] = "spine_02", ["Spine2"] = "spine_03",
+        ["Neck"] = "neck_01", ["Head"] = "Head",
+        ["LeftShoulder"] = "clavicle_l", ["LeftArm"] = "upperarm_l", ["LeftForeArm"] = "lowerarm_l", ["LeftHand"] = "hand_l",
+        ["RightShoulder"] = "clavicle_r", ["RightArm"] = "upperarm_r", ["RightForeArm"] = "lowerarm_r", ["RightHand"] = "hand_r",
+        ["LeftUpLeg"] = "thigh_l", ["LeftLeg"] = "calf_l", ["LeftFoot"] = "foot_l", ["LeftToeBase"] = "ball_l",
+        ["RightUpLeg"] = "thigh_r", ["RightLeg"] = "calf_r", ["RightFoot"] = "foot_r", ["RightToeBase"] = "ball_r"
+    };
 
     /// <summary>Ossos retargetados, pais antes dos filhos, e o filho que dá a direção de cada um (vazio: só a rotação).</summary>
     static readonly (string bone, string child)[] Map =
@@ -47,6 +65,7 @@ public sealed class ZatanRigAnimations
     readonly Dictionary<string, Quaternion> mStandModel = new Dictionary<string, Quaternion>();
     Vector3 mStandHips;
     float ratio = 1f;
+    float tScale = 1f; // unidades do FBX alvo -> metros do jogo
     bool retargetReady;
 
     struct TPose
@@ -118,8 +137,10 @@ public sealed class ZatanRigAnimations
             InitRetarget(stand);
 
             float runLen = source.length;
-            var runKeys = straight.Select((p, i) => (runLen * i / n, p)).ToList();
-            var run = Save(MakeClip(runKeys, true), "Zatan_Rig_Run");
+            // Run: o sprint do próprio FBX alvo, no lugar (quem anda é o NavMeshAgent).
+            var sprint = AssetDatabase.LoadAllAssetsAtPath(TargetPath).OfType<AnimationClip>().FirstOrDefault(c => !c.name.StartsWith("__preview"));
+            if (sprint == null) throw new InvalidOperationException($"{TargetPath} sem clipe de corrida.");
+            var run = Save(BuildTargetRun(sprint), "Zatan_Rig_Run");
             runPoses = straight;
 
             // --- caminhada: metade da amplitude da corrida, ciclo mais lento, pés no chão
@@ -213,12 +234,13 @@ public sealed class ZatanRigAnimations
             // --- velocidades sem escorregar: a corrida real do FBX calibra a medida dos clipes no lugar
             // (a medida no lugar subestima; a razão entre a corrida real e a medida da corrida no Mixamo corrige as duas)
             float k = realRun / MixamoStride(runPoses.Take(n).ToArray(), runLen);
-            RunSpeed = k * StrideSpeed(run);
-            WalkSpeed = k * StrideSpeed(walk);
+            RunSpeed = ChaseRunSpeed;
+            SceneScale = tScale;
+            WalkSpeed = k * StrideSpeed(walk) * tScale;
 
             BuildController(idle, walk, run, stareClip, stalk, bang, catchClip);
             AssetDatabase.SaveAssets();
-            Debug.Log($"[ZatanRig] clipes em {Folder} para {TargetPath}. Run={RunSpeed:0.00} m/s, Walk={WalkSpeed:0.00} m/s (k={k:0.00}, escala {ratio:0.00}).");
+            Debug.Log($"[ZatanRig] clipes em {Folder} para {TargetPath}. Run={RunSpeed:0.00} m/s (sprint do FBX cobre {SprintSpeed:0.0} m/s), Walk={WalkSpeed:0.00} m/s (k={k:0.00}, escala {ratio:0.0000}, alvo x{tScale:0.0}).");
         }
         finally
         {
@@ -229,7 +251,28 @@ public sealed class ZatanRigAnimations
 
     // ------------------------------------------------------------------ retarget Mixamo -> QuickRig
 
-    Transform T(string name) => tByName.TryGetValue(name, out var t) ? t : throw new InvalidOperationException($"Osso do alvo não encontrado: {TP}{name}");
+    Transform T(string name) => tByName.TryGetValue(name, out var t) ? t : throw new InvalidOperationException($"Osso do alvo não encontrado: {name} ({(TargetBone.TryGetValue(name, out var n) ? n : "?")})");
+
+    /// <summary>Metros por segundo que o sprint do alvo avança (pelo osso root, já na escala do jogo).</summary>
+    static float SprintSpeed { get; set; }
+
+    /// <summary>O sprint do FBX alvo sem o avanço do osso root: os pés correm no lugar.</summary>
+    AnimationClip BuildTargetRun(AnimationClip sprint)
+    {
+        var clip = new AnimationClip { frameRate = sprint.frameRate };
+        foreach (var bind in AnimationUtility.GetCurveBindings(sprint))
+        {
+            var curve = AnimationUtility.GetEditorCurve(sprint, bind);
+            if (bind.path == "root" && (bind.propertyName == "m_LocalPosition.z" || bind.propertyName == "m_LocalPosition.x"))
+            {
+                if (bind.propertyName == "m_LocalPosition.z") SprintSpeed = (curve.Evaluate(sprint.length) - curve.Evaluate(0f)) / sprint.length * tScale;
+                curve = AnimationCurve.Constant(0f, sprint.length, curve.Evaluate(0f));
+            }
+            AnimationUtility.SetEditorCurve(clip, bind, curve);
+        }
+        SetLoop(clip, true);
+        return clip;
+    }
 
     void InitRetarget(Pose stand)
     {
@@ -240,7 +283,13 @@ public sealed class ZatanRigAnimations
         if (skin.Length == 0) throw new InvalidOperationException($"{TargetPath} sem SkinnedMeshRenderer.");
         var skinBones = new HashSet<Transform>(skin.SelectMany(s => s.bones).Where(b => b != null));
         tBones = tRoot.GetComponentsInChildren<Transform>(true).Where(skinBones.Contains).ToArray();
-        foreach (var t in tBones) tByName[t.name.Replace(TP, "")] = t;
+        var byTargetName = new Dictionary<string, Transform>();
+        foreach (var t in tBones) byTargetName[t.name] = t;
+        foreach (var pair in TargetBone)
+        {
+            if (!byTargetName.TryGetValue(pair.Value, out var t)) throw new InvalidOperationException($"{TargetPath} sem o osso {pair.Value}.");
+            tByName[pair.Key] = t;
+        }
         tHips = T("Hips");
         tPaths = tBones.Select(t => AnimationUtility.CalculateTransformPath(t, tRoot)).ToArray();
         tRestLocal = tBones.Select(t => t.localRotation).ToArray();
@@ -255,7 +304,23 @@ public sealed class ZatanRigAnimations
         float LegT(string s) => (T(s + "UpLeg").position - T(s + "Leg").position).magnitude + (T(s + "Leg").position - T(s + "Foot").position).magnitude;
         ratio = (LegT("Left") + LegT("Right")) / (LegM("Left") + LegM("Right"));
         retargetReady = true;
+
+        // Altura do alvo de pé (malhas assadas na pose de pé): a escala que a cena usa para ele ter TargetHeight.
+        Retarget(stand);
+        float top = float.MinValue, bottom = float.MaxValue;
+        foreach (var s in skin)
+        {
+            var baked = new Mesh();
+            s.BakeMesh(baked, true);
+            foreach (var v in baked.vertices) { float y = s.transform.TransformPoint(v).y; top = Mathf.Max(top, y); bottom = Mathf.Min(bottom, y); }
+            UnityEngine.Object.DestroyImmediate(baked);
+        }
+        tScale = TargetHeight / (top - bottom);
+        ApplyTargetRest();
     }
+
+    /// <summary>A escala da cena para o modelo alvo (unidades do FBX -> metros), medida de pé. Válida depois de gerar.</summary>
+    public static float SceneScale { get; private set; }
 
     void ApplyTargetRest()
     {

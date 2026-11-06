@@ -122,6 +122,25 @@ namespace Jamlloween.Progression
         /// <summary>Padrão Driven: o nível (0..1) vem de outro script, a cada quadro (ex.: o clarão das faíscas do painel do Zatan).</summary>
         public float DrivenLevel { get; set; }
 
+        /// <summary>Todas as luzes ativas na cena (para o apagão em sequência do final).</summary>
+        public static IReadOnlyList<StepBeacon> All => all;
+
+        /// <summary>LightGroup que alimenta esta luz (vazio: não depende da energia do parque).</summary>
+        public string PowerGroup => powerGroup;
+
+        /// <summary>Já caiu de vez (depois de <see cref="FailPower"/>).</summary>
+        public bool Failed => failStart >= 0f && Time.time >= failStart + failSeconds;
+
+        float failStart = -1f, failSeconds;
+
+        /// <summary>A energia desta luz falha: ela engasga por <paramref name="flickerSeconds"/> e apaga de vez.</summary>
+        public void FailPower(float flickerSeconds)
+        {
+            if (failStart >= 0f) return;
+            failStart = Time.time;
+            failSeconds = Mathf.Max(0f, flickerSeconds);
+        }
+
         public void SetSteady() => pattern = Pattern.Steady;
         public void SetBlink() => pattern = Pattern.Blink;
         public void SetFlicker() => pattern = Pattern.Flicker;
@@ -223,6 +242,13 @@ namespace Jamlloween.Progression
             if (!Broken && pattern != Pattern.Driven) level *= WorkingWave(t);
             float bulb = level;
             if (Broken) { float f = brokenStyle == BrokenStyle.Sparks ? BrokenSparks(t) : BrokenWave(t); level = f * brokenLevel; bulb = f * brokenBulbLevel; }
+            if (failStart >= 0f)
+            {
+                // Falha de energia: engasga (cada vez mais escuro) e apaga de vez.
+                float k = failSeconds <= 0f ? 1f : Mathf.Clamp01((t - failStart) / failSeconds);
+                float stutter = k >= 1f || Hash(seed * 3.7f + Mathf.Floor(t * 14f)) < 0.35f + 0.6f * k ? 0f : 1f - 0.7f * k;
+                level *= stutter; bulb *= stutter;
+            }
             if (!Lit) { level = 0f; bulb = 0f; }
             // Sparks: a dark bulb stays visible as dead glass while broken, so the ring does not vanish between bursts.
             bool show = bulbsStayVisible || bulb > 0f;

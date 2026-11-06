@@ -28,6 +28,8 @@ public static class RoteiroSetup
     public const string FinalAttackDoneEvent = "FinalAttackDone"; // ZatanDirector.OnFinaleFinished
     // Eventos nomeados emitidos pelas etapas (a cena reage pelo ProgressionEventRelay).
     public const string PowerLostEvent = "PowerLost";
+    /// <summary>O jogador viu que falta o fusível: abre o acesso ao lado leste (labirinto e roda-gigante).</summary>
+    public const string EastAccessOpenedEvent = "AcessoLesteAberto";
     // Triggers.
     public const string GeneratorNoiseTrigger = "gen_noise";
     public const string ZatanEscapeTrigger = "zatan_escape";
@@ -97,7 +99,9 @@ public static class RoteiroSetup
                 onComplete: new[]
                 {
                     Say("Falta fusível? Tem uma caixa de peças no meio do labirinto de sebes, do lado leste do parque. Vai lá e volta rápido."),
-                    Task("fuse_find", TaskState.Current)
+                    Task("fuse_find", TaskState.Current),
+                    // Abre as barreiras do lado leste (labirinto e roda-gigante): o relay troca Barreiras por Barreiras_abertas.
+                    Evt(EastAccessOpenedEvent)
                 }),
             // 12-13: fusivel numa clareira no meio do labirinto. Pegar o fusivel conclui a etapa; a R14 comeca a perseguicao
             // (relay: EnsureChaseFrom) e abre de vez o portao leste (StepLockedMachine da Porta_2).
@@ -106,7 +110,8 @@ public static class RoteiroSetup
                 blocked: new[] { ("fusebox", MissingFuseText) }),
             // 14: foge para o trailer pela outra entrada (portao leste). O ZatanSafeRoom faz a desistencia.
             Step("R14_FugaTrailer2", "Fugir para o trailer pelo portão leste", new[] { ZatanGaveUpEvent },
-                onStart: new[] { Think("Ele tá no labirinto! Sai pelo outro lado, pro trailer, pelo portão leste!") },
+                // PipocaTrocada: o relay troca os carrinhos de pipoca de Barreira_pipoca (1 sai, 2 entra).
+                onStart: new[] { Think("Ele tá no labirinto! Sai pelo outro lado, pro trailer, pelo portão leste!"), Evt("PipocaTrocada") },
                 onComplete: new[] { Task("fuse_fix", TaskState.Current), Think("Foi embora... Agora o carrossel.") },
                 blocked: new[] { ("fusebox", "Primeiro sair daqui vivo.") }),
             // 15: o quadro de fusiveis liga o carrossel (CarouselRepair).
@@ -118,7 +123,10 @@ public static class RoteiroSetup
             Step("R17_ConsertarRodaGigante", "Consertar a roda-gigante", new[] { WheelFixedEvent }, active: new[] { "wheel_panel" }),
             // 17-18: depois do conserto da roda, Zatan se aproxima do jogador encurralado (relay: StalkFrom); a porta de uma gondola abre (relay: GondolaDoor.Open).
             Step("R18_Encurralado", "Encurralado: entrar na gôndola", new[] { GondolaBoardedEvent }, active: new[] { "gondola_door" },
-                onStart: new[] { Think("Ele tá vindo... não tem saída!") }),
+                // A gôndola abre na hora (relay: PlayerSeat.Open). Zatan só vem quando o jogador chega perto das Barreiras
+                // tentando ir embora (Trigger_FinalBarreiras -> ZatanDirector.ChaseFrom(Zatan_ChaseSpawn_Final)).
+                onStart: new[] { Think("Ele tá vindo... não tem saída!"), Trigger("fim_barreiras", true) },
+                onComplete: new[] { Trigger("fim_barreiras", false) }),
             // 19: a roda gira e para no alto (FerrisWheelRide) porque a energia cai: apagao no parque inteiro
             // (LightGroup park: luzes, carrossel e musica). O som de tensao comeca.
             Step("R19_RodaGigante", "A roda-gigante gira", new[] { WheelStoppedEvent },

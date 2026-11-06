@@ -28,6 +28,7 @@ MonoBehaviour:
       text: "Falta fus\xEDvel? Tem uma caixa de pe\xE7as no meio do labirinto de sebes, do lado leste do parque. Vai l\xE1 e volta r\xE1pido."
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: 
     state: 1
     taskState: 2
@@ -39,7 +40,20 @@ MonoBehaviour:
       text: 
       audio: {fileID: 0}
       volume: 1
+      seconds: 0
     targetId: fuse_find
+    state: 1
+    taskState: 2
+    clip: {fileID: 0}
+    volume: 1
+  - kind: 4
+    line:
+      speaker: "PATR\xC3O"
+      text: 
+      audio: {fileID: 0}
+      volume: 1
+      seconds: 0
+    targetId: AcessoLesteAberto
     state: 1
     taskState: 2
     clip: {fileID: 0}
