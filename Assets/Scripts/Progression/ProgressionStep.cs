@@ -13,6 +13,8 @@ namespace Jamlloween.Progression
         [Tooltip("Opcional. Quando existe, a legenda dura o tamanho do áudio.")]
         public AudioClip audio;
         [Range(0f, 1f)] public float volume = 1f;
+        [Tooltip("Opcional. Tempo da legenda em segundos quando a fala não tem áudio. 0 = automático, pelo número de caracteres.")]
+        [Min(0f)] public float seconds;
     }
 
     /// <summary>Estado de uma tarefa na prancheta.</summary>

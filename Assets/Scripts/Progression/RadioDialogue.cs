@@ -13,8 +13,10 @@ namespace Jamlloween.Progression
     {
         [SerializeField] AudioSource source;
         [Tooltip("Tempo de leitura por caractere quando a fala não tem áudio.")]
-        [SerializeField] float secondsPerCharacter = 0.055f;
-        [SerializeField] float minSeconds = 2f;
+        [SerializeField] float secondsPerCharacter = 0.06f;
+        [Tooltip("Tempo fixo somado a toda fala sem áudio, para o jogador achar a legenda antes de ler.")]
+        [SerializeField] float baseSeconds = 0.75f;
+        [SerializeField] float minSeconds = 2.5f;
         [Tooltip("Pausa entre uma fala e a próxima.")]
         [SerializeField] float gapSeconds = 0.5f;
 
@@ -69,7 +71,8 @@ namespace Jamlloween.Progression
                 source.PlayOneShot(playing.audio, playing.volume);
                 remaining = playing.audio.length;
             }
-            else remaining = Mathf.Max(minSeconds, (playing.text?.Length ?? 0) * secondsPerCharacter);
+            else if (playing.seconds > 0f) remaining = playing.seconds;
+            else remaining = Mathf.Max(minSeconds, baseSeconds + (playing.text?.Length ?? 0) * secondsPerCharacter);
         }
 
         void OnGUI()

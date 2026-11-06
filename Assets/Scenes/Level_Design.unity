@@ -3721,8 +3721,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.RadioDialogue
   source: {fileID: 0}
-  secondsPerCharacter: 0.055
-  minSeconds: 2
+  secondsPerCharacter: 0.06
+  baseSeconds: 0.75
+  minSeconds: 2.5
   gapSeconds: 0.5
 --- !u!114 &81572223
 MonoBehaviour:
