@@ -18,7 +18,7 @@ namespace Jamlloween.Progression
     [DefaultExecutionOrder(100)]   // after the director changes step
     public sealed class StepBeacon : MonoBehaviour
     {
-        public enum Pattern { Steady, Blink, Flicker, Sputter }
+        public enum Pattern { Steady, Blink, Flicker, Sputter, Driven }
         /// <summary>How a broken light behaves: Sparks (dark most of the time, short bursts) or Wave (dim, drifts slowly, never dark).</summary>
         public enum BrokenStyle { Sparks, Wave }
 
@@ -119,6 +119,9 @@ namespace Jamlloween.Progression
         /// <summary>Lit now (in its step range and powered), whatever the blink phase.</summary>
         public bool Lit { get; private set; }
 
+        /// <summary>Padrão Driven: o nível (0..1) vem de outro script, a cada quadro (ex.: o clarão das faíscas do painel do Zatan).</summary>
+        public float DrivenLevel { get; set; }
+
         public void SetSteady() => pattern = Pattern.Steady;
         public void SetBlink() => pattern = Pattern.Blink;
         public void SetFlicker() => pattern = Pattern.Flicker;
@@ -214,9 +217,10 @@ namespace Jamlloween.Progression
                     level = n > 0.32f ? Mathf.Lerp(0.55f, 1f, n) : 0f;
                     break;
                 case Pattern.Sputter: level = Sputter(t); break;
+                case Pattern.Driven: level = Mathf.Clamp01(DrivenLevel); break;
                 default: level = 1f; break;
             }
-            if (!Broken) level *= WorkingWave(t);
+            if (!Broken && pattern != Pattern.Driven) level *= WorkingWave(t);
             float bulb = level;
             if (Broken) { float f = brokenStyle == BrokenStyle.Sparks ? BrokenSparks(t) : BrokenWave(t); level = f * brokenLevel; bulb = f * brokenBulbLevel; }
             if (!Lit) { level = 0f; bulb = 0f; }
