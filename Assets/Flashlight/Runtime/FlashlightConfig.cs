@@ -22,6 +22,8 @@ namespace Jamlloween.Flashlight
         [Range(0f, 1f)] public float coneBrightness = 0.8f;
 
         [Header("Light")]
+        [Tooltip("Cor do feixe: um branco quente, como uma lâmpada incandescente.")]
+        public Color tint = new Color(1f, 0.86f, 0.66f);
         [Range(0f, 20f)] public float intensity = 2.5f;
         [Range(10f, 120f)] public float spotAngle = 38f;
         [Range(1f, 120f)] public float innerSpotAngle = 18f;

@@ -8,14 +8,19 @@ namespace Jamlloween.Progression
     /// It is lit from the step <see cref="from"/> until the step <see cref="until"/> starts (empty: to the end), so a
     /// debug jump shows the right lights. Lit, it lights the scenery around it (WorldBeacons.hlsl: computed in the
     /// shaders, seen through the fog from far away) and shows its <see cref="renderers"/> (bulbs, a little lamp).
-    /// At most 48 lights (beacons, or each emitFrom point) are lit at once; plan the step ranges so they do not overlap more.
+    /// At most 48 lights (beacons, or each emitFrom point) are lit at once. The story lights go in first, then the decor
+    /// lights (<see cref="decor"/>: the lamp posts), nearest first; decor lights far from the camera are not sent at all.
+    /// When the 48 slots are full, the console shows one warning.
     /// With a <see cref="powerGroup"/>, the beacon is dark while that LightGroup is off (a blackout), in any step.
-    /// Before <see cref="brokenUntil"/>, the beacon is broken: a weak flicker, and only some bulbs flicker on.
+    /// Before <see cref="brokenUntil"/>, the beacon is broken (<see cref="brokenStyle"/>): sparks (dark, short bursts, only some
+    /// bulbs take part) or a slow dim wave.
     /// </summary>
     [DefaultExecutionOrder(100)]   // after the director changes step
     public sealed class StepBeacon : MonoBehaviour
     {
         public enum Pattern { Steady, Blink, Flicker, Sputter }
+        /// <summary>How a broken light behaves: Sparks (dark most of the time, short bursts) or Wave (dim, drifts slowly, never dark).</summary>
+        public enum BrokenStyle { Sparks, Wave }
 
         const int Max = 48;   // = WORLD_BEACON_MAX em WorldBeacons.hlsl
         static readonly List<StepBeacon> all = new List<StepBeacon>();
@@ -37,8 +42,11 @@ namespace Jamlloween.Progression
         static readonly int BulbVariationId = Shader.PropertyToID("_BulbVariation");
         static readonly int BulbSpeedId = Shader.PropertyToID("_BulbSpeed");
         static readonly int BulbMinId = Shader.PropertyToID("_BulbMin");
+        static readonly int BulbBrokenStyleId = Shader.PropertyToID("_BulbBrokenStyle");
         static readonly int SegmentAxisId = Shader.PropertyToID("_SegmentAxis");
         static readonly int SegmentCenterId = Shader.PropertyToID("_SegmentCenter");
+        static readonly int SegmentsId = Shader.PropertyToID("_Segments");
+        static readonly int BulbMaskId = Shader.PropertyToID("_BulbMask");
 
         [Header("When")]
         [Tooltip("Lit from the start of this step. Empty: from the start of the game.")]
@@ -47,15 +55,19 @@ namespace Jamlloween.Progression
         [SerializeField] ProgressionStep until;
         [Tooltip("LightGroup id that powers this beacon (e.g. park). While that group is off, the beacon is dark. Empty: no power needed.")]
         [SerializeField] string powerGroup = "";
-        [Tooltip("Quebrado até o começo desta etapa: a luz fica fraca e vai e volta devagar entre um mínimo e um máximo. Vazio: nunca quebrado.")]
+        [Tooltip("Quebrado até o começo desta etapa (ver Broken Style). Vazio: nunca quebrado.")]
         [SerializeField] ProgressionStep brokenUntil;
+        [Tooltip("Faíscas: apagada quase o tempo todo, com faíscas curtas, e só algumas lâmpadas participam (tentando funcionar). Onda: fraca, vai e volta devagar, nunca apaga.")]
+        [SerializeField] BrokenStyle brokenStyle = BrokenStyle.Sparks;
+        [Tooltip("Faíscas: menor e maior intervalo (s) entre duas faíscas.")]
+        [SerializeField] Vector2 brokenGap = new Vector2(1f, 2.5f);
         [Tooltip("Força da luz no máximo da variação, quebrado (1 = a força consertado).")]
         [SerializeField, Range(0f, 1f)] float brokenLevel = 0.3f;
         [Tooltip("Brilho das lâmpadas no máximo da variação, quebrado (1 = o brilho consertado).")]
         [SerializeField, Range(0f, 1f)] float brokenBulbLevel = 0.4f;
-        [Tooltip("Mínimo da variação, quebrado, como parte do máximo (0.3 = cai até 30% do máximo).")]
+        [Tooltip("Onda: mínimo da variação, quebrado, como parte do máximo (0.3 = cai até 30% do máximo).")]
         [SerializeField, Range(0f, 1f)] float brokenMin = 0.3f;
-        [Tooltip("Ciclos por segundo da variação, quebrado (0.4 = vai e volta a cada ~2,5 s).")]
+        [Tooltip("Onda: ciclos por segundo da variação, quebrado (0.4 = vai e volta a cada ~2,5 s).")]
         [SerializeField, Min(0.01f)] float brokenSpeed = 0.4f;
         [Tooltip("Funcionando: quanto a luz e algumas lâmpadas oscilam (0 = firme, 0.15 = até 15% mais fraca).")]
         [SerializeField, Range(0f, 0.5f)] float workingVariation = 0.12f;
@@ -65,12 +77,16 @@ namespace Jamlloween.Progression
         [SerializeField] int flickerSeed;
 
         [Header("Light")]
-        [Tooltip("Decor light (a booth, a lamp post): it does not take a story slot. The ambient lights nearest to the camera share 8 slots of their own and fade out at the edge.")]
+        [Tooltip("Luz de decoração (os postes): entra nas 48 vagas depois das luzes da história, a mais perto da câmera primeiro, e não é enviada longe da câmera.")]
+        [SerializeField] bool decor;
+        [Tooltip("Luz das barracas: não usa as 48 vagas. As 8 mais perto da câmera dividem vagas próprias e somem aos poucos na borda.")]
         [SerializeField] bool ambient;
         [SerializeField] Color color = new Color(1f, 0.8f, 0.45f);
         [SerializeField, Min(0f)] float intensity = 2f;
         [Tooltip("Metres the light reaches around the beacon.")]
         [SerializeField, Min(0.1f)] float range = 6f;
+        [Tooltip("Queda suave, em metros (os postes): a luz cai como uma lâmpada de verdade e se espalha até o alcance, sem borda. 0: a poça compacta das luzes da história.")]
+        [SerializeField, Min(0f)] float softness;
         [Tooltip("De onde a luz sai (as lâmpadas). Cada ponto é uma luz com a intensidade dividida entre eles. Vazio: sai deste objeto.")]
         [SerializeField] Transform[] emitFrom = new Transform[0];
         [SerializeField] Pattern pattern = Pattern.Steady;
@@ -86,6 +102,10 @@ namespace Jamlloween.Progression
         [SerializeField] Renderer[] renderers = new Renderer[0];
         [Tooltip("On: the renderers always show and only their glow changes (Beacon Bulb: a dead bulb when dark). Off: they hide when dark.")]
         [SerializeField] bool bulbsStayVisible;
+        [Tooltip("Lâmpadas numa fileira reta (as barracas): quantas são. 0: um anel (carrossel, roda-gigante).")]
+        [SerializeField, Min(0)] int rowBulbs;
+        [Tooltip("Fileira: quais lâmpadas acendem, um bit por lâmpada (bit 0 = a primeira). -1: todas. As outras ficam queimadas.")]
+        [SerializeField] int litBulbs = -1;
 
         [Tooltip("Thin fog of every beacon's light, per metre from the camera. 0.012: about 30% left at 100 m.")]
         [SerializeField, Min(0f)] float fogDensity = 0.012f;
@@ -106,6 +126,24 @@ namespace Jamlloween.Progression
         void Awake() => seed = flickerSeed != 0 ? flickerSeed * 7.31f : Random.value * 100f;
 
         static float Hash(float n) => Mathf.Repeat(Mathf.Sin(n * 12.9898f + 1.7f) * 43758.5453f, 1f);
+
+        /// <summary>
+        /// A faulty circuit trying to work: dark most of the time (on for about 10%). Bursts come at irregular gaps, last
+        /// 0.15 to 0.8 s, stutter on and off, and reach only 60 to 100% of the peak. About one gap in five has no burst. 0..1.
+        /// </summary>
+        float BrokenSparks(float t)
+        {
+            int index = Mathf.FloorToInt(t / brokenGap.y);
+            float start = index * brokenGap.y;
+            float offset = Hash(seed + index) * (brokenGap.y - brokenGap.x);
+            float local = t - start - offset;
+            if (local < 0f || Hash(seed * 1.37f + index) < 0.2f) return 0f;
+            float burst = Mathf.Lerp(0.15f, 0.8f, Hash(seed * 2.11f + index));
+            if (local > burst) return 0f;
+            int tick = Mathf.FloorToInt(local * 22f);
+            if (Hash(seed * 3.7f + index * 31f + tick) < 0.35f) return 0f;   // the stutter inside a burst
+            return Mathf.Lerp(0.6f, 1f, Hash(seed * 5.3f + index * 17f + tick));
+        }
 
         /// <summary>Circuito com defeito: a luz vai e volta devagar entre <see cref="brokenMin"/> e 1, sem apagar. 0..1.</summary>
         float BrokenWave(float t) => Mathf.Lerp(brokenMin, 1f, Mathf.SmoothStep(0f, 1f, Mathf.PerlinNoise(t * brokenSpeed, seed)));
@@ -139,7 +177,7 @@ namespace Jamlloween.Progression
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { all.Clear(); pushedFrame = -1; }
+        static void ResetStatics() { all.Clear(); pushedFrame = -1; warnedFull = false; }
 
         bool Powered() => string.IsNullOrEmpty(powerGroup) || LightGroup.IsGroupOn(powerGroup);
 
@@ -180,8 +218,9 @@ namespace Jamlloween.Progression
             }
             if (!Broken) level *= WorkingWave(t);
             float bulb = level;
-            if (Broken) { float f = BrokenWave(t); level = f * brokenLevel; bulb = f * brokenBulbLevel; }
+            if (Broken) { float f = brokenStyle == BrokenStyle.Sparks ? BrokenSparks(t) : BrokenWave(t); level = f * brokenLevel; bulb = f * brokenBulbLevel; }
             if (!Lit) { level = 0f; bulb = 0f; }
+            // Sparks: a dark bulb stays visible as dead glass while broken, so the ring does not vanish between bursts.
             bool show = bulbsStayVisible || bulb > 0f;
             block ??= new MaterialPropertyBlock();
             foreach (var r in renderers)
@@ -190,51 +229,103 @@ namespace Jamlloween.Progression
                 if (r.enabled != show) r.enabled = show;
                 r.GetPropertyBlock(block);
                 // The ring of bulbs turns around the thinnest side of its mesh (the carousel: Y; the Ferris wheel: Z).
+                // A row runs along the longest side, one segment per bulb.
                 if (r.TryGetComponent(out MeshFilter mf) && mf.sharedMesh != null)
                 {
                     Bounds mb = mf.sharedMesh.bounds;
                     Vector3 e = mb.size;
-                    float axis = e.x <= e.y && e.x <= e.z ? 0f : (e.y <= e.z ? 1f : 2f);
-                    block.SetFloat(SegmentAxisId, axis);
-                    block.SetVector(SegmentCenterId, mb.center);
+                    if (rowBulbs > 0)
+                    {
+                        int axis = e.x >= e.y && e.x >= e.z ? 0 : (e.y >= e.z ? 1 : 2);
+                        block.SetFloat(SegmentAxisId, 3 + axis);
+                        block.SetVector(SegmentCenterId, new Vector4(mb.center.x, mb.center.y, mb.center.z, e[axis]));
+                        block.SetFloat(SegmentsId, rowBulbs);
+                    }
+                    else
+                    {
+                        float axis = e.x <= e.y && e.x <= e.z ? 0f : (e.y <= e.z ? 1f : 2f);
+                        block.SetFloat(SegmentAxisId, axis);
+                        block.SetVector(SegmentCenterId, mb.center);
+                    }
                 }
+                block.SetFloat(BulbMaskId, rowBulbs > 0 ? litBulbs : -1f);
                 // The bulbs flicker with the light pool; while broken, the shader only picks which bulbs stay dead.
                 block.SetFloat(BulbLevelId, bulb);
                 block.SetFloat(BulbBrokenId, Broken ? 1f : 0f);
                 block.SetFloat(BulbVariationId, workingVariation);
                 block.SetFloat(BulbSpeedId, Broken ? brokenSpeed : workingSpeed);
                 block.SetFloat(BulbMinId, brokenMin);
+                block.SetFloat(BulbBrokenStyleId, brokenStyle == BrokenStyle.Sparks ? 0f : 1f);
                 r.SetPropertyBlock(block);
             }
         }
 
-        static void Push(ref int n, Vector3 p, float range, Color c)
+        /// <summary>Sends this beacon's light (one per emitFrom point, or one from itself), scaled by <paramref name="weight"/>.</summary>
+        void PushLights(ref int n, ref int wanted, float weight)
+        {
+            if (weight <= 0f) return;
+            if (emitFrom.Length == 0)
+            {
+                wanted++;
+                Push(ref n, transform.position, range, softness, color * (intensity * level * weight));
+                return;
+            }
+            Color share = color * (intensity * level * weight / emitFrom.Length);
+            foreach (var point in emitFrom)
+            {
+                if (point == null)
+                {
+                    // Only this point is skipped; the other lights of the scene still show.
+                    if (!warnedEmpty) { warnedEmpty = true; Debug.LogWarning($"[StepBeacon] '{name}': um ponto de 'emitFrom' está vazio.", this); }
+                    continue;
+                }
+                wanted++;
+                Push(ref n, point.position, range, softness, share);
+            }
+        }
+
+        static void Push(ref int n, Vector3 p, float range, float soft, Color c)
         {
             if (n >= Max) return;
             posRange[n] = new Vector4(p.x, p.y, p.z, range);
-            colors[n] = new Vector4(c.r, c.g, c.b, 0f);
+            colors[n] = new Vector4(c.r, c.g, c.b, soft);
             n++;
         }
+
+        // Decor lights farther than this (plus their range) from the camera are not sent; they fade out over the last metres.
+        const float DecorCullDistance = 60f, DecorFade = 10f;
+        static readonly List<(float dist, StepBeacon b)> decorNear = new List<(float, StepBeacon)>();
+        static bool warnedFull;
+        bool warnedEmpty;
 
         void LateUpdate()
         {
             if (pushedFrame == Time.frameCount) return;
             pushedFrame = Time.frameCount;
-            int n = 0;
+            var cam = Camera.main;
+            Vector3 eye = cam != null ? cam.transform.position : Vector3.zero;
+            int n = 0, wanted = 0;
+
+            // 1. The story lights: always sent, they guide the player from far away.
+            foreach (var b in all)
+                if (!b.ambient && !b.decor && b.level > 0f && b.intensity > 0f) b.PushLights(ref n, ref wanted, 1f);
+
+            // 2. The decor lights (lamp posts): nearest first, only near the camera.
+            decorNear.Clear();
             foreach (var b in all)
             {
-                if (b.ambient || b.level <= 0f || n >= Max) continue;
-                if (b.emitFrom.Length == 0)
-                {
-                    Push(ref n, b.transform.position, b.range, b.color * (b.intensity * b.level));
-                    continue;
-                }
-                Color share = b.color * (b.intensity * b.level / b.emitFrom.Length);
-                foreach (var point in b.emitFrom)
-                {
-                    if (point == null) throw new MissingReferenceException($"[StepBeacon] '{b.name}': um ponto de 'emitFrom' está vazio.");
-                    Push(ref n, point.position, b.range, share);
-                }
+                if (!b.decor || b.ambient || b.level <= 0f || b.intensity <= 0f) continue;
+                float d = Vector3.Distance(eye, b.transform.position);
+                if (d < DecorCullDistance + b.range) decorNear.Add((d, b));
+            }
+            decorNear.Sort((x, y) => x.dist.CompareTo(y.dist));
+            foreach (var (d, b) in decorNear)
+                b.PushLights(ref n, ref wanted, Mathf.Clamp01((DecorCullDistance + b.range - d) / DecorFade));
+
+            if (wanted > Max && !warnedFull)
+            {
+                warnedFull = true;
+                Debug.LogWarning($"[StepBeacon] {wanted} luzes pedidas, só {Max} cabem (WORLD_BEACON_MAX). As mais longe da câmera ficaram de fora.");
             }
             Shader.SetGlobalFloat(CountId, n);
             Shader.SetGlobalFloat(FogId, fogDensity);
@@ -254,7 +345,7 @@ namespace Jamlloween.Progression
             var cam = Camera.main;
             Vector3 eye = cam != null ? cam.transform.position : Vector3.zero;
             foreach (var b in all)
-                if (b.ambient && b.level > 0f)
+                if (b.ambient && b.level > 0f && b.intensity > 0f)
                 {
                     float d = Vector3.Distance(eye, b.transform.position);
                     if (d < AmbientFadeEnd) near.Add((d, b));

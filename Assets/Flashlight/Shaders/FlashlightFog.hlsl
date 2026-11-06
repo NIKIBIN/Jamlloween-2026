@@ -12,18 +12,22 @@ float _RadialFogBaseBrightness, _RadialFogConeBrightness;
 float _FlashlightCosInner;
 float4 _FlashlightPosition; // xyz: origin, w: 0..1 on amount
 float4 _FlashlightDirection; // xyz: forward, w: cos of the outer angle
+float4 _FlashlightTint;      // rgb: colour of the beam, a: 1 when set (0, unset: white)
 
 float FlashlightConeAmount(float3 positionWS)
 {
     float3 toSurface = normalize(positionWS - _FlashlightPosition.xyz);
     float cosAngle = dot(toSurface, _FlashlightDirection.xyz);
-    return smoothstep(_FlashlightDirection.w, _FlashlightCosInner, cosAngle) * _FlashlightPosition.w;
+    // pow > 1: the light fades slowly across the wide penumbra, so the beam has no clear circle at its edge.
+    return pow(smoothstep(_FlashlightDirection.w, _FlashlightCosInner, cosAngle), 1.6) * _FlashlightPosition.w;
 }
 
-float FlashlightBrightness(float3 positionWS)
+float3 FlashlightBrightness(float3 positionWS)
 {
-    // The beam only adds light: with a bright world profile it never darkens what is outside it.
-    return lerp(_RadialFogBaseBrightness, max(_RadialFogBaseBrightness, _RadialFogConeBrightness), FlashlightConeAmount(positionWS));
+    // The beam only adds light: with a bright world profile it never darkens what is outside it. The light it adds has the beam's colour.
+    float3 tint = lerp(float3(1.0, 1.0, 1.0), _FlashlightTint.rgb, _FlashlightTint.a);
+    float added = max(0.0, _RadialFogConeBrightness - _RadialFogBaseBrightness) * FlashlightConeAmount(positionWS);
+    return _RadialFogBaseBrightness + added * tint;
 }
 
 // How much of the scene the base fog leaves at this distance (exp), without the beam.

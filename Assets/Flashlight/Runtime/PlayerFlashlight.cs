@@ -18,6 +18,7 @@ namespace Jamlloween.Flashlight
         static readonly int ConeDensityId = Shader.PropertyToID("_RadialFogConeDensity");
         static readonly int ConeBrightnessId = Shader.PropertyToID("_RadialFogConeBrightness");
         static readonly int CosInnerId = Shader.PropertyToID("_FlashlightCosInner");
+        static readonly int TintId = Shader.PropertyToID("_FlashlightTint");
         static readonly int PositionId = Shader.PropertyToID("_FlashlightPosition");
         static readonly int DirectionId = Shader.PropertyToID("_FlashlightDirection");
 
@@ -57,6 +58,8 @@ namespace Jamlloween.Flashlight
             Shader.SetGlobalFloat(EnabledId, 1f);
             Shader.SetGlobalFloat(ConeDensityId, config.coneFogDensity);
             Shader.SetGlobalFloat(ConeBrightnessId, config.coneBrightness);
+            Shader.SetGlobalVector(TintId, new Vector4(config.tint.r, config.tint.g, config.tint.b, 1f));
+            beam.color = config.tint;
         }
 
         void OnDisable() => Shader.SetGlobalFloat(EnabledId, 0f);

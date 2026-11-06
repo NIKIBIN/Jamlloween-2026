@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Jamlloween.Lighting::Jamlloween.Lighting.LightingProfile
   fogColor: {r: 0.03, g: 0.034, b: 0.048, a: 1}
   skyColor: {r: 0.008, g: 0.009, b: 0.014, a: 1}
-  fogDensity: 0.16
-  brightness: 0.42
+  fogDensity: 0.08
+  brightness: 0.03
   ambientColor: {r: 0.03, g: 0.03, b: 0.045, a: 1}

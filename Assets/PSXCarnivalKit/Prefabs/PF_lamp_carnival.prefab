@@ -1,67 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4391634643503448560
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8265507986410312808}
-  - component: {fileID: 4015116178221225186}
-  m_Layer: 0
-  m_Name: Luz_Poste
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8265507986410312808
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4391634643503448560}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.6, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2405392674102130982}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4015116178221225186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4391634643503448560}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0ca8aaaf053905a98667a27080aa0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.StepBeacon
-  from: {fileID: 0}
-  until: {fileID: 0}
-  powerGroup: park
-  brokenUntil: {fileID: 0}
-  brokenLevel: 0.3
-  brokenBulbLevel: 0.4
-  brokenGap: {x: 1, y: 2.5}
-  flickerSeed: 0
-  ambient: 1
-  color: {r: 1, g: 0.72, b: 0.4, a: 1}
-  intensity: 3
-  range: 7.5
-  pattern: 0
-  blinkPeriod: 1
-  blinkOn: 0.5
-  renderers: []
-  bulbsStayVisible: 0
-  fogDensity: 0.012
 --- !u!1001 &7213393493626360380
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -114,23 +52,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_lamp_carnival
       objectReference: {fileID: 0}
-    - target: {fileID: 466991682479401165, guid: 8fd6788f16d7788f254c8e047cbb8758, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 8f6f85ba43607b06f96b80d6046496bf, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: -4216859302048453862, guid: 8fd6788f16d7788f254c8e047cbb8758, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8265507986410312808}
+    m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: -927199367670048503, guid: 8fd6788f16d7788f254c8e047cbb8758, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5135807898160166833}
-    - targetCorrespondingSourceObject: {fileID: -927199367670048503, guid: 8fd6788f16d7788f254c8e047cbb8758, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3210068892524241183}
     - targetCorrespondingSourceObject: {fileID: -7622321546129889901, guid: 8fd6788f16d7788f254c8e047cbb8758, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7920067205666234213}
@@ -185,7 +113,6 @@ MonoBehaviour:
   steps: 1
   takes: 
   keep: 0
-  locked: 0
   item: 
   code: 
   lit:
@@ -210,25 +137,6 @@ MonoBehaviour:
   onPicked:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &3210068892524241183
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1673916552689863477}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e8fa17dd0dfc9901aa125939e52a82b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.PoweredMachines
-  groupId: park
-  machines: []
---- !u!4 &2405392674102130982 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: 8fd6788f16d7788f254c8e047cbb8758, type: 3}
-  m_PrefabInstance: {fileID: 7213393493626360380}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &5080402855278765230 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2493349671464072850, guid: 8fd6788f16d7788f254c8e047cbb8758, type: 3}

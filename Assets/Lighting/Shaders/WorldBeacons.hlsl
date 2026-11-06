@@ -11,7 +11,7 @@
 float _BeaconCount;
 float _BeaconFogDensity;               // exponential fog of the beacon light, per metre from the camera
 float4 _BeaconPosRange48[WORLD_BEACON_MAX];  // xyz: position, w: range
-float4 _BeaconColor48[WORLD_BEACON_MAX];     // rgb: colour x intensity
+float4 _BeaconColor48[WORLD_BEACON_MAX];     // rgb: colour x intensity, a: soft falloff in metres (0: compact pool)
 float _AmbientLightCount;
 float4 _AmbientLightPosRange[WORLD_AMBIENT_MAX];
 float4 _AmbientLightColor[WORLD_AMBIENT_MAX];
@@ -22,14 +22,26 @@ float BeaconSeen(float3 positionWS)
     return exp(-_BeaconFogDensity * distance(positionWS, _WorldSpaceCameraPos.xyz));
 }
 
-float3 BeaconPool(float4 posRange, float3 color, float3 positionWS, float3 normalWS)
+// soft 0: a compact pool that ends at the range. soft > 0 (the lamp posts): the light drops like a real lamp,
+// 1 / (1 + (dist / soft)^2), and a window brings the long tail to zero at the range, with no visible edge.
+float3 BeaconPool(float4 posRange, float3 color, float soft, float3 positionWS, float3 normalWS)
 {
     float3 toLight = posRange.xyz - positionWS;
     float dist = length(toLight);
     float3 lightDir = toLight / max(dist, 0.001);
-    float reach = saturate(dist / max(posRange.w, 0.001));
-    reach = 1.0 - reach * reach;
-    reach *= reach;
+    float x = saturate(dist / max(posRange.w, 0.001));
+    float reach;
+    if (soft > 0.0)
+    {
+        float window = 1.0 - x * x * x * x;
+        float d = dist / soft;
+        reach = window * window / (1.0 + d * d);
+    }
+    else
+    {
+        reach = 1.0 - x * x;
+        reach *= reach;
+    }
     float facing = lerp(0.35, 1.0, saturate(dot(normalWS, lightDir)));
     return color * reach * facing;
 }
@@ -47,12 +59,12 @@ float3 WorldBeacons(float3 albedo, float3 positionWS)
     [loop] for (int i = 0; i < WORLD_BEACON_MAX; i++)
     {
         if (i >= (int)_BeaconCount) break;
-        sum += BeaconPool(_BeaconPosRange48[i], _BeaconColor48[i].rgb, positionWS, normalWS);
+        sum += BeaconPool(_BeaconPosRange48[i], _BeaconColor48[i].rgb, _BeaconColor48[i].a, positionWS, normalWS);
     }
     [unroll] for (int j = 0; j < WORLD_AMBIENT_MAX; j++)
     {
         if (j >= (int)_AmbientLightCount) break;
-        sum += BeaconPool(_AmbientLightPosRange[j], _AmbientLightColor[j].rgb, positionWS, normalWS);
+        sum += BeaconPool(_AmbientLightPosRange[j], _AmbientLightColor[j].rgb, 0.0, positionWS, normalWS);
     }
     // The minimum keeps the pool readable on the night floor, whose own colour is almost black.
     return (1.0 - exp(-max(albedo, 0.08) * sum)) * BeaconSeen(positionWS);

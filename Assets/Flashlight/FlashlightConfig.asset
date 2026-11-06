@@ -17,6 +17,7 @@ MonoBehaviour:
   transitionSeconds: 0.2
   baseBrightness: 0.45
   coneBrightness: 0.8
+  tint: {r: 1, g: 0.86, b: 0.66, a: 1}
   intensity: 2.5
-  spotAngle: 38
-  innerSpotAngle: 18
+  spotAngle: 52
+  innerSpotAngle: 13

@@ -29,7 +29,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Glow: 1.6
+    - _Glow: 1
     - _SnapRows: 240
     m_Colors:
     - _Color: {r: 1, g: 0.92, b: 0.75, a: 1}

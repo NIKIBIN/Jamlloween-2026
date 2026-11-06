@@ -10,6 +10,7 @@ Shader "PSXCarnivalKit/PSX Unlit"
         _Affine ("Affine Texture Warp", Range(0, 1)) = 0
         _Cutoff ("Alpha Cutoff", Range(0, 1)) = 0
         [Toggle] _IgnoreBlackout ("Stays Visible In Catch Blackout (Zatan)", Float) = 0
+        _BeaconResponse ("Lamp Light Taken (1 = all, foliage less)", Range(0, 1)) = 1
     }
     SubShader
     {
@@ -29,7 +30,7 @@ Shader "PSXCarnivalKit/PSX Unlit"
             CBUFFER_START(UnityPerMaterial) // for URP's SRP Batcher
             float4 _MainTex_ST;
             fixed4 _Color;
-            float _SnapRows, _Affine, _Cutoff, _IgnoreBlackout;
+            float _SnapRows, _Affine, _Cutoff, _IgnoreBlackout, _BeaconResponse;
             CBUFFER_END
 
             struct appdata
@@ -87,14 +88,14 @@ Shader "PSXCarnivalKit/PSX Unlit"
                 float3 albedo = c.rgb;
                 if (_RadialFogEnabled > 0.5)
                 {
-                    float3 eyeLight = ZatanEyeLight(c.rgb, i.positionWS) + MinigameWorkLamp(c.rgb, i.positionWS) + WorldBeacons(c.rgb, i.positionWS);
+                    float3 eyeLight = ZatanEyeLight(c.rgb, i.positionWS) + MinigameWorkLamp(c.rgb, i.positionWS) + WorldBeacons(c.rgb, i.positionWS) * _BeaconResponse;
                     c.rgb *= FlashlightBrightness(i.positionWS);
                     c.rgb = FlashlightApplyFog(c.rgb, i.positionWS, unity_FogColor.rgb) + eyeLight;
                     c.rgb = Blackout(c.rgb, albedo, i);
                     return c;
                 }
                 UNITY_APPLY_FOG(i.fogCoord, c);
-                c.rgb += MinigameWorkLamp(c.rgb, i.positionWS) + WorldBeacons(c.rgb, i.positionWS);
+                c.rgb += MinigameWorkLamp(c.rgb, i.positionWS) + WorldBeacons(c.rgb, i.positionWS) * _BeaconResponse;
                 c.rgb = Blackout(c.rgb, albedo, i);
                 return c;
             }
