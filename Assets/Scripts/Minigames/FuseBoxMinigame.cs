@@ -41,6 +41,18 @@ public class FuseBoxMinigame : Minigame
     [Tooltip("Quanto do tamanho da tela o mouse precisa descer para puxar a alavanca ate o fim.")]
     [SerializeField] float leverDragScreenFraction = 0.35f;
 
+    [Header("Som (vazio = sem som)")]
+    [Tooltip("Parafuso solto caindo.")]
+    [SerializeField] AudioClip screwClip;
+    [Tooltip("Tampa de metal saindo.")]
+    [SerializeField] AudioClip coverClip;
+    [Tooltip("Fusivel saindo e entrando no encaixe.")]
+    [SerializeField] AudioClip fuseClip;
+    [Tooltip("Alavanca chegando ao fim (a energia volta).")]
+    [SerializeField] AudioClip leverClip;
+    [SerializeField, Range(0f, 1f)] float volume = 1f;
+    [SerializeField] float audioMaxDistance = 12f;
+
     bool[] screwOut;
     bool[] fusePresent;
     bool[] shaking;
@@ -53,6 +65,7 @@ public class FuseBoxMinigame : Minigame
     Coroutine leverRoutine;
     FuseBoxPart hovered;
     Coroutine spareRoutine;
+    AudioSource sfx;
 
     public bool CoverRemoved => coverOff;
     public bool BurntFuseRemoved => burntRemoved;
@@ -79,6 +92,13 @@ public class FuseBoxMinigame : Minigame
         // O fusivel novo e o que o jogador acha no parque: so aparece na prateleira quando ele chega com ele (ao abrir o minigame).
         spareFuse.gameObject.SetActive(false);
         leverHomeRot = lever.transform.localRotation;
+
+        sfx = gameObject.AddComponent<AudioSource>();
+        sfx.playOnAwake = false;
+        sfx.spatialBlend = 1f;
+        sfx.rolloffMode = AudioRolloffMode.Linear;
+        sfx.minDistance = 1f;
+        sfx.maxDistance = audioMaxDistance;
 
         if (burntIndex < 0 || burntIndex >= fuses.Length) burntIndex = Random.Range(0, fuses.Length);
         var glass = fuses[burntIndex].transform.Find("Glass");
@@ -203,6 +223,7 @@ public class FuseBoxMinigame : Minigame
         if (p.progress < 1f) return;
 
         screwOut[i] = true;
+        Play(screwClip);
         Disable(p);
         StartCoroutine(Fall(p.transform));
     }
@@ -212,6 +233,7 @@ public class FuseBoxMinigame : Minigame
     void RemoveCover()
     {
         coverOff = true;
+        Play(coverClip);
         Disable(cover);
         StartCoroutine(Slide(cover.transform, new Vector3(0f, -0.4f, -0.5f), Quaternion.Euler(35f, 0f, 0f), 0.5f, hideAtEnd: true));
     }
@@ -221,6 +243,7 @@ public class FuseBoxMinigame : Minigame
         var f = fuses[burntIndex];
         fusePresent[burntIndex] = false;
         burntRemoved = true;
+        Play(fuseClip);
         Disable(f);
         StartCoroutine(Slide(f.transform, fuseHome[burntIndex] + new Vector3(0f, 0.04f, -0.25f), f.transform.localRotation, 0.35f, hideAtEnd: true));
     }
@@ -293,6 +316,7 @@ public class FuseBoxMinigame : Minigame
     IEnumerator InsertRoutine(int slot)
     {
         yield return Slide(spareFuse.transform, fuseHome[slot], Quaternion.identity, 0.2f, hideAtEnd: false);
+        Play(fuseClip);
         fuseSeated = true;   // destrava a alavanca; o LED ambar avisa que tem energia
         if (statusLed != null && ledReadyMaterial != null) statusLed.sharedMaterial = ledReadyMaterial;
     }
@@ -341,8 +365,16 @@ public class FuseBoxMinigame : Minigame
         ApplyLever();
         if (target < 1f) yield break;
 
+        Play(leverClip);
         if (statusLed != null && ledOkMaterial != null) statusLed.sharedMaterial = ledOkMaterial;
         Complete();
+    }
+
+    void Play(AudioClip clip)
+    {
+        if (clip == null) return;
+        sfx.pitch = Random.Range(0.95f, 1.05f);
+        sfx.PlayOneShot(clip, volume);
     }
 
     // ---------- Animacoes simples ----------

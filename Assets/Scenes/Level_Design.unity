@@ -2724,7 +2724,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 06b4988cc5a53c64381d29aa217fd6e8, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 5480633b4d1e6ca82bbad7a6c2cf3971, type: 2}
   m_BuildHeightMesh: 0
 --- !u!4 &57800357
 Transform:
@@ -7278,6 +7278,22 @@ PrefabInstance:
       propertyPath: walker
       value: 
       objectReference: {fileID: 127641598}
+    - target: {fileID: 6602584622411659179, guid: 081660043db628608a106ae72e58c158, type: 3}
+      propertyPath: sloshClips.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6602584622411659179, guid: 081660043db628608a106ae72e58c158, type: 3}
+      propertyPath: 'sloshClips.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 9ecf125b69cb043389b398bf6db24e78, type: 3}
+    - target: {fileID: 6602584622411659179, guid: 081660043db628608a106ae72e58c158, type: 3}
+      propertyPath: 'sloshClips.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 779489d3e56ea0b0c9f4be9bce977ff1, type: 3}
+    - target: {fileID: 6602584622411659179, guid: 081660043db628608a106ae72e58c158, type: 3}
+      propertyPath: 'sloshClips.Array.data[2]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 4985bd0e7ca6fbcb3a54bcf5f6f675bf, type: 3}
     - target: {fileID: 6622665817036680443, guid: 081660043db628608a106ae72e58c158, type: 3}
       propertyPath: m_Name
       value: Player
@@ -7353,6 +7369,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6622665817036680443, guid: 081660043db628608a106ae72e58c158, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2018857429}
+    - targetCorrespondingSourceObject: {fileID: 6622665817036680443, guid: 081660043db628608a106ae72e58c158, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2018857431}
     - targetCorrespondingSourceObject: {fileID: 6090226406398175336, guid: 081660043db628608a106ae72e58c158, type: 3}
       insertIndex: -1
       addedObject: {fileID: 127641605}
@@ -22451,8 +22470,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26bd1c6c8205f8bdb9fa408a71621653, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarouselAudio
-  creakClip: {fileID: 0}
+  creakClip: {fileID: 8300000, guid: 822c754e2ee4695cdb608aa9a691dd42, type: 3}
   musicClip: {fileID: 0}
+  clickClip: {fileID: 8300000, guid: 3b0b080e030f16e2c91d9e1158fe7b10, type: 3}
+  strainClip: {fileID: 8300000, guid: 8273c1614e48d951c92484bbc88c7c3d, type: 3}
+  snapClip: {fileID: 8300000, guid: 46157bf6c33db1dd4bf128eb34265f3c, type: 3}
+  humClip: {fileID: 8300000, guid: b59d1ce7f396759068d1613d7c85ccf1, type: 3}
   maxDistance: 30
   sfxVolume: 0.9
   creakVolume: 0.35
@@ -49238,8 +49261,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26bd1c6c8205f8bdb9fa408a71621653, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarouselAudio
-  creakClip: {fileID: 0}
+  creakClip: {fileID: 8300000, guid: 822c754e2ee4695cdb608aa9a691dd42, type: 3}
   musicClip: {fileID: 8300000, guid: b735035ab4736cc429894273606c9e54, type: 3}
+  clickClip: {fileID: 8300000, guid: 3b0b080e030f16e2c91d9e1158fe7b10, type: 3}
+  strainClip: {fileID: 8300000, guid: 8273c1614e48d951c92484bbc88c7c3d, type: 3}
+  snapClip: {fileID: 8300000, guid: 46157bf6c33db1dd4bf128eb34265f3c, type: 3}
+  humClip: {fileID: 8300000, guid: b59d1ce7f396759068d1613d7c85ccf1, type: 3}
   maxDistance: 30
   sfxVolume: 0.9
   creakVolume: 0.35
@@ -53557,6 +53584,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: FuseBoxMinigame
       objectReference: {fileID: 0}
+    - target: {fileID: 6343882114831353271, guid: 8949c000732394929b7782f6d892d262, type: 3}
+      propertyPath: fuseClip
+      value: 
+      objectReference: {fileID: 8300000, guid: f1594a9eb59bf5f918d61eeff30efbf6, type: 3}
+    - target: {fileID: 6343882114831353271, guid: 8949c000732394929b7782f6d892d262, type: 3}
+      propertyPath: coverClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 7c303054cccdb6829a05c538f75a4e4b, type: 3}
+    - target: {fileID: 6343882114831353271, guid: 8949c000732394929b7782f6d892d262, type: 3}
+      propertyPath: leverClip
+      value: 
+      objectReference: {fileID: 8300000, guid: abc8e72afcc6980cabe93f533ee3dd5a, type: 3}
+    - target: {fileID: 6343882114831353271, guid: 8949c000732394929b7782f6d892d262, type: 3}
+      propertyPath: screwClip
+      value: 
+      objectReference: {fileID: 8300000, guid: ebd6093f71884f87db9cd51d3dfdb3d9, type: 3}
     - target: {fileID: 6343882114831353271, guid: 8949c000732394929b7782f6d892d262, type: 3}
       propertyPath: activeWhilePlaying.Array.size
       value: 0
@@ -67315,6 +67358,46 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1144539995}
     m_Modifications:
+    - target: {fileID: 935313872704373, guid: 67de3c84d909cb45f90d2a641e7f7729, type: 3}
+      propertyPath: humClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 12c5cf638782d5df3a6e0e9abe98db6a, type: 3}
+    - target: {fileID: 935313872704373, guid: 67de3c84d909cb45f90d2a641e7f7729, type: 3}
+      propertyPath: leakClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 944d472779c2e76658b0508cf313db28, type: 3}
+    - target: {fileID: 935313872704373, guid: 67de3c84d909cb45f90d2a641e7f7729, type: 3}
+      propertyPath: sighClip
+      value: 
+      objectReference: {fileID: 8300000, guid: ac81f97e7fae081bfa9f91ce241b5852, type: 3}
+    - target: {fileID: 935313872704373, guid: 67de3c84d909cb45f90d2a641e7f7729, type: 3}
+      propertyPath: tapeClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 04f03908197c89d198c68d923ede2782, type: 3}
+    - target: {fileID: 935313872704373, guid: 67de3c84d909cb45f90d2a641e7f7729, type: 3}
+      propertyPath: clickClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 6c3dc88da63548fd3a4d4195a22bdb6e, type: 3}
+    - target: {fileID: 935313872704373, guid: 67de3c84d909cb45f90d2a641e7f7729, type: 3}
+      propertyPath: clunkClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 8df511853b843f5a2a12dba5df4ea915, type: 3}
+    - target: {fileID: 935313872704373, guid: 67de3c84d909cb45f90d2a641e7f7729, type: 3}
+      propertyPath: creakClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 98e97a38e98ee2cb8887b2f0c58c0198, type: 3}
+    - target: {fileID: 935313872704373, guid: 67de3c84d909cb45f90d2a641e7f7729, type: 3}
+      propertyPath: scrubClip
+      value: 
+      objectReference: {fileID: 8300000, guid: dbb6fb6596fe231c9a98f812ea070da4, type: 3}
+    - target: {fileID: 935313872704373, guid: 67de3c84d909cb45f90d2a641e7f7729, type: 3}
+      propertyPath: breathClip
+      value: 
+      objectReference: {fileID: 8300000, guid: c53bef5d92cdee173b2138e90dbf8c8f, type: 3}
+    - target: {fileID: 935313872704373, guid: 67de3c84d909cb45f90d2a641e7f7729, type: 3}
+      propertyPath: solenoidClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 074a3ca3d8622ac87b4635faeffd457a, type: 3}
     - target: {fileID: 1173586178859398292, guid: 67de3c84d909cb45f90d2a641e7f7729, type: 3}
       propertyPath: headPivot
       value: 
@@ -78122,6 +78205,18 @@ PrefabInstance:
       value: -1183493901
       objectReference: {fileID: 0}
     - target: {fileID: 354307394418699778, guid: 22da81a94ffbc59baaea3778f6868f4e, type: 3}
+      propertyPath: bossVoice
+      value: 
+      objectReference: {fileID: 8300000, guid: d8fee1aaa018bde7f8454c3fde201787, type: 3}
+    - target: {fileID: 354307394418699778, guid: 22da81a94ffbc59baaea3778f6868f4e, type: 3}
+      propertyPath: clickClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 9e8ee452b9eef378f96ba865900bc16a, type: 3}
+    - target: {fileID: 354307394418699778, guid: 22da81a94ffbc59baaea3778f6868f4e, type: 3}
+      propertyPath: staticClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 38d0744f6ae647c89b90f4f812c709cc, type: 3}
+    - target: {fileID: 354307394418699778, guid: 22da81a94ffbc59baaea3778f6868f4e, type: 3}
       propertyPath: staticVolume
       value: 0.2
       objectReference: {fileID: 0}
@@ -84970,6 +85065,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 127306091225024647, guid: ba21cbdad13c71d899c295bf5d96800e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1680999500}
+    - targetCorrespondingSourceObject: {fileID: 127306091225024647, guid: ba21cbdad13c71d899c295bf5d96800e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1680999502}
+    - targetCorrespondingSourceObject: {fileID: 127306091225024647, guid: ba21cbdad13c71d899c295bf5d96800e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1680999501}
   m_SourcePrefab: {fileID: 100100000, guid: ba21cbdad13c71d899c295bf5d96800e, type: 3}
 --- !u!4 &1680999493 stripped
 Transform:
@@ -85049,6 +85150,119 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Roteiro.MachinePrompt
   machine: {fileID: 1680999494}
   prompt: Interagir
+--- !u!114 &1680999501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770634654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06572d69553093a9ebd34f8efde12723, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Roteiro.MachineSwitchSound
+  machine: {fileID: 1680999494}
+  onClip: {fileID: 8300000, guid: bf23f68440686e556a259f4d4abbe28e, type: 3}
+  offClip: {fileID: 8300000, guid: 427128d2bd1fa1ace90ba14554039657, type: 3}
+  volume: 1
+--- !u!82 &1680999502
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770634654}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1.5
+  MaxDistance: 18
+  Pan2D: 0
+  rolloffMode: 1
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &1681881885
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -98549,7 +98763,11 @@ MonoBehaviour:
   sparks: {fileID: 1820826362}
   glow: {fileID: 1770946505}
   source: {fileID: 1820826360}
-  clips: []
+  clips:
+  - {fileID: 8300000, guid: 63dccefda40db71e5892ed1610dec1f0, type: 3}
+  - {fileID: 8300000, guid: 9a41026b7ab76e98f99f4e917cb6871f, type: 3}
+  - {fileID: 8300000, guid: d1cab47401cdacdf7bee8d3c8538cc1f, type: 3}
+  - {fileID: 8300000, guid: 832fdfbeb099c7045aa65d44467f691d, type: 3}
   pauseRange: {x: 1.2, y: 3.5}
   crackleCount: {x: 1, y: 3}
   crackleGap: {x: 0.03, y: 0.18}
@@ -109750,6 +109968,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b46ae3b35e3a954c8422816c2893a6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Jamlloween.Zatan.TestScene::Jamlloween.Zatan.TestScene.LevelWalkerHiding
+--- !u!114 &2018857431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 760356484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ae03803c63ecfbeeb26ea10d1a8c0eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerFoley
+  steps:
+  - {fileID: 8300000, guid: 4d77bf1565c26ec71a511876a7311b0b, type: 3}
+  - {fileID: 8300000, guid: f679e7a3ae887b770a1b2f817cb50e02, type: 3}
+  - {fileID: 8300000, guid: b557beee4b040d52f9c8428af74c83a8, type: 3}
+  - {fileID: 8300000, guid: ec93ccf336b0eb89f9e2074121b07285, type: 3}
+  - {fileID: 8300000, guid: 19b4b760e2db6fe69b0656bfc1b9a7b9, type: 3}
+  - {fileID: 8300000, guid: 12c61874236b54c9baf67fc421fba130, type: 3}
+  - {fileID: 8300000, guid: 43b36bf46d0e3fef4904c8908dc88bfd, type: 3}
+  - {fileID: 8300000, guid: 08369212322cdb04080ac5b2ff739903, type: 3}
+  stride: {x: 0.75, y: 1.05}
+  stepVolume: {x: 0.45, y: 0.7}
+  flashlightClick: {fileID: 8300000, guid: 4aeadc6fac65fe3dfa2d836e7fcab268, type: 3}
+  flashlightVolume: 0.6
+  pickups:
+  - {fileID: 8300000, guid: 81a880d1576d8f4bfa1c374924b84ef4, type: 3}
+  - {fileID: 8300000, guid: ce095e61b37acd466b86cae6a3049750, type: 3}
+  - {fileID: 8300000, guid: 982d12f392f454ebf8d65a3b1d3921c7, type: 3}
+  - {fileID: 8300000, guid: 043b69d4cd18e39d1a24b61460ddf09a, type: 3}
+  pickupVolume: 0.7
 --- !u!1001 &2019315202
 PrefabInstance:
   m_ObjectHideFlags: 0

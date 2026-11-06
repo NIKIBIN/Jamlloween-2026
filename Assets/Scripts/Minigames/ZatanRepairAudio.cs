@@ -23,6 +23,14 @@ public class ZatanRepairAudio : MonoBehaviour
     [SerializeField] AudioClip creakClip;
     [Tooltip("Vazamento de gas (chiado em loop enquanto uma junta vaza).")]
     [SerializeField] AudioClip leakClip;
+    [Tooltip("Zumbido do motor do compressor (loop).")]
+    [SerializeField] AudioClip humClip;
+    [Tooltip("Clique curto de encaixe.")]
+    [SerializeField] AudioClip clickClip;
+    [Tooltip("Estopa esfregando (loop).")]
+    [SerializeField] AudioClip scrubClip;
+    [Tooltip("Fita sendo esticada (loop). Vazio = o loop da estopa, mais agudo.")]
+    [SerializeField] AudioClip tapeClip;
 
     [Header("Volumes")]
     // Ambiente sutil: o painel soa como uma maquina velha ao fundo, nao como um trem. Suba com cuidado.
@@ -56,16 +64,16 @@ public class ZatanRepairAudio : MonoBehaviour
         scrub = NewSource(true);
         tape = NewSource(true);
 
-        click = MakeClick();
+        click = clickClip != null ? clickClip : MakeClick();
         solenoid = solenoidClip != null ? solenoidClip : MakeSolenoid();
         clunk = clunkClip != null ? clunkClip : MakeClunk();
         sigh = sighClip != null ? sighClip : MakeSigh();
         breath.clip = breathClip != null ? breathClip : MakeBreath();
-        hum.clip = MakeHum();
+        hum.clip = humClip != null ? humClip : MakeHum();
         effort.clip = creakClip != null ? creakClip : MakeCreakLoop();
         leak.clip = leakClip != null ? leakClip : MakeLeakLoop();
-        scrub.clip = MakeScrubLoop();
-        tape.clip = scrub.clip;
+        scrub.clip = scrubClip != null ? scrubClip : MakeScrubLoop();
+        tape.clip = tapeClip != null ? tapeClip : scrub.clip;
     }
 
     AudioSource NewSource(bool loop)
@@ -146,7 +154,8 @@ public class ZatanRepairAudio : MonoBehaviour
     public void SetScrub(float level) => Loop(scrub, level, 0.25f, Mathf.Lerp(0.9f, 1.2f, Mathf.Clamp01(level)));
 
     /// <summary>Fita sendo esticada sobre a junta (o mesmo loop do esfregar, mais agudo e chiado).</summary>
-    public void SetTape(float level) => Loop(tape, level, 0.25f, Mathf.Lerp(1.5f, 1.9f, Mathf.Clamp01(level)));
+    public void SetTape(float level) =>
+        Loop(tape, level, 0.25f, tapeClip != null ? Mathf.Lerp(0.9f, 1.15f, Mathf.Clamp01(level)) : Mathf.Lerp(1.5f, 1.9f, Mathf.Clamp01(level)));
 
     static void Loop(AudioSource s, float level, float maxVolume, float pitch)
     {

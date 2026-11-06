@@ -12,6 +12,10 @@ public class RadioAudio : MonoBehaviour
 
     [Tooltip("Opcional. Se vazio, toca uma fala sintetica de placeholder.")]
     [SerializeField] AudioClip bossVoice;
+    [Tooltip("Opcional. Estatica em loop (o volume segue a sintonia). Vazio = ruido sintetico.")]
+    [SerializeField] AudioClip staticClip;
+    [Tooltip("Opcional. Clique de encaixe. Vazio = clique sintetico.")]
+    [SerializeField] AudioClip clickClip;
     [SerializeField] float maxDistance = 8f;
     [SerializeField, Range(0f, 1f)] float staticVolume = 0.6f;
 
@@ -21,10 +25,10 @@ public class RadioAudio : MonoBehaviour
     void Awake()
     {
         hiss = NewSource();
-        hiss.clip = MakeNoise(2f);
+        hiss.clip = staticClip != null ? staticClip : MakeNoise(2f);
         hiss.loop = true;
         sfx = NewSource();
-        click = MakeClick();
+        click = clickClip != null ? clickClip : MakeClick();
         voice = bossVoice != null ? bossVoice : MakeVoice(2.6f);
     }
 

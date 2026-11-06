@@ -653,12 +653,14 @@ MonoBehaviour:
   spillNoiseRadius: 14
   spillNoiseInterval: 0.7
   pullNoiseRadius: 20
-  pourClip: {fileID: 0}
-  spillClip: {fileID: 0}
-  clickClip: {fileID: 0}
-  cordClip: {fileID: 0}
-  sputterClips: []
-  runClip: {fileID: 0}
+  pourClip: {fileID: 8300000, guid: 64c4ff51a3b3f45dcbdeb237f6064a2a, type: 3}
+  spillClip: {fileID: 8300000, guid: 10596dd4a61ece1e6a0b08dc1e616ac4, type: 3}
+  clickClip: {fileID: 8300000, guid: 9679271c2d43cd687b999338822b553c, type: 3}
+  cordClip: {fileID: 8300000, guid: 4fcb9c69b5074d1f7bfbb6eb06e91c0d, type: 3}
+  sputterClips:
+  - {fileID: 8300000, guid: 694d388c2e4d02318927d67b6d8fabab, type: 3}
+  - {fileID: 8300000, guid: 37cab4c6cd2e9d97d86acf5ace68de8c, type: 3}
+  runClip: {fileID: 8300000, guid: 096b43b050940395395d34ab5ee6da66, type: 3}
   volume: 0.8
   audioMaxDistance: 30
   stepsClip: {fileID: 8300000, guid: 255f82c7c6b0774a4bbbe1ea41c8f40c, type: 3}
@@ -704,6 +706,7 @@ MonoBehaviour:
   completionEvent: GeneratorStarted
   blockedText: 
   disableCollidersWhenInactive: 0
+  waitForInspectClose: 0
   onForceCompleted:
     m_PersistentCalls:
       m_Calls: []
