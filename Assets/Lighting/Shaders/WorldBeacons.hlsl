@@ -42,7 +42,8 @@ float3 BeaconPool(float4 posRange, float3 color, float soft, float3 positionWS, 
         reach = 1.0 - x * x;
         reach *= reach;
     }
-    float facing = lerp(0.35, 1.0, saturate(dot(normalWS, lightDir)));
+    // A soft facing term: the PSX meshes have flat faces, and a strong one made each face a different flat shade (plastic).
+    float facing = lerp(0.5, 1.0, saturate(dot(normalWS, lightDir)));
     return color * reach * facing;
 }
 
@@ -66,8 +67,13 @@ float3 WorldBeacons(float3 albedo, float3 positionWS)
         if (j >= (int)_AmbientLightCount) break;
         sum += BeaconPool(_AmbientLightPosRange[j], _AmbientLightColor[j].rgb, 0.0, positionWS, normalWS);
     }
-    // The minimum keeps the pool readable on the night floor, whose own colour is almost black.
-    return (1.0 - exp(-max(albedo, 0.08) * sum)) * BeaconSeen(positionWS);
+    // The light takes the surface colour: a strong light brings the surface up to its own colour, never to white, so the
+    // texture keeps its contrast near a lamp. The minimum is on the brightness and keeps the hue: the night floor, almost
+    // black, still shows the pool, and a dark green hedge stays green (a minimum on each channel made dark colours grey).
+    float3 surface = max(albedo, 0.0005);
+    float brightness = dot(surface, float3(0.2126, 0.7152, 0.0722));
+    surface *= max(brightness, 0.06) / brightness;
+    return surface * (1.0 - exp(-sum)) * BeaconSeen(positionWS);
 }
 
 #endif
