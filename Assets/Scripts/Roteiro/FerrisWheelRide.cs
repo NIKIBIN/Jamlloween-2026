@@ -94,14 +94,16 @@ namespace Jamlloween.Roteiro
         [Tooltip("The player's car stopped at the bottom, ready to board.")]
         [SerializeField] UnityEvent onCarDown = new UnityEvent();
         [SerializeField] UnityEvent onBoarded = new UnityEvent();
+        [Tooltip("The player's car is halfway up (finale: Zatan stops watching from the ground and starts to climb).")]
+        [SerializeField] UnityEvent onHalfway = new UnityEvent();
         [Tooltip("The wheel stopped at the top: the power failed. Its own lights go out here; the park blackout comes from the story (WheelStopped).")]
         [SerializeField] UnityEvent onStopped = new UnityEvent();
         [SerializeField] UnityEvent onLookedBack = new UnityEvent();
 
         Phase phase = Phase.Idle;
         Vector3 viewLocal;
-        float yaw, pitch, timer, lookBackTime;
-        bool creaked;
+        float yaw, pitch, timer, lookBackTime, rideFrom, rideDelta;
+        bool creaked, halfway;
         Quaternion hubHome;
         Quaternion[] carHome;
         float[] carPhase;
@@ -117,6 +119,8 @@ namespace Jamlloween.Roteiro
         public UnityEvent OnLookedBack => onLookedBack;
         public UnityEvent OnCarDown => onCarDown;
         public UnityEvent OnBoarded => onBoarded;
+        public UnityEvent OnHalfway => onHalfway;
+        public UnityEvent OnStopped => onStopped;
 
         void Awake()
         {
@@ -195,6 +199,9 @@ namespace Jamlloween.Roteiro
             pitch = 0f;
             timer = 0f;
             phase = Phase.Riding;
+            rideFrom = Angle;
+            rideDelta = Mathf.Max(0.01f, Mathf.Repeat(TopAngle(playerCar) - Angle, 360f));
+            halfway = false;
             PlayRideLoop();
             onBoarded.Invoke();
             SpinTo(TopAngle(playerCar), 0, 0f, Stop);
@@ -212,6 +219,11 @@ namespace Jamlloween.Roteiro
             if (phase == Phase.Idle || phase == Phase.Done) return;
             timer += Time.deltaTime;
 
+            if (phase == Phase.Riding && !halfway && Mathf.Repeat(Angle - rideFrom, 360f) >= rideDelta * 0.5f)
+            {
+                halfway = true;
+                onHalfway.Invoke();
+            }
             if (phase == Phase.Stopped && timer >= armDelay) phase = Phase.Armed;
             if (phase == Phase.Armed && !creaked && timer >= creakDelay)
             {
@@ -239,6 +251,8 @@ namespace Jamlloween.Roteiro
             tensionSource.Play();
             phase = Phase.Stopped;
             timer = 0f;
+            // The car is still now: the point behind it is final, so the finale can rise to it before the look back.
+            PlaceAttackPoint();
             onStopped.Invoke();
             ProgressionDirector.RaiseEvent(stoppedEvent);
         }

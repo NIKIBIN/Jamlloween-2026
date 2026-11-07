@@ -20,18 +20,6 @@ MonoBehaviour:
   completionEvents:
   - GondolaBoarded
   onStart:
-  - kind: 0
-    line:
-      speaker: 
-      text: "Ele t\xE1 vindo... n\xE3o tem sa\xEDda!"
-      audio: {fileID: 0}
-      volume: 1
-      seconds: 0
-    targetId: 
-    state: 1
-    taskState: 2
-    clip: {fileID: 0}
-    volume: 1
   - kind: 3
     line:
       speaker: "PATR\xC3O"

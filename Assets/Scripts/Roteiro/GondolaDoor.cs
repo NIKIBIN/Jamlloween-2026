@@ -20,6 +20,8 @@ namespace Jamlloween.Roteiro
         [SerializeField] float openSeconds = 0.8f;
         [SerializeField] AudioSource source;
         [SerializeField] AudioClip openClip;
+        [Tooltip("Said right when the story asks the door to open (the final chase starts): the player sees Zatan coming.")]
+        [SerializeField] RadioLine chaseLine = new RadioLine { speaker = "", text = "Ele tá vindo... não tem saída!" };
         [Tooltip("Said when the door swings open (the car may come down some seconds after the story asks).")]
         [SerializeField] RadioLine openLine = new RadioLine { speaker = "", text = "A porta daquela gôndola abriu..." };
 
@@ -39,11 +41,16 @@ namespace Jamlloween.Roteiro
             closed = hinge.localRotation;
         }
 
-        /// <summary>Swings the door open with a creak, when the car is down. The story calls this when Zatan closes in.</summary>
+        /// <summary>
+        /// The final chase started (Trigger_FinalBarreiras): the player thinks they are cornered, then the door swings open
+        /// with a creak once the car is down. Until this is called the car can't be boarded.
+        /// </summary>
         public void Open()
         {
             if (open || wanted) return;
             wanted = true;
+            var radio = ProgressionDirector.Instance != null ? ProgressionDirector.Instance.Radio : null;
+            if (radio != null) radio.Enqueue(chaseLine);
             StartCoroutine(OpenWhenDown());
         }
 

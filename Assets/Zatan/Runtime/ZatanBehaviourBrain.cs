@@ -437,6 +437,28 @@ namespace Jamlloween.Zatan
             PlayerCaught();
         }
 
+        /// <summary>
+        /// Off the NavMesh, wherever an outside sequence puts him this frame (the finale: rising behind the Ferris wheel car).
+        /// Visible, senses off, no catch; call it every frame he moves. Sleep or Respawn hand him back to the NavMesh.
+        /// </summary>
+        public void ScriptedHover(Vector3 position, Vector3 lookAt)
+        {
+            dormant = false;
+            Relentless = false;
+            if (agent.isOnNavMesh)
+            {
+                agent.isStopped = true;
+                agent.ResetPath();
+            }
+            agent.updatePosition = false;
+            agent.updateRotation = false;
+            perception.Sensing = false;
+            SetPresence(true);
+            if (State != ZatanBehaviourState.Scripted) SetState(ZatanBehaviourState.Scripted);
+            Vector3 to = Vector3.ProjectOnPlane(lookAt - position, Vector3.up);
+            transform.SetPositionAndRotation(position, to.sqrMagnitude > 0.0001f ? Quaternion.LookRotation(to) : transform.rotation);
+        }
+
         // ------------------------------------------------------------------ navigation
 
         bool Arrived() => !agent.pathPending && (!agent.hasPath || agent.remainingDistance <= ArriveDistance);

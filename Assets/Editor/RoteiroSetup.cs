@@ -127,11 +127,11 @@ public static class RoteiroSetup
                 onStart: new[] { Say("Tô ouvindo a musiquinha do carrossel daqui. Falta só a roda-gigante. Conserta o motor dela e pode ir embora.") },
                 onComplete: new[] { Task("wheel", TaskState.Current) }),
             Step("R17_ConsertarRodaGigante", "Consertar a roda-gigante", new[] { WheelFixedEvent }, active: new[] { "wheel_panel" }),
-            // 17-18: depois do conserto da roda, Zatan se aproxima do jogador encurralado (relay: StalkFrom); a porta de uma gondola abre (relay: GondolaDoor.Open).
+            // 18: depois do conserto da roda o jogador tenta ir embora. Perto das Barreiras, Trigger_FinalBarreiras chama
+            // ZatanDirector.ChaseFrom(Zatan_ChaseSpawn_Final) e PlayerSeat.Open: só então a gôndola abre e o pensamento
+            // "Ele tá vindo... não tem saída!" toca (GondolaDoor.chaseLine). Antes disso não dá para embarcar.
             Step("R18_Encurralado", "Encurralado: entrar na gôndola", new[] { GondolaBoardedEvent }, active: new[] { "gondola_door" },
-                // A gôndola abre na hora (relay: PlayerSeat.Open). Zatan só vem quando o jogador chega perto das Barreiras
-                // tentando ir embora (Trigger_FinalBarreiras -> ZatanDirector.ChaseFrom(Zatan_ChaseSpawn_Final)).
-                onStart: new[] { Think("Ele tá vindo... não tem saída!"), Trigger("fim_barreiras", true) },
+                onStart: new[] { Trigger("fim_barreiras", true) },
                 onComplete: new[] { Trigger("fim_barreiras", false) }),
             // 19: a roda gira e para no alto (FerrisWheelRide) porque a energia cai: apagao no parque inteiro
             // (LightGroup park: luzes, carrossel e musica). O som de tensao comeca.

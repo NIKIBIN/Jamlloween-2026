@@ -69,7 +69,7 @@ namespace Jamlloween.Zatan
         public UnityEvent OnPlayerRespawned => onPlayerRespawned;
 
         Transform chaseSpawn;
-        Coroutine rechase, stalk, stare, reveal;
+        Coroutine rechase, stalk, stare, reveal, watch, rise;
         bool finale;
 
         /// <summary>True while a story chase is running (until EndChase or Sleep).</summary>
@@ -97,6 +97,8 @@ namespace Jamlloween.Zatan
             stalk = null;
             stare = null;
             reveal = null;
+            watch = null;
+            rise = null;
             if (twitch != null) twitch.Play(false);
         }
 
@@ -234,6 +236,57 @@ namespace Jamlloween.Zatan
         }
 
         /// <summary>The finale: he appears at the point and grabs the player. When the catch ends, OnFinaleFinished runs.</summary>
+        /// <summary>
+        /// The finale ride: he stands on the ground at the point and only watches the player go up, turning to follow them,
+        /// beams on them. No chase, no catch. Ends with any other story call (Sleep when he starts to climb).
+        /// </summary>
+        public void WatchFrom(Transform point)
+        {
+            if (point == null) throw new ArgumentNullException(nameof(point));
+            StopRoutines();
+            chaseSpawn = null;
+            brain.Respawn(point.position);
+            brain.BeginScripted(calmEyes: true);
+            animationDriver.SetStare(true);
+            eyeLights.AimAt(playerView);
+            watch = StartCoroutine(Watch());
+        }
+
+        IEnumerator Watch()
+        {
+            while (brain.State == ZatanBehaviourState.Scripted)
+            {
+                brain.ScriptedFace(target.Position);
+                yield return null;
+            }
+            watch = null;
+        }
+
+        /// <summary>
+        /// The finale, after the blackout: he rises slowly from depth metres below the point up to it (behind the player's
+        /// car), beams on the player, and stays there until FinalAttackFrom takes him from the same point.
+        /// </summary>
+        public void RiseBehind(Transform point, float depth, float seconds)
+        {
+            if (point == null) throw new ArgumentNullException(nameof(point));
+            if (seconds <= 0f) throw new ArgumentOutOfRangeException(nameof(seconds));
+            StopRoutines();
+            chaseSpawn = null;
+            animationDriver.SetStare(true);
+            eyeLights.AimAt(playerView);
+            rise = StartCoroutine(Rise(point, depth, seconds));
+        }
+
+        IEnumerator Rise(Transform point, float depth, float seconds)
+        {
+            for (float t = 0f; ; t += Time.deltaTime)
+            {
+                float k = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / seconds));
+                brain.ScriptedHover(point.position - Vector3.up * (depth * (1f - k)), target.Position);
+                yield return null;
+            }
+        }
+
         public void FinalAttackFrom(Transform point)
         {
             if (point == null) throw new ArgumentNullException(nameof(point));
@@ -291,10 +344,14 @@ namespace Jamlloween.Zatan
             if (stalk != null) StopCoroutine(stalk);
             if (stare != null) StopCoroutine(stare);
             if (reveal != null) StopCoroutine(reveal);
+            if (watch != null) StopCoroutine(watch);
+            if (rise != null) StopCoroutine(rise);
             rechase = null;
             stalk = null;
             stare = null;
             reveal = null;
+            watch = null;
+            rise = null;
             if (twitch != null) twitch.Play(false);
             animationDriver.SetStare(false);
             animationDriver.SetStalk(false);
