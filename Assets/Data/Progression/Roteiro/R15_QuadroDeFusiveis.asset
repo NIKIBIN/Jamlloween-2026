@@ -21,3 +21,4 @@ MonoBehaviour:
   - FuseBoxFixed
   onStart: []
   onComplete: []
+  onEvent: []

@@ -174,8 +174,10 @@ namespace Jamlloween.Progression
             var step = Current;
             if (step == null || finished || transitioning || string.IsNullOrEmpty(eventId)) return;
             if (!step.completionEvents.Contains(eventId)) return;
-            satisfied.Add(eventId);
+            if (!satisfied.Add(eventId)) return;   // o mesmo evento duas vezes não roda as ações de novo
             MarkDone(eventId);
+            foreach (var ea in step.onEvent)
+                if (ea.eventId == eventId) Run(ea.actions, true);
             foreach (var e in step.completionEvents)
                 if (!satisfied.Contains(e)) return;   // faltam eventos desta etapa
             CompleteCurrent();
@@ -319,6 +321,8 @@ namespace Jamlloween.Progression
                 foreach (var e in steps[i].completionEvents)
                 {
                     MarkDone(e);
+                    foreach (var ea in steps[i].onEvent)
+                        if (ea.eventId == e) Run(ea.actions, false);
                     foreach (var inter in StepInteraction.All.ToArray())
                         if (!string.IsNullOrEmpty(e) && inter.CompletionEvent == e)
                             inter.ForceComplete();

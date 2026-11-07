@@ -12,6 +12,7 @@ float _BeaconCount;
 float _BeaconFogDensity;               // exponential fog of the beacon light, per metre from the camera
 float4 _BeaconPosRange48[WORLD_BEACON_MAX];  // xyz: position, w: range
 float4 _BeaconColor48[WORLD_BEACON_MAX];     // rgb: colour x intensity, a: soft falloff in metres (0: compact pool)
+float4 _BeaconSpot48[WORLD_BEACON_MAX];      // xyz: spot direction (zero: a point light, all around), w: cos of the outer half-angle
 float _AmbientLightCount;
 float4 _AmbientLightPosRange[WORLD_AMBIENT_MAX];
 float4 _AmbientLightColor[WORLD_AMBIENT_MAX];
@@ -47,6 +48,14 @@ float3 BeaconPool(float4 posRange, float3 color, float soft, float3 positionWS, 
     return color * reach * facing;
 }
 
+// A spot: the same pool inside a cone, with a soft edge. A zero direction is a point light (the default).
+float BeaconCone(float4 spot, float3 positionWS, float3 lightPos)
+{
+    if (dot(spot.xyz, spot.xyz) < 0.25) return 1.0;
+    float3 fromLight = normalize(positionWS - lightPos);
+    return smoothstep(spot.w, min(1.0, spot.w + 0.18), dot(fromLight, spot.xyz));
+}
+
 float3 WorldBeacons(float3 albedo, float3 positionWS)
 {
     // Face normal from the position, like ZatanEyeLight: the kit's meshes bake their shading. Taken before any early out (derivatives).
@@ -60,7 +69,8 @@ float3 WorldBeacons(float3 albedo, float3 positionWS)
     [loop] for (int i = 0; i < WORLD_BEACON_MAX; i++)
     {
         if (i >= (int)_BeaconCount) break;
-        sum += BeaconPool(_BeaconPosRange48[i], _BeaconColor48[i].rgb, _BeaconColor48[i].a, positionWS, normalWS);
+        sum += BeaconPool(_BeaconPosRange48[i], _BeaconColor48[i].rgb, _BeaconColor48[i].a, positionWS, normalWS)
+             * BeaconCone(_BeaconSpot48[i], positionWS, _BeaconPosRange48[i].xyz);
     }
     [unroll] for (int j = 0; j < WORLD_AMBIENT_MAX; j++)
     {

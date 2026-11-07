@@ -54,20 +54,20 @@ public static class RoteiroSetup
 
         var steps = new List<ProgressionStep>
         {
-            // 1-2: no trailer. A prancheta (minigame: virar a ordem de servico) primeiro, depois o radio e a lanterna.
-            Step("R00_Prancheta", "Ler a ordem de serviço", new[] { ClipboardTakenEvent }, active: new[] { "clipboard" },
-                onComplete: new[] { Task("radio", TaskState.Current) },
-                blocked: new[] { ("radio", "Primeiro a ordem de serviço.") }),
-            Step("R00_Radio", "Consertar o rádio", new[] { "RadioFixed" }, active: new[] { "radio" },
+            // 1-2: no trailer. Prancheta (minigame da ordem de servico), radio e lanterna, na ordem que o jogador quiser;
+            // a fala do patrao sai assim que o radio funciona.
+            Step("R00_Trailer", "Trailer: prancheta, rádio e lanterna", new[] { ClipboardTakenEvent, "RadioFixed", "FlashlightTaken" },
+                active: new[] { "clipboard", "radio", "flashlight" },
                 onStart: new[] { Think("Esse rádio velho... preciso consertar pra falar com o patrão.", 3.5f) },
-                onComplete: new[]
+                onEvent: new[]
                 {
-                    // A primeira fala do patrao fica dividida em duas legendas (b90c2d9), cada uma com o seu tempo.
-                    Say("Até que enfim. Escuta: o circo tá cobrando, tudo tem que funcionar até amanhã. Ninguém vai te buscar antes de terminar.", 6.5f),
-                    Say("Começa pela cabine da cartomante, na entrada do circo. E pega a lanterna, tá um breu aí fora.", 5f),
-                    Task("flashlight", TaskState.Current)
-                }),
-            Step("R01_Lanterna", "Pegar a lanterna", new[] { "FlashlightTaken" }, active: new[] { "flashlight" },
+                    ("RadioFixed", new[]
+                    {
+                        // A primeira fala do patrao fica dividida em duas legendas (b90c2d9), cada uma com o seu tempo.
+                        Say("Até que enfim. Escuta: o circo tá cobrando, tudo tem que funcionar até amanhã. Ninguém vai te buscar antes de terminar.", 6.5f),
+                        Say("Começa pela cabine da cartomante, na entrada do circo. E pega a lanterna, tá um breu aí fora.", 5f)
+                    })
+                },
                 onComplete: new[] { Task("zatan", TaskState.Current) }),
             // 3-4: Zatan na entrada do circo. No caminho, o gerador faz barulho. Depois do conserto, a energia cai.
             Step("R02_Zatan", "Consertar o Zatan", new[] { "ZatanFixed" }, active: new[] { "zatan_repair" },
@@ -159,11 +159,11 @@ public static class RoteiroSetup
     static List<ClipboardTask> Tasks() => new List<ClipboardTask>
     {
         new ClipboardTask { id = "clipboard", text = "Ler a ordem de serviço", initialState = TaskState.Current, doneEvent = ClipboardTakenEvent },
-        new ClipboardTask { id = "radio", text = "Consertar o rádio", initialState = TaskState.Future, doneEvent = "RadioFixed" },
-        new ClipboardTask { id = "flashlight", text = "Pegar a lanterna", initialState = TaskState.Future, doneEvent = "FlashlightTaken" },
-        new ClipboardTask { id = "zatan", text = "Consertar o Zatan", initialState = TaskState.Future, doneEvent = "ZatanFixed" },
+        new ClipboardTask { id = "radio", text = "Consertar o rádio", initialState = TaskState.Current, doneEvent = "RadioFixed" },
+        new ClipboardTask { id = "flashlight", text = "Pegar a lanterna", initialState = TaskState.Current, doneEvent = "FlashlightTaken" },
+        new ClipboardTask { id = "zatan", text = "Consertar o Zatan na tenda principal", initialState = TaskState.Future, doneEvent = "ZatanFixed" },
         new ClipboardTask { id = "generator", text = "Abastecer e ligar o gerador", initialState = TaskState.Hidden, doneEvent = "GeneratorStarted" },
-        new ClipboardTask { id = "gas", text = "Pegar a gasolina", indent = true, initialState = TaskState.Hidden, doneEvent = "GasCanTaken" },
+        new ClipboardTask { id = "gas", text = "Pegar a gasolina no fundo da tenda principal", indent = true, initialState = TaskState.Hidden, doneEvent = "GasCanTaken" },
         new ClipboardTask { id = "hide", text = "Me esconder no trailer", initialState = TaskState.Hidden, doneEvent = ZatanGaveUpEvent },
         new ClipboardTask { id = "carousel", text = "Consertar o carrossel", initialState = TaskState.Future, doneEvent = "FuseBoxFixed" },
         new ClipboardTask { id = "fuse_find", text = "Achar um fusível no labirinto", indent = true, doneEvent = "FuseTaken" },
@@ -197,7 +197,8 @@ public static class RoteiroSetup
     /// <summary>Writes the step into its asset, reusing the existing file (and GUID) when there is one.</summary>
     static ProgressionStep Step(string file, string label, string[] completion, string[] active = null,
         StepAction[] onStart = null, StepAction[] onComplete = null,
-        (string id, string text)[] intercepted = null, (string id, string text)[] blocked = null)
+        (string id, string text)[] intercepted = null, (string id, string text)[] blocked = null,
+        (string id, StepAction[] actions)[] onEvent = null)
     {
         var s = ScriptableObject.CreateInstance<ProgressionStep>();
         s.label = label;
@@ -205,6 +206,8 @@ public static class RoteiroSetup
         if (active != null) s.activeInteractions.AddRange(active);
         if (onStart != null) s.onStart.AddRange(onStart);
         if (onComplete != null) s.onComplete.AddRange(onComplete);
+        if (onEvent != null)
+            foreach (var (id, actions) in onEvent) s.onEvent.Add(new EventActions { eventId = id, actions = new List<StepAction>(actions) });
         if (intercepted != null)
             foreach (var (id, text) in intercepted) s.interceptedInteractions.Add(new InterceptedInteraction { interactionId = id, text = text });
         if (blocked != null)

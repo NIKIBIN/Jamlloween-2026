@@ -44,3 +44,4 @@ MonoBehaviour:
     taskState: 2
     clip: {fileID: 8300000, guid: 1e446a57745e416479d472f36a53b4c9, type: 3}
     volume: 1
+  onEvent: []

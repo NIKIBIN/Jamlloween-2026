@@ -32,3 +32,4 @@ MonoBehaviour:
     clip: {fileID: 0}
     volume: 1
   onComplete: []
+  onEvent: []

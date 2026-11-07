@@ -921,6 +921,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -3767,6 +3769,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -5314,9 +5318,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Jamlloween.Progression.ProgressionDirector
   steps:
-  - {fileID: 11400000, guid: 59b8e8b06a129e85aad3af981e992cb9, type: 2}
-  - {fileID: 11400000, guid: 4062206bd329f2048af12bb7aa3f7270, type: 2}
-  - {fileID: 11400000, guid: 81045306322550348b4e12ec326c6d2b, type: 2}
+  - {fileID: 11400000, guid: 397233d6b79f41415b2d764afd9785f2, type: 2}
   - {fileID: 11400000, guid: 7929e4e99e7e4ed4b8d3a365dde08c79, type: 2}
   - {fileID: 11400000, guid: b3fc0804a2e239745b0e32386f4ceaba, type: 2}
   - {fileID: 11400000, guid: fb54888785dfcca4fb72ba8c4490c02f, type: 2}
@@ -5344,15 +5346,15 @@ MonoBehaviour:
   - id: radio
     text: "Consertar o r\xE1dio"
     indent: 0
-    initialState: 1
+    initialState: 2
     doneEvent: RadioFixed
   - id: flashlight
     text: Pegar a lanterna
     indent: 0
-    initialState: 1
+    initialState: 2
     doneEvent: FlashlightTaken
   - id: zatan
-    text: Consertar o Zatan
+    text: Consertar o Zatan na tenda principal
     indent: 0
     initialState: 1
     doneEvent: ZatanFixed
@@ -5362,7 +5364,7 @@ MonoBehaviour:
     initialState: 0
     doneEvent: GeneratorStarted
   - id: gas
-    text: Pegar a gasolina
+    text: Pegar a gasolina no fundo da tenda principal
     indent: 1
     initialState: 0
     doneEvent: GasCanTaken
@@ -7711,6 +7713,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -8616,6 +8620,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -9815,6 +9821,8 @@ MonoBehaviour:
   workingVariation: 0
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 0
   color: {r: 1, g: 0.55, b: 0.1, a: 1}
@@ -11361,6 +11369,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -11911,6 +11921,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -15079,6 +15091,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 0
   color: {r: 1, g: 0.72, b: 0.42, a: 1}
@@ -19633,37 +19647,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2209192619973586487, guid: 9d4028de0a3ce0a3fb3abbf087a81af5, type: 3}
   m_PrefabInstance: {fileID: 264574493}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &267022113
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 267022114}
-  m_Layer: 0
-  m_Name: TP_00_R00_Radio
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &267022114
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 267022113}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: -0.00000004371139}
-  m_LocalPosition: {x: -10.1, y: 1.1, z: 79.6}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 783548165}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &269881926
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21215,6 +21198,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -26402,6 +26387,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -27214,6 +27201,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 0
   color: {r: 1, g: 0.72, b: 0.42, a: 1}
@@ -29054,6 +29043,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -36690,6 +36681,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -40017,6 +40010,8 @@ MonoBehaviour:
   workingVariation: 0
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 0
   color: {r: 1, g: 0.15, b: 0.08, a: 1}
@@ -42316,6 +42311,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -48935,6 +48932,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -49195,6 +49194,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -53128,6 +53129,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -54813,6 +54816,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -55854,8 +55859,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1039655204}
-  - {fileID: 267022114}
-  - {fileID: 1797818799}
   - {fileID: 1252879325}
   - {fileID: 175468962}
   - {fileID: 462419240}
@@ -55891,8 +55894,6 @@ MonoBehaviour:
   player: {fileID: 127641604}
   points:
   - {fileID: 1039655204}
-  - {fileID: 267022114}
-  - {fileID: 1797818799}
   - {fileID: 1252879325}
   - {fileID: 175468962}
   - {fileID: 462419240}
@@ -56328,6 +56329,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 1
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 0
   color: {r: 1, g: 0.75, b: 0.42, a: 1}
@@ -64268,6 +64271,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -68632,6 +68637,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -70064,6 +70071,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 1
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 0
   color: {r: 1, g: 0.75, b: 0.42, a: 1}
@@ -73457,6 +73466,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -81654,6 +81665,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -82995,6 +83008,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4317896518251706608, guid: 553ac0718df0885371354f32f2f82c00, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3707522}
+    - targetCorrespondingSourceObject: {fileID: 4317896518251706608, guid: 553ac0718df0885371354f32f2f82c00, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2105592694}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 988287065124702947, guid: 553ac0718df0885371354f32f2f82c00, type: 3}
       insertIndex: -1
@@ -83222,6 +83238,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -86266,6 +86284,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -86874,6 +86894,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 1
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 0
   color: {r: 1, g: 0.75, b: 0.42, a: 1}
@@ -87638,6 +87660,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -95200,6 +95224,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -101432,6 +101458,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 0
   color: {r: 1, g: 0.72, b: 0.42, a: 1}
@@ -101996,6 +102024,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -102327,6 +102357,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -107245,6 +107277,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -108012,6 +108046,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -119944,7 +119980,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "<align=center><b>ORDEM DE SERVI\xC7O</b></align>\nCliente: O Incr\xEDvel Mundo de Zatan\nPrazo: antes da reabertura\n\nConsertar:\n- Zatan (cabine da entrada)\n- Carrossel\n- Roda-gigante\n\n<i>Obs. do cliente: cuidado com o Zatan, \xE9 a nossa atra\xE7\xE3o principal. Foi feito com muito cuidado. A tecnologia \xE9 antiga, mas os resultados s\xE3o incr\xEDveis.</i>"
+  m_text: "<align=center><b>ORDEM DE SERVI\xC7O</b></align>\nCliente: O Incr\xEDvel Mundo de Zatan\nPrazo: antes da reabertura\n\nConsertar:\n- Zatan (cabine da entrada)\n- Carrossel\n- Roda-gigante\n\n<i>Obs. do cliente: cuidado com o Zatan, \xE9 a nossa atra\xE7\xE3o principal. Foi feito com muito cuidado. A tecnologia \xE9 antiga, mas os resultados s\xE3o incr\xEDveis.</i>\n\n<align=center><size=118%><color=#B0120F><b><u>PUXE A FOLHA PARA BAIXO</u></b></color></size></align>"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -119971,7 +120007,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 142.3
+  m_fontSize: 123
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -126934,11 +126970,13 @@ MonoBehaviour:
   workingVariation: 0
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 1
+  spotAngle: 80
   decor: 0
   ambient: 0
   color: {r: 0.8, g: 0.88, b: 1, a: 1}
-  intensity: 1.2
-  range: 2.5
+  intensity: 1.5
+  range: 3.5
   softness: 0
   emitFrom: []
   pattern: 4
@@ -136071,37 +136109,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1086316648}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1797818798
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1797818799}
-  m_Layer: 0
-  m_Name: TP_01_R01_Lanterna
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1797818799
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1797818798}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: -0.00000004371139}
-  m_LocalPosition: {x: -10.1, y: 1.1, z: 79.6}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 783548165}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1797840159
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -137331,13 +137338,13 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 9a41026b7ab76e98f99f4e917cb6871f, type: 3}
   - {fileID: 8300000, guid: d1cab47401cdacdf7bee8d3c8538cc1f, type: 3}
   - {fileID: 8300000, guid: 832fdfbeb099c7045aa65d44467f691d, type: 3}
-  pauseRange: {x: 1.2, y: 3.5}
-  crackleCount: {x: 1, y: 3}
+  pauseRange: {x: 0.6, y: 1.8}
+  crackleCount: {x: 2, y: 5}
   crackleGap: {x: 0.03, y: 0.18}
   volume: 0.45
   volumeJitter: {x: 0.6, y: 1}
   glowLevel: 1
-  burstParticles: {x: 6, y: 16}
+  burstParticles: {x: 18, y: 40}
   peakThreshold: 0.6
 --- !u!82 &1820826360
 AudioSource:
@@ -137763,7 +137770,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 120
+    maxNumParticles: 400
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -140748,6 +140755,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -143198,6 +143207,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -148562,6 +148573,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -153015,6 +153028,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -155844,6 +155859,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -156690,6 +156707,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 0
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 1
   color: {r: 1, g: 0.72, b: 0.4, a: 1}
@@ -158994,6 +159013,74 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1228352873270526916, guid: 58bc5b2f0f5b9b3e9475f8e32581e81c, type: 3}
   m_PrefabInstance: {fileID: 2103464106}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2105592693
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2105592694}
+  - component: {fileID: 2105592696}
+  - component: {fileID: 2105592697}
+  m_Layer: 2
+  m_Name: Examinar_Zatan
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2105592694
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2105592693}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.029999733, y: 2.29, z: -0.6000011}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1144539995}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2105592696
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2105592693}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.4, y: 4.98, z: 1.34}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2105592697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2105592693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09adb49073aea57bd82a2de346654d52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExamineText
+  text: "Esse \xE9 o Zatan. O painel com defeito t\xE1 nas costas dele"
+  whileInteractionActive: zatan_repair
 --- !u!1 &2106411394
 GameObject:
   m_ObjectHideFlags: 0
@@ -159036,6 +159123,8 @@ MonoBehaviour:
   workingVariation: 0.12
   workingSpeed: 0.6
   flickerSeed: 2
+  spot: 0
+  spotAngle: 70
   decor: 0
   ambient: 0
   color: {r: 1, g: 0.75, b: 0.42, a: 1}

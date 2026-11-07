@@ -75,6 +75,14 @@ namespace Jamlloween.Progression
         [TextArea(1, 3)] public string text;
     }
 
+    /// <summary>Ações que rodam quando um evento de conclusão chega, antes da etapa acabar.</summary>
+    [Serializable]
+    public class EventActions
+    {
+        public string eventId;
+        public List<StepAction> actions = new List<StepAction>();
+    }
+
     /// <summary>Uma etapa da progressão linear. A ordem é a da lista do ProgressionDirector.</summary>
     [CreateAssetMenu(menuName = "Jamlloween/Progression Step", fileName = "Step")]
     public class ProgressionStep : ScriptableObject
@@ -99,5 +107,7 @@ namespace Jamlloween.Progression
         [Header("Ações")]
         public List<StepAction> onStart = new List<StepAction>();
         public List<StepAction> onComplete = new List<StepAction>();
+        [Tooltip("Ações de cada evento de conclusão, na hora em que ele chega (útil quando a etapa espera vários eventos, em qualquer ordem).")]
+        public List<EventActions> onEvent = new List<EventActions>();
     }
 }

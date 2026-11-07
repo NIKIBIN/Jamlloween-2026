@@ -57,3 +57,4 @@ MonoBehaviour:
     taskState: 2
     clip: {fileID: 0}
     volume: 1
+  onEvent: []

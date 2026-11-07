@@ -26,6 +26,8 @@ namespace Jamlloween.Progression
         static readonly List<StepBeacon> all = new List<StepBeacon>();
         static readonly Vector4[] posRange = new Vector4[Max];
         static readonly Vector4[] colors = new Vector4[Max];
+        static readonly Vector4[] spots = new Vector4[Max];
+        static readonly int SpotId = Shader.PropertyToID("_BeaconSpot48");
         static int pushedFrame = -1;
         static readonly int CountId = Shader.PropertyToID("_BeaconCount");
         static readonly int FogId = Shader.PropertyToID("_BeaconFogDensity");
@@ -77,6 +79,10 @@ namespace Jamlloween.Progression
         [SerializeField] int flickerSeed;
 
         [Header("Light")]
+        [Tooltip("Spot: a luz sai num cone para a frente (+Z) deste objeto, em vez de para todos os lados.")]
+        [SerializeField] bool spot;
+        [Tooltip("Abertura total do cone do spot, em graus.")]
+        [SerializeField, Range(5f, 170f)] float spotAngle = 70f;
         [Tooltip("Luz de decoração (os postes): entra nas 48 vagas depois das luzes da história, a mais perto da câmera primeiro, e não é enviada longe da câmera.")]
         [SerializeField] bool decor;
         [Tooltip("Luz das barracas: não usa as 48 vagas. As 8 mais perto da câmera dividem vagas próprias e somem aos poucos na borda.")]
@@ -297,7 +303,7 @@ namespace Jamlloween.Progression
             if (emitFrom.Length == 0)
             {
                 wanted++;
-                Push(ref n, transform.position, range, softness, color * (intensity * level * weight));
+                Push(ref n, transform.position, range, softness, color * (intensity * level * weight), SpotVector());
                 return;
             }
             Color share = color * (intensity * level * weight / emitFrom.Length);
@@ -310,15 +316,24 @@ namespace Jamlloween.Progression
                     continue;
                 }
                 wanted++;
-                Push(ref n, point.position, range, softness, share);
+                Push(ref n, point.position, range, softness, share, SpotVector());
             }
         }
 
-        static void Push(ref int n, Vector3 p, float range, float soft, Color c)
+        /// <summary>Direção e abertura do spot para o shader; zero = luz para todos os lados.</summary>
+        Vector4 SpotVector()
+        {
+            if (!spot) return Vector4.zero;
+            Vector3 f = transform.forward;
+            return new Vector4(f.x, f.y, f.z, Mathf.Cos(spotAngle * 0.5f * Mathf.Deg2Rad));
+        }
+
+        static void Push(ref int n, Vector3 p, float range, float soft, Color c, Vector4 spotDir)
         {
             if (n >= Max) return;
             posRange[n] = new Vector4(p.x, p.y, p.z, range);
             colors[n] = new Vector4(c.r, c.g, c.b, soft);
+            spots[n] = spotDir;
             n++;
         }
 
@@ -361,6 +376,7 @@ namespace Jamlloween.Progression
             Shader.SetGlobalFloat(FogId, fogDensity);
             Shader.SetGlobalVectorArray(PosId, posRange);
             Shader.SetGlobalVectorArray(ColorId, colors);
+            Shader.SetGlobalVectorArray(SpotId, spots);
             PushAmbient();
         }
 
