@@ -201,7 +201,7 @@ namespace Jamlloween.Progression
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() { all.Clear(); pushedFrame = -1; warnedFull = false; }
 
-        bool Powered() => string.IsNullOrEmpty(powerGroup) || LightGroup.IsGroupOn(powerGroup);
+        bool Powered() => string.IsNullOrEmpty(powerGroup) || LightGroup.IsPoweredAt(powerGroup, transform.position);
 
         bool BeforeStep(ProgressionStep step)
         {

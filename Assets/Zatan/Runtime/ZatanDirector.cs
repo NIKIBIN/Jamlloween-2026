@@ -48,6 +48,14 @@ namespace Jamlloween.Zatan
         [Tooltip("If the player never looks at him, the chase starts anyway after this many seconds.")]
         [SerializeField, Min(1f)] float stareFallbackSeconds = 20f;
 
+        [Header("Reveal (first chase, after the generator)")]
+        [Tooltip("Procedural spasm played while he is revealed. Empty: he only stares.")]
+        [SerializeField] ZatanTwitch twitch;
+        [Tooltip("Seconds he stands there spasming before he runs (match the camera hold of the scare).")]
+        [SerializeField, Min(0f)] float revealSeconds = 1.9f;
+        [Tooltip("The chase music starts as soon as he appears, while he is still spasming. Empty: it starts when he runs.")]
+        [SerializeField] ZatanChaseMusic chaseMusic;
+
         [SerializeField] UnityEvent onPlayerRespawned = new UnityEvent();
         [Tooltip("The finale catch (FinalAttackFrom) finished and the screen is black. Wire the credits here.")]
         [SerializeField] UnityEvent onFinaleFinished = new UnityEvent();
@@ -61,7 +69,7 @@ namespace Jamlloween.Zatan
         public UnityEvent OnPlayerRespawned => onPlayerRespawned;
 
         Transform chaseSpawn;
-        Coroutine rechase, stalk, stare;
+        Coroutine rechase, stalk, stare, reveal;
         bool finale;
 
         /// <summary>True while a story chase is running (until EndChase or Sleep).</summary>
@@ -88,6 +96,8 @@ namespace Jamlloween.Zatan
             rechase = null;
             stalk = null;
             stare = null;
+            reveal = null;
+            if (twitch != null) twitch.Play(false);
         }
 
         /// <summary>Out of the world, for good, until the next story call.</summary>
@@ -132,6 +142,38 @@ namespace Jamlloween.Zatan
             animationDriver.SetStare(true);
             eyeLights.AimAt(playerView);
             stare = StartCoroutine(Stare());
+        }
+
+        /// <summary>
+        /// First chase: he appears at the point already facing the player, eyes in the hunt colour, and spasms for
+        /// revealSeconds (the scare camera is on him); then he runs at the player like ChaseFrom (a catch restarts it there).
+        /// </summary>
+        public void RevealThenChase(Transform spawn)
+        {
+            if (spawn == null) throw new ArgumentNullException(nameof(spawn));
+            StopRoutines();
+            chaseSpawn = spawn;
+            tension.SetValue(chaseTension);
+            brain.Respawn(spawn.position);
+            brain.BeginScripted(calmEyes: false);
+            Vector3 to = Vector3.ProjectOnPlane(target.Position - brain.transform.position, Vector3.up);
+            if (to.sqrMagnitude > 0.0001f) brain.transform.rotation = Quaternion.LookRotation(to);
+            if (chaseMusic != null) chaseMusic.Cue();
+            reveal = StartCoroutine(Reveal());
+        }
+
+        IEnumerator Reveal()
+        {
+            if (twitch != null) twitch.Play(true);
+            for (float t = 0f; t < revealSeconds; t += Time.deltaTime)
+            {
+                if (brain.State != ZatanBehaviourState.Scripted) break;   // something else took him
+                brain.ScriptedFace(target.Position);
+                yield return null;
+            }
+            if (twitch != null) twitch.Play(false);
+            reveal = null;
+            if (brain.State == ZatanBehaviourState.Scripted) brain.SpotThenChase(0f);
         }
 
         IEnumerator Stare()
@@ -248,9 +290,12 @@ namespace Jamlloween.Zatan
             if (rechase != null) StopCoroutine(rechase);
             if (stalk != null) StopCoroutine(stalk);
             if (stare != null) StopCoroutine(stare);
+            if (reveal != null) StopCoroutine(reveal);
             rechase = null;
             stalk = null;
             stare = null;
+            reveal = null;
+            if (twitch != null) twitch.Play(false);
             animationDriver.SetStare(false);
             animationDriver.SetStalk(false);
             eyeLights.StopAim();

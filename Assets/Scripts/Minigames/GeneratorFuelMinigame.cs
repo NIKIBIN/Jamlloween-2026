@@ -1,6 +1,7 @@
 using Jamlloween.Core;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 /// <summary>
@@ -129,6 +130,30 @@ public class GeneratorFuelMinigame : Minigame
     [Header("Textos")]
     [SerializeField] string missingCanText = "Preciso de combustível.";
 
+    [Header("Susto do Zatan (fim)")]
+    [Tooltip("Ao pegar, a energia volta e a camera vira de uma vez para o Zatan, que aparece se contorcendo. O controle " +
+             "volta quando ele comeca a correr. Desligado: o minigame so termina.")]
+    [SerializeField] bool revealScare;
+    [Tooltip("Onde o jogador fica em pe no susto: de frente para o Zatan, de costas para a rota do trailer.")]
+    [SerializeField] Transform scareStandPoint;
+    [Tooltip("Para onde a camera olha: o rosto do Zatan (o HeadAnchor dele).")]
+    [SerializeField] Transform scareLookAt;
+    [Tooltip("Do motor pegar ate a energia voltar (luzes acendem).")]
+    [SerializeField, Min(0f)] float scarePowerDelay = 0.3f;
+    [Tooltip("Da energia voltar ate a camera virar para ele.")]
+    [SerializeField, Min(0f)] float scareRevealDelay = 0.45f;
+    [Tooltip("Duracao da virada da camera. Rapida: nao pode criar expectativa.")]
+    [SerializeField, Min(0.05f)] float scareCameraMove = 0.25f;
+    [Tooltip("Camera travada nele, depois da virada. Some com scareCameraMove = o revealSeconds do ZatanDirector.")]
+    [SerializeField, Min(0f)] float scareHold = 1.65f;
+    [SerializeField, Range(0f, 90f)] float scareFov = 50f;
+    [SerializeField] AudioClip scareClip;
+    [SerializeField, Range(0f, 1f)] float scareVolume = 1f;
+    [Tooltip("A energia volta (ligue os grupos de luz \"park\" aqui).")]
+    public UnityEvent onPowerBack = new UnityEvent();
+    [Tooltip("O Zatan aparece (ZatanDirector.RevealThenChase) e as barreiras da fuga entram.")]
+    public UnityEvent onRevealScare = new UnityEvent();
+
     // --- estado (persiste ao sair) ---
     float capProgress;               // 0 = fechada no bocal, 1 = solta e pendurada
     bool full, sealedTank;
@@ -137,6 +162,7 @@ public class GeneratorFuelMinigame : Minigame
     bool running;
 
     // --- temporarios ---
+    bool scaring;
     Drag drag;
     GeneratorPart hovered;
     GeneratorPart[] parts;
@@ -639,7 +665,61 @@ public class GeneratorFuelMinigame : Minigame
         yield return Shake(0.8f, shakeAmount * 1.2f);
         FinishCan();
         busy = false;
-        Complete();
+        if (revealScare && scareStandPoint != null && scareLookAt != null && ViewCamera != null) StartCoroutine(RevealScare());
+        else Complete();
+    }
+
+    protected override bool PlayerCanExit => !scaring;
+
+    /// <summary>
+    /// A energia volta, e o Zatan esta la. A camera sai do gerador e vira de uma vez para ele, com zoom, e fica travada
+    /// enquanto ele se contorce; o jogador e solto ja em pe, olhando para ele, com a rota do trailer atras.
+    /// </summary>
+    IEnumerator RevealScare()
+    {
+        scaring = true;
+        var cam = ViewCamera;
+        var lens = cam.GetComponent<Camera>();
+        float fov0 = lens != null ? lens.fieldOfView : 60f;
+        bool zoom = lens != null && scareFov > 0f;
+
+        yield return new WaitForSeconds(scarePowerDelay);
+        onPowerBack?.Invoke();
+        yield return new WaitForSeconds(scareRevealDelay);
+        onRevealScare?.Invoke();
+        if (scareClip != null) sfx.PlayOneShot(scareClip, scareVolume);
+
+        PlacePlayer(scareStandPoint.position, scareLookAt.position);
+        PlayerViewPose(out Vector3 endPos, out Quaternion endRot);
+        var flashlight = PlayerRoot != null ? PlayerRoot.GetComponentInChildren<Jamlloween.Flashlight.PlayerFlashlight>(true) : null;
+        if (flashlight != null)
+        {
+            flashlight.SetOn(true);
+            flashlight.SetWorkMode(false, scareCameraMove + 0.05f);
+        }
+        Vector3 startPos = cam.position;
+        Quaternion startRot = cam.rotation;
+        for (float t = 0f; t < 1f; t += Time.deltaTime / scareCameraMove)
+        {
+            float k = 1f - Mathf.Pow(1f - t, 3f);   // sai rapido e assenta
+            cam.SetPositionAndRotation(Vector3.Lerp(startPos, endPos, k), Quaternion.Slerp(startRot, endRot, k));
+            if (zoom) lens.fieldOfView = Mathf.Lerp(fov0, scareFov, k);
+            yield return null;
+        }
+        cam.SetPositionAndRotation(endPos, endRot);
+        if (zoom) lens.fieldOfView = scareFov;
+
+        yield return new WaitForSeconds(scareHold);
+        scaring = false;
+        Complete(0f);   // ele comeca a correr agora; o jogador e solto ali mesmo
+        if (!zoom) yield break;
+        float from = lens.fieldOfView;
+        for (float t = 0f; t < 1f; t += Time.deltaTime / 0.5f)
+        {
+            lens.fieldOfView = Mathf.Lerp(from, fov0, Mathf.SmoothStep(0f, 1f, t));
+            yield return null;
+        }
+        lens.fieldOfView = fov0;
     }
 
     AudioClip SputterClip(int pull)

@@ -32,7 +32,15 @@ namespace Jamlloween.Progression
         [Tooltip("Segundos da transição ao desligar. Curto: a energia cai de repente.")]
         [SerializeField] float fadeOffSeconds = 0.3f;
 
+        [Header("Onda ao ligar")]
+        [Tooltip("Ao ligar, as luzes de rua (StepBeacon com este powerGroup) acendem em onda a partir deste ponto " +
+                 "(ex.: o gerador). Vazio: todas de uma vez.")]
+        [SerializeField] Transform waveOrigin;
+        [Tooltip("Metros por segundo da onda.")]
+        [SerializeField, Min(0.1f)] float waveSpeed = 14f;
+
         public bool IsOn { get; private set; }
+        float onSince = float.NegativeInfinity;
 
         void Awake()
         {
@@ -49,6 +57,7 @@ namespace Jamlloween.Progression
 
         void Apply(bool on, bool changeProfile)
         {
+            if (changeProfile && on && !IsOn) onSince = Time.time;   // a onda so recomeca quando liga de verdade
             IsOn = on;
             if (changeProfile) WorldLighting.Set(on ? profileOn : profileOff, on ? fadeOnSeconds : fadeOffSeconds);
             foreach (var l in lights) if (l != null) l.enabled = on;
@@ -65,6 +74,23 @@ namespace Jamlloween.Progression
                 if (g.groupId != id) continue;
                 if (g.IsOn) return true;
                 found = true;
+            }
+            return !found;
+        }
+
+        /// <summary>
+        /// Como IsGroupOn, mas para uma luz neste ponto: com a onda, ela só acende quando a onda chega até ela.
+        /// </summary>
+        public static bool IsPoweredAt(string id, Vector3 point)
+        {
+            bool found = false;
+            foreach (var g in all)
+            {
+                if (g.groupId != id) continue;
+                found = true;
+                if (!g.IsOn) continue;
+                if (g.waveOrigin == null) return true;
+                if (Time.time - g.onSince >= Vector3.Distance(g.waveOrigin.position, point) / g.waveSpeed) return true;
             }
             return !found;
         }

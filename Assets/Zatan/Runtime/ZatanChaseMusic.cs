@@ -7,6 +7,7 @@ namespace Jamlloween.Zatan
     /// A música da perseguição: entra quando o Zatan avista o jogador e toca enquanto ele persegue ou procura.
     /// Sai com um fade quando a perseguição acaba (ele desiste, some, prende o jogador ou começa uma cena).
     /// Uma perseguição nova, depois que a música terminou de sair, começa a trilha do início.
+    /// Uma cena pode adiantar a música com <see cref="Cue"/> (ex.: o Zatan aparece se contorcendo antes de correr).
     /// </summary>
     public sealed class ZatanChaseMusic : MonoBehaviour
     {
@@ -21,7 +22,7 @@ namespace Jamlloween.Zatan
         [Tooltip("Procurando o jogador (Search) também conta como perseguição.")]
         [SerializeField] bool keepWhileSearching = true;
 
-        bool chasing;
+        bool chasing, cued;
 
         void Awake()
         {
@@ -46,10 +47,19 @@ namespace Jamlloween.Zatan
             music.Stop();
         }
 
+        /// <summary>A perseguição começa agora, mesmo que ele ainda esteja numa cena (Scripted): a música já entra.</summary>
+        public void Cue()
+        {
+            cued = true;
+            OnStateChanged(brain.State);
+        }
+
         void OnStateChanged(ZatanBehaviourState state)
         {
-            chasing = state == ZatanBehaviourState.Spotted || state == ZatanBehaviourState.Chase
-                      || (keepWhileSearching && state == ZatanBehaviourState.Search);
+            bool hunting = state == ZatanBehaviourState.Spotted || state == ZatanBehaviourState.Chase
+                           || (keepWhileSearching && state == ZatanBehaviourState.Search);
+            if (!hunting && state != ZatanBehaviourState.Scripted) cued = false;   // a perseguição adiantada acabou
+            chasing = hunting || (cued && state == ZatanBehaviourState.Scripted);
             if (chasing && !music.isPlaying)
             {
                 music.time = 0f;
