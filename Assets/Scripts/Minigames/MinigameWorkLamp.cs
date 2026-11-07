@@ -27,11 +27,12 @@ public class MinigameWorkLamp : MonoBehaviour
     [Tooltip("Deixa a luminaria sempre acesa, com ou sem o jogador no minigame.")]
     [SerializeField] bool alwaysOn;
 
-    static readonly int PositionId = Shader.PropertyToID("_WorkLampPosition");
-    static readonly int DirectionId = Shader.PropertyToID("_WorkLampDirection");
-    static readonly int ColorId = Shader.PropertyToID("_WorkLampColor");
-    static readonly int CosInnerId = Shader.PropertyToID("_WorkLampCosInner");
-    static MinigameWorkLamp owner;   // a luminaria que esta escrevendo nos globais (a ultima a acender)
+    // Dois slots de globais (MinigameWorkLamp.hlsl): ate duas luminarias acesas iluminam o PSX Unlit ao mesmo tempo.
+    static readonly int[] PositionId = { Shader.PropertyToID("_WorkLampPosition"), Shader.PropertyToID("_WorkLamp2Position") };
+    static readonly int[] DirectionId = { Shader.PropertyToID("_WorkLampDirection"), Shader.PropertyToID("_WorkLamp2Direction") };
+    static readonly int[] ColorId = { Shader.PropertyToID("_WorkLampColor"), Shader.PropertyToID("_WorkLamp2Color") };
+    static readonly int[] CosInnerId = { Shader.PropertyToID("_WorkLampCosInner"), Shader.PropertyToID("_WorkLamp2CosInner") };
+    static readonly MinigameWorkLamp[] slots = new MinigameWorkLamp[2];   // a luminaria que escreve em cada slot
 
     float level;      // 0 = apagada, 1 = acesa
     bool wanted;
@@ -56,16 +57,35 @@ public class MinigameWorkLamp : MonoBehaviour
             minigame.onStarted.RemoveListener(TurnOn);
             minigame.onExited.RemoveListener(TurnOff);
         }
-        if (owner == this) { owner = null; Shader.SetGlobalVector(ColorId, Vector4.zero); }
+        Release();
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    static void ResetStatics() => owner = null;
+    static void ResetStatics() { slots[0] = null; slots[1] = null; }
+
+    int Slot => slots[0] == this ? 0 : slots[1] == this ? 1 : -1;
+
+    /// <summary>Pega um slot livre. Sem slot livre, o mais novo a acender toma o slot 0 (a luz do minigame em uso vale mais).</summary>
+    void Claim(bool force)
+    {
+        if (Slot >= 0) return;
+        int free = slots[0] == null ? 0 : slots[1] == null ? 1 : -1;
+        if (free < 0 && !force) return;
+        slots[free < 0 ? 0 : free] = this;
+    }
+
+    void Release()
+    {
+        int s = Slot;
+        if (s < 0) return;
+        slots[s] = null;
+        Shader.SetGlobalVector(ColorId[s], Vector4.zero);
+    }
 
     public void TurnOn()
     {
         wanted = true;
-        owner = this;
+        Claim(force: true);
     }
     public void TurnOff() => wanted = false;
 
@@ -77,28 +97,29 @@ public class MinigameWorkLamp : MonoBehaviour
             level = Mathf.MoveTowards(level, target, Time.deltaTime / Mathf.Max(fadeSeconds, 0.01f));
             Apply();
         }
-        if (alwaysOn && level > 0f && owner == null) owner = this;
+        if (level > 0f) Claim(force: false);   // ex.: a sempre acesa retoma um slot quando outra apaga
     }
 
     // Depois de tudo mexer, publica a luz para os shaders. Sem lampada acesa os globais ficam em zero.
     void LateUpdate()
     {
-        if (owner != this) return;
+        if (Slot < 0) return;
         PublishToShaders();
-        if (level <= 0f && !wanted) owner = null;
+        if (level <= 0f && !wanted && !alwaysOn) Release();
     }
 
     void PublishToShaders()
     {
-        if (spot == null) return;
+        int s = Slot;
+        if (spot == null || s < 0) return;
         Transform t = spot.transform;
         float outer = Mathf.Cos(spot.spotAngle * 0.5f * Mathf.Deg2Rad);
         float inner = Mathf.Cos(spot.innerSpotAngle * 0.5f * Mathf.Deg2Rad);
         Color c = spot.color * (shaderIntensity * level);
-        Shader.SetGlobalVector(PositionId, new Vector4(t.position.x, t.position.y, t.position.z, spot.range));
-        Shader.SetGlobalVector(DirectionId, new Vector4(t.forward.x, t.forward.y, t.forward.z, outer));
-        Shader.SetGlobalVector(ColorId, new Vector4(c.r, c.g, c.b, 0f));
-        Shader.SetGlobalFloat(CosInnerId, inner);
+        Shader.SetGlobalVector(PositionId[s], new Vector4(t.position.x, t.position.y, t.position.z, spot.range));
+        Shader.SetGlobalVector(DirectionId[s], new Vector4(t.forward.x, t.forward.y, t.forward.z, outer));
+        Shader.SetGlobalVector(ColorId[s], new Vector4(c.r, c.g, c.b, 0f));
+        Shader.SetGlobalFloat(CosInnerId[s], inner);
     }
 
     /// <summary>Acende ou apaga na hora, sem esperar o fade. Usado ao montar a cena no editor.</summary>
@@ -106,10 +127,10 @@ public class MinigameWorkLamp : MonoBehaviour
     {
         wanted = on;
         level = on ? 1f : 0f;
-        if (on) owner = this;
+        if (on) Claim(force: true);
         Apply();
         if (on) PublishToShaders();
-        else if (owner == this) { owner = null; Shader.SetGlobalVector(ColorId, Vector4.zero); }
+        else Release();
     }
 
     void Apply()

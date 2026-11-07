@@ -46,6 +46,8 @@ namespace HeyHeyThere.PSXCarnivalKit
         [Tooltip("Locked: every use is refused with \"locked\" (the game unlocks it later)")] public bool locked;
         public string item = "", code = "";
         public string[] lit = new string[0], idle = new string[0], fitted = new string[0];
+        [Tooltip("Only these parts take a use (ex.: the caravan's door, not its walls). Empty: any part.")]
+        public string[] useParts = new string[0];
 
         [Tooltip("A use did something: the part used")] public StringEvent onUsed = new StringEvent();
         public BoolEvent onSwitched = new BoolEvent(), onLive = new BoolEvent();
@@ -98,6 +100,8 @@ namespace HeyHeyThere.PSXCarnivalKit
         /// </summary>
         public bool Use(List<string> items, string part = "")
         {
+            if (useParts.Length > 0 && Array.IndexOf(useParts, part) < 0)
+                return false;
             items = items ?? new List<string>();
             if (locked)
             {
